@@ -1,0 +1,41 @@
+# The whole system comes up with a single command:
+#   docker compose up
+#
+# db and backend run in week 02. The frontend joins in week 10.
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-alumni}
+      POSTGRES_USER: ${POSTGRES_USER:-alumni}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-alumni}
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      BACKEND_PORT: ${BACKEND_PORT:-3000}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-alumni}:${POSTGRES_PASSWORD:-alumni}@db:5432/${POSTGRES_DB:-alumni}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # frontend:  React SPA (nginx) -- from week 10
+
+volumes:
+  db-data:

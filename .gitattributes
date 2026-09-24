@@ -1,0 +1,8 @@
+# Keep LF line endings in the repo so scripts run inside Linux containers
+# even when the project is edited on Windows.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
