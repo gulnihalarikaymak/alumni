@@ -2,9 +2,6 @@
 
 A web system that helps a university stay in touch with its graduates: who they are, where they work, and how they can help the students who come after them.
 
-> [!IMPORTANT]
-> **Status: week 1 of 14, project inception.** This repository currently contains this README only. The system is built week by week and every week leaves at least one commit. The goal is that the whole system starts with a single command, `docker compose up`. That command starts working in **week 2** (database and API) and covers the full stack in **week 10**. Anything marked *(planned)* describes where the project is going, not what exists today.
-
 | | |
 |---|---|
 | **Course** | Web Programming (YBSB3001), Istanbul University, Faculty of Economics, MIS, Fall 2026 |
