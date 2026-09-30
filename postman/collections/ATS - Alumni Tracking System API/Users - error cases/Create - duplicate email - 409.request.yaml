@@ -1,0 +1,18 @@
+$kind: http-request
+name: Create - duplicate email -> 409
+url: "{{baseUrl}}/api/users"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{dupEmail}}",
+      "role": "STUDENT"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("Status is 409", () => pm.response.to.have.status(409));
+    language: text/javascript
+order: 4000

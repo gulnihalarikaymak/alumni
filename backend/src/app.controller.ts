@@ -1,5 +1,7 @@
 import { Controller, Get, Param, Header } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('demo')
 @Controller()
 export class AppController {
   @Get()
@@ -26,7 +28,7 @@ export class AppController {
           <h1>Welcome to ATS Test Domain</h1>
           <p>This is a temporary main page.</p>
           <div class="links">
-            <a href="/api/v1/health">API Health Check</a>
+            <a href="/api/health">API Health Check</a>
             <a href="/hello">Hello API</a>
             <a href="/about">About</a>
           </div>

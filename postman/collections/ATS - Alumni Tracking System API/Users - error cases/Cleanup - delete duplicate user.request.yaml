@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/api/users/{{dupId}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: pm.test("Status is 204", () => pm.response.to.have.status(204));
+    language: text/javascript
+order: 10000
