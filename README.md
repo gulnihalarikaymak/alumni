@@ -128,16 +128,16 @@ docker compose up
 | Service | What it is | Address *(planned)* | Starts in |
 |---|---|---|---|
 | `db` | PostgreSQL | `localhost:5432`, reachable from your own machine only | week 2 |
-| `backend` | NestJS REST API, with interactive docs | `http://localhost:3000/api/v1`, docs at `/api/docs` | week 2 |
+| `backend` | NestJS REST API, with interactive docs | `http://localhost:3000/api`, docs at `/api/swagger` | week 2 |
 | `frontend` | React app served by nginx, which forwards `/api` to the backend | `http://localhost:8080` | week 10 |
 
 **Check that it worked** (from week 2):
 
 ```bash
-curl http://localhost:3000/api/v1/health
+curl http://localhost:3000/api/health
 ```
 
-The answer is `{"status":"ok"}`.
+The answer is JSON starting with `{"status":"ok", ...}`. Opened in a browser, the same address shows a status page. The interactive API docs are at `http://localhost:3000/api/swagger`.
 
 **Demo data.** From week 5 the database is filled with synthetic demo data on first start (no real people). From week 11 this README lists one demo account per role.
 
@@ -243,7 +243,7 @@ The topic column follows the course. The rest is my plan and may shift with each
 | Week | Course topic | What ATS gets | Done when | Status |
 |---|---|---|---|---|
 | 01 | Project inception and fundamentals | Public repository, this README, stack decisions, assistant chosen | Repository is public, the README explains the system, the stack and how it will run | 🚧 |
-| 02 | Routing: the doors of the system | NestJS project, one module per resource, a route map with stub handlers, a health route. **`docker compose up` starts `db` and `backend`.** | `GET /api/v1/health` answers after a clean `docker compose up`; the route map is documented | 🗓️ |
+| 02 | Routing: the doors of the system | NestJS project, one module per resource, a route map with stub handlers, a health route. **`docker compose up` starts `db` and `backend`.** | `GET /api/health` answers after a clean `docker compose up`; the route map is documented | 🗓️ |
 | 03 | HTTP methods and CRUD | Full CRUD for events and alumni records, held in memory: correct verbs and status codes, input validation | Every verb works; invalid input returns a clear `400` | 🗓️ |
 | 04 | MVC architecture | Controller, service and model split; DTOs; conventions written down | No business logic in controllers | 🗓️ |
 | 05 | Database and ORM | Prisma schema, first migration, seed script, final ER diagram | A clean `docker compose up` creates the schema and demo data | 🗓️ |
@@ -454,8 +454,8 @@ stateDiagram-v2
 
 ### 9.1 Conventions
 
-- **Style.** REST over HTTP, JSON in and out, every route under `/api/v1`. Field names are camelCase, timestamps are ISO 8601 in UTC, and ids are UUIDs so they cannot be guessed by counting.
-- **Documentation.** The OpenAPI description is generated from the code and served as interactive docs at `/api/docs`. The web app's typed client is generated from the same description.
+- **Style.** REST over HTTP, JSON in and out, every route under `/api`. Field names are camelCase, timestamps are ISO 8601 in UTC, and ids are UUIDs so they cannot be guessed by counting.
+- **Documentation.** The OpenAPI description is generated from the code and served as interactive docs at `/api/swagger`. The web app's typed client is generated from the same description.
 - **Lists.** `page` (starting at 1) and `limit` (default 20, maximum 100). A list returns `{ "data": [...], "meta": { "page": 1, "limit": 20, "total": 134 } }`.
 - **Errors.** Every error has the same shape: `{ "statusCode": 404, "error": "Not Found", "message": "Event not found", "requestId": "..." }`.
 - **Authentication.** A session cookie from week 11. Until then the API is open, so **development builds must never hold real data.**
@@ -483,7 +483,7 @@ stateDiagram-v2
 <details>
 <summary><b>Route map (draft, finalised in week 2)</b></summary>
 
-Paths are relative to `/api/v1`. *Any* means any signed-in user, *Owner* means the person the record belongs to. Until week 11 every route is open.
+Paths are relative to `/api`. *Any* means any signed-in user, *Owner* means the person the record belongs to. Until week 11 every route is open.
 
 **Health and public**
 
