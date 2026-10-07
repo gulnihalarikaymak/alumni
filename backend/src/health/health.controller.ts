@@ -42,9 +42,9 @@ function sendHealth(req: Request, res: Response, format?: string): void {
   }
 }
 
-// GET /api/health
+// GET /api/health (path set in app.routes.ts)
 @ApiTags('health')
-@Controller('health')
+@Controller()
 export class HealthController {
   @Get()
   @ApiOperation({ summary: 'Liveness check', description: 'JSON for API clients; a status page when opened in a browser' })

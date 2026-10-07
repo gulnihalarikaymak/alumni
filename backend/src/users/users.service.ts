@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ROLES, Role, STATUSES, Status, User } from './user.model';
+import { ROLES, Role, STATUSES, Status, User, UserModel } from './user.model';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,18 +16,17 @@ interface UserFields {
   status?: Status;
 }
 
+// Business rules for users. Storage is the UserModel's job (user.model.ts).
 @Injectable()
 export class UsersService {
-  // In-memory store: resets every time the server restarts.
-  private readonly users: User[] = [];
-  private nextId = 1;
+  constructor(private readonly userModel: UserModel) {}
 
   findAll(): User[] {
-    return this.users;
+    return this.userModel.findAll();
   }
 
   findOne(id: number): User {
-    const user = this.users.find((u) => u.id === id);
+    const user = this.userModel.findById(id);
     if (!user) throw new NotFoundException(`User ${id} not found`);
     return user;
   }
@@ -37,48 +36,35 @@ export class UsersService {
     const f = this.validate(body, 'create');
     this.assertEmailFree(f.email!);
 
-    const user: User = {
-      id: this.nextId++,
-      email: f.email!,
-      role: f.role!,
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-    };
-    this.users.push(user);
-    return user;
+    return this.userModel.create({ email: f.email!, role: f.role!, status: 'PENDING' });
   }
 
   // PUT: full replacement, email + role + status all required
   replace(id: number, body: unknown): User {
-    const user = this.findOne(id);
+    this.findOne(id);
     const f = this.validate(body, 'replace');
     this.assertEmailFree(f.email!, id);
 
-    user.email = f.email!;
-    user.role = f.role!;
-    user.status = f.status!;
-    return user;
+    return this.userModel.update(id, { email: f.email!, role: f.role!, status: f.status! })!;
   }
 
   // PATCH: partial update, at least one of email / role / status
   update(id: number, body: unknown): User {
-    const user = this.findOne(id);
+    this.findOne(id);
     const f = this.validate(body, 'update');
     if (f.email !== undefined) this.assertEmailFree(f.email, id);
 
-    Object.assign(user, f);
-    return user;
+    return this.userModel.update(id, f)!;
   }
 
-  // DELETE: remove the user from the in-memory store
+  // DELETE: remove the user through the model
   remove(id: number): void {
-    const index = this.users.findIndex((u) => u.id === id);
-    if (index === -1) throw new NotFoundException(`User ${id} not found`);
-    this.users.splice(index, 1);
+    if (!this.userModel.delete(id)) throw new NotFoundException(`User ${id} not found`);
   }
 
   private assertEmailFree(email: string, exceptId?: number): void {
-    if (this.users.some((u) => u.email === email && u.id !== exceptId)) {
+    const owner = this.userModel.findByEmail(email);
+    if (owner && owner.id !== exceptId) {
       throw new ConflictException(`A user with email "${email}" already exists`);
     }
   }

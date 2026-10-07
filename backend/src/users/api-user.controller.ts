@@ -32,10 +32,12 @@ import {
   UserResponse,
 } from './user.dto';
 
-// Served at /api/users (global prefix 'api' set in main.ts)
+// JSON API for users. Returns data for programs (Postman, the React app).
+// The HTML pages for people are in UserController.
+// Path: /api/users, set in app.routes.ts.
 @ApiTags('users')
-@Controller('users')
-export class UsersController {
+@Controller()
+export class ApiUserController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()

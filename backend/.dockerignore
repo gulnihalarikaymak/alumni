@@ -1,0 +1,5 @@
+# The image installs its own packages and builds its own dist/ (see Dockerfile).
+# A local node_modules (for the editor) must not be copied over them.
+node_modules
+dist
+npm-debug.log*

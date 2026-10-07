@@ -1,15 +1,22 @@
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { methodOverride } from './common/method-override';
+import { setupViews } from './common/views';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // All API routes live under /api (e.g. /api/health, /api/users).
-  // The demo pages stay at the root.
-  app.setGlobalPrefix('api', {
-    exclude: ['/', 'hello', 'hello/(.*)', 'sum/(.*)', 'about'],
-  });
+  // View layer: Handlebars templates in backend/views/
+  setupViews(app);
+
+  // Lets HTML forms send PUT, PATCH and DELETE with "?_method=..."
+  app.use(methodOverride);
+
+  // No global prefix: every URL path is defined in app.routes.ts
+  // (/users for pages, /api/users and /api/health for JSON). A global 'api'
+  // prefix with an exclude list cannot tell /users and /api/users apart.
 
   app.enableCors();
 
@@ -32,7 +39,8 @@ async function bootstrap() {
   console.log(`  - Root (Browser): http://localhost:${port}/ -> "ok"`);
   console.log(`  - Health direct: http://localhost:${port}/health -> {"status":"ok"}`);
   console.log(`  - Health API:    http://localhost:${port}/api/health (browser: status page, curl: JSON)`);
-  console.log(`  - Users:         GET/POST http://localhost:${port}/api/users, GET/PUT/PATCH/DELETE /api/users/:id (in memory)`);
+  console.log(`  - Users (pages): http://localhost:${port}/users (list, create, edit, delete in the browser)`);
+  console.log(`  - Users (API):   GET/POST http://localhost:${port}/api/users, GET/PUT/PATCH/DELETE /api/users/:id (in memory)`);
   console.log(`  - Swagger UI:    http://localhost:${port}/api/swagger`);
 }
 bootstrap();

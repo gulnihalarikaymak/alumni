@@ -1,0 +1,32 @@
+{{!-- READ one: GET /users/:id; also PATCH /users/:id when the status change is rejected.
+      Data: user, statuses, errors --}}
+<h1>{{user.email}}</h1>
+<p class="sub">User #{{user.id}}</p>
+<dl>
+  <dt>Id</dt><dd>{{user.id}}</dd>
+  <dt>E-mail</dt><dd>{{user.email}}</dd>
+  <dt>Role</dt><dd><span class="tag">{{user.role}}</span></dd>
+  <dt>Status</dt><dd><span class="tag">{{user.status}}</span></dd>
+  <dt>Created</dt><dd>{{user.createdAt}}</dd>
+</dl>
+
+<h2>Change status</h2>
+{{> errors}}
+<form class="inline" method="post" action="/users/{{user.id}}?_method=PATCH">
+  <label>Status
+    <select name="status" required>
+      {{#each statuses}}
+        <option value="{{this}}" {{#if (same this ../user.status)}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+  </label>
+  <button class="btn" type="submit">Save status</button>
+</form>
+
+<div class="actions" style="margin-top:28px">
+  <a class="btn" href="/users/{{user.id}}/edit">Edit</a>
+  <form method="post" action="/users/{{user.id}}?_method=DELETE" onsubmit="return confirm('Delete this user?')">
+    <button class="btn danger" type="submit">Delete</button>
+  </form>
+  <a href="/users">Back to the list</a>
+</div>

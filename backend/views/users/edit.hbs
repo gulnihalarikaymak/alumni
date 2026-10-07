@@ -1,0 +1,28 @@
+{{!-- UPDATE: GET /users/:id/edit shows it; PUT /users/:id renders it again when the input is rejected.
+      Data: user, roles, statuses, values (stored or typed), errors --}}
+<h1>Edit user #{{user.id}}</h1>
+<p class="sub">Change the fields and save.</p>
+{{> errors}}
+<form class="stack" method="post" action="/users/{{user.id}}?_method=PUT">
+  <label>E-mail
+    <input type="email" name="email" value="{{values.email}}" required autofocus>
+  </label>
+  <label>Role
+    <select name="role" required>
+      {{#each roles}}
+        <option value="{{this}}" {{#if (same this ../values.role)}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+  </label>
+  <label>Status
+    <select name="status" required>
+      {{#each statuses}}
+        <option value="{{this}}" {{#if (same this ../values.status)}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+  </label>
+  <div class="actions">
+    <button class="btn" type="submit">Save</button>
+    <a href="/users/{{user.id}}">Cancel</a>
+  </div>
+</form>

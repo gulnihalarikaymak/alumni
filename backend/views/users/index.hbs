@@ -1,0 +1,38 @@
+{{!-- READ all: GET /users. Data: users --}}
+<h1>Users</h1>
+<p class="sub">{{users.length}} {{#if (same users.length 1)}}user{{else}}users{{/if}}</p>
+
+<div class="actions" style="margin-bottom:16px">
+  <a class="btn" href="/users/create">New user</a>
+</div>
+
+{{#if users.length}}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Id</th><th>E-mail</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {{#each users}}
+          <tr>
+            <td>{{id}}</td>
+            <td><a href="/users/{{id}}">{{email}}</a></td>
+            <td><span class="tag">{{role}}</span></td>
+            <td><span class="tag">{{status}}</span></td>
+            <td>
+              <div class="actions">
+                <a href="/users/{{id}}">View</a>
+                <a href="/users/{{id}}/edit">Edit</a>
+                <form method="post" action="/users/{{id}}?_method=DELETE" onsubmit="return confirm('Delete this user?')">
+                  <button class="link danger" type="submit">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+{{else}}
+  <p class="empty">No users yet. <a href="/users/create">Create the first one</a>.</p>
+{{/if}}
+
+<p class="foot">Kept in memory: restarting the server empties this list. The same data as JSON: <a href="/api/users">/api/users</a></p>

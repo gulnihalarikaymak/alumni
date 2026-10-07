@@ -29,6 +29,7 @@ export class AppController {
           <p>This is a temporary main page.</p>
           <div class="links">
             <a href="/api/health">API Health Check</a>
+            <a href="/users">Users</a>
             <a href="/hello">Hello API</a>
             <a href="/about">About</a>
           </div>

@@ -1,12 +1,5 @@
 import type { HealthPayload } from './health.controller';
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
+import { escapeHtml } from '../common/html';
 
 export function renderHealthPage(p: HealthPayload, path: string): string {
   const json = escapeHtml(JSON.stringify(p, null, 2));

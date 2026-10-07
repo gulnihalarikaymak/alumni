@@ -330,7 +330,360 @@ An error thrown anywhere in the pipeline is caught by one exception filter, whic
 | 12 | Service layers | Approval workflow, mentorship rules and scoring, reports |
 | 13 | Deployment and CI/CD | GitHub Actions and the production compose file |
 
-### 7.3 Planned code layout of the back end
+### 7.3 MVC in the current code ✅
+
+This section describes the code **as it is in the repository today**, not the plan. Section 7.4 shows where it is going.
+
+#### How MVC maps onto NestJS
+
+NestJS has no folder called `models` or `views`. MVC shows up as kinds of files, one set per feature module, and NestJS adds a **service** between the controller and the model so the business rules have one home.
+
+| Layer | Its job | NestJS building block | File suffix in ATS |
+|---|---|---|---|
+| **Model** | What the data is (fields, allowed values, types) and the CRUD operations that store and fetch it | Types, constants and an `@Injectable()` model class holding the records in memory (Prisma from week 5) | `*.model.ts` |
+| **Model (shapes on the wire)** | What a request may send and what a response contains | DTO classes, also read by Swagger | `*.dto.ts` |
+| **Service** | Business rules: validation, uniqueness, deciding that a missing record is a `404` | `@Injectable()` provider that calls the model | `*.service.ts` |
+| **Controller** | HTTP only: route, verb, status code, parameter parsing. Hands the work to a service and returns its result. A resource can have two: one for web pages, one for the JSON API | `@Controller()` class | `*.controller.ts` (pages), `api-*.controller.ts` (JSON) |
+| **View** | What the caller receives. For the API this is the JSON NestJS serialises from the returned object; for people opening a URL in a browser it is an HTML page | Return value of a controller method, or an HTML render function | JSON from `*.dto.ts` shapes; HTML from Handlebars templates in `backend/views/` (`*.hbs`), and the older `*.page.ts` |
+| **Module** | Wires one feature together: which controllers and services it owns | `@Module()` class | `*.module.ts` |
+
+#### One request through the layers
+
+`POST /api/users` with `{"email": "ayse@istanbul.edu.tr", "role": "ALUMNI"}`:
+
+```mermaid
+sequenceDiagram
+    participant Client as Client (curl, Postman, browser)
+    participant Ctl as ApiUserController<br/>(controller)
+    participant Svc as UsersService<br/>(service)
+    participant Model as UserModel<br/>(model, in memory)
+    Client->>Ctl: POST /api/users
+    Ctl->>Svc: create(body)
+    Svc->>Svc: validate(body, 'create')
+    alt invalid input
+        Svc-->>Client: 400 Bad Request (list of messages)
+    else valid
+        Svc->>Model: findByEmail(email)
+        alt e-mail already used
+            Svc-->>Client: 409 Conflict
+        else e-mail free
+            Svc->>Model: create({ email, role, status: PENDING })
+            Model-->>Svc: User (with id and createdAt)
+            Svc-->>Ctl: User
+            Ctl-->>Client: 201 Created, JSON in the UserResponse shape (view)
+        end
+    end
+```
+
+The controller method is one line: `return this.usersService.create(body);`. It does not know how a user is validated or stored. The service does not know how the model stores it either: it only calls `create`, `findAll`, `findById`, `findByEmail`, `update` and `delete`. When the in-memory array is replaced by PostgreSQL in weeks 5 and 6, only the inside of `UserModel` changes.
+
+#### The User model and its CRUD functions
+
+`UserModel` in `backend/src/users/user.model.ts` keeps the users in an array, with no database connection. It is registered as a provider in `UsersModule`, so Nest creates one instance and injects it into `UsersService`. The data lasts as long as the process does.
+
+| Operation | Function | Returns | Used by |
+|---|---|---|---|
+| Create | `create({ email, role, status })` | The new `User`, with the next `id` and `createdAt` set by the model | `POST /api/users` |
+| Read all | `findAll()` | Every `User` | `GET /api/users` |
+| Read one | `findById(id)` | The `User`, or `undefined` | `GET`, `PUT`, `PATCH /api/users/:id` |
+| Read one | `findByEmail(email)` | The `User`, or `undefined` (used for the unique e-mail rule) | `POST`, `PUT`, `PATCH` |
+| Update | `update(id, changes)` | The updated `User`, or `undefined`. Only the fields given change, so `PUT` and `PATCH` share it | `PUT`, `PATCH /api/users/:id` |
+| Delete | `delete(id)` | `true` if a record was removed, `false` if none had that id | `DELETE /api/users/:id` |
+
+The model knows nothing about HTTP. It reports a missing record with `undefined` or `false`, and the service turns that into `404 Not Found`. It hands out copies of its records, so nothing outside the model can change the stored data without calling one of these functions.
+
+#### Two controllers for one resource: `UserController` and `ApiUserController`
+
+Users are served twice: as HTML pages for a person with a browser, and as JSON for programs (Postman, later the React app). Each audience gets its own controller. Both call the **same** `UsersService`, so the rules (valid e-mail, unique e-mail, `PENDING` on create) are written once and the two always see the same data.
+
+```mermaid
+flowchart LR
+    browser(["Browser"]) -->|"/users<br/>HTML forms"| web["UserController<br/>user.controller.ts"]
+    program(["Postman, React app"]) -->|"/api/users<br/>JSON"| api["ApiUserController<br/>api-user.controller.ts"]
+    web --> views["views/users/*.hbs<br/>HTML templates"]
+    api --> dto["user.dto.ts<br/>JSON shapes"]
+    web --> svc["UsersService<br/>rules"]
+    api --> svc
+    svc --> model["UserModel<br/>CRUD in memory"]
+```
+
+| CRUD | `UserController` (pages, `/users`) | `ApiUserController` (JSON, `/api/users`) | Service method |
+|---|---|---|---|
+| Read all | `GET /users`: table of users | `GET /api/users`: `200` and an array | `findAll` |
+| Create | `GET /users/create` shows the form, `POST /users` saves it and redirects to the new user's page | `POST /api/users`: `201` and the user | `create` |
+| Read one | `GET /users/:id`: detail page | `GET /api/users/:id`: `200` and the user | `findOne` |
+| Update (all fields) | `GET /users/:id/edit` shows the filled form, `PUT /users/:id` saves it and redirects | `PUT /api/users/:id`: `200` | `replace` |
+| Update (some fields) | `PATCH /users/:id` from the "Change status" form on the detail page | `PATCH /api/users/:id`: `200` | `update` |
+| Delete | `DELETE /users/:id` (with a confirmation), then the list | `DELETE /api/users/:id`: `204` | `remove` |
+| Invalid input | The form again, with the messages and what was typed, status `400` | `400` and a JSON list of messages | – |
+| E-mail taken | The form again, status `409` | `409` | – |
+| Unknown id | A "User not found" page, status `404` | `404` (`400` if the id is not a number) | – |
+
+Why the two differ:
+
+- **The page controller has two extra routes**, `GET /users/create` and `GET /users/:id/edit`, because a person needs a form to fill in. A program sends JSON directly.
+- **After a successful change the page controller redirects** (`303 See Other`) instead of returning the record. Refreshing the page then reloads it rather than submitting the form a second time.
+- **The page controller is hidden from Swagger** (`@ApiExcludeController()`), because Swagger documents the JSON API only.
+- **The page controller returns data for a template, not the HTML itself.** The API controller's view is the JSON shape; the page controller's view is a Handlebars file (next section).
+
+#### Every CRUD operation as a route, a controller method and a view
+
+The page routes follow the usual resource layout: one route per operation, with the HTTP verb that matches it.
+
+| CRUD | Verb and route | `UserController` method | View, or where it goes next |
+|---|---|---|---|
+| Read all | `GET /users` | `index()` with `@Render('users/index')` | `views/users/index.hbs` |
+| Create (form) | `GET /users/create` | `create()` with `@Render('users/create')` | `views/users/create.hbs` |
+| Create (save) | `POST /users` | `store()` | Redirect to `/users/:id`; rejected: `create.hbs` again |
+| Read one | `GET /users/:id` | `show()` | `views/users/show.hbs` |
+| Update (form) | `GET /users/:id/edit` | `edit()` | `views/users/edit.hbs` |
+| Update (all fields) | `PUT /users/:id` | `update()` | Redirect to `/users/:id`; rejected: `edit.hbs` again |
+| Update (some fields) | `PATCH /users/:id` | `patch()` | Redirect to `/users/:id`; rejected: `show.hbs` again |
+| Delete | `DELETE /users/:id` | `destroy()` | Redirect to `/users` |
+| Unknown id | any `/users/:id...` | every method above | `views/users/not-found.hbs`, status `404` |
+
+`GET /users/create` is declared before `GET /users/:id` in the controller, so `create` is never taken for an id.
+
+**PUT, PATCH and DELETE from an HTML form.** A browser form can only send `GET` or `POST`. The forms therefore post to the same URL with `?_method=PUT`, `?_method=PATCH` or `?_method=DELETE`:
+
+```html
+<form method="post" action="/users/{{user.id}}?_method=DELETE">
+  <button type="submit">Delete</button>
+</form>
+```
+
+`src/common/method-override.ts`, registered in `main.ts`, changes such a request's method before Nest chooses a route, so the controller uses `@Put`, `@Patch` and `@Delete` just like the JSON API. Only a `POST` is ever changed. A link (`GET`) with `?_method=DELETE` stays a `GET` and can never delete anything. Tools that can send the real verbs, such as curl or Postman, reach the same routes directly.
+
+#### The view layer: routes render templates
+
+The HTML for people lives in **template files**, not in TypeScript. A route names a template and passes it data; the template decides how that data looks. This is the "V" of MVC kept separate from the "C".
+
+```
+backend/views/
+├── layout.hbs              the frame of every page: <head>, styles, navigation, {{{body}}}
+├── partials/
+│   └── errors.hbs          {{> errors}}: the list of messages on a rejected form
+└── users/
+    ├── index.hbs           GET /users: table with View, Edit and Delete per user
+    ├── create.hbs          GET /users/create, and POST /users when the input is rejected
+    ├── show.hbs            GET /users/:id with the "Change status" form (PATCH), Edit and Delete
+    ├── edit.hbs            GET /users/:id/edit, and PUT /users/:id when the input is rejected
+    └── not-found.hbs       any /users/:id whose user does not exist (404)
+```
+
+Create, as one example of a form and its two routes:
+
+```ts
+// CREATE, form: GET /users/create
+@Get('create')
+@Render('users/create')
+create() {
+  return { title: 'New user', roles: ROLES, values: {}, errors: [] };
+}
+
+// CREATE, save: POST /users
+@Post()
+store(@Body() body: UserFormValues, @Res() res: Response): void {
+  try {
+    const user = this.usersService.create(body);
+    res.redirect(303, `/users/${user.id}`);
+  } catch (err) {
+    // 400 invalid or 409 e-mail taken: the same view again, with the messages and what was typed
+    res.status(status).render('users/create', { ..., values: body, errors });
+  }
+}
+```
+
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant C as UserController
+    participant S as UsersService
+    participant V as views/users/*.hbs
+    B->>C: GET /users/create
+    C->>V: render create.hbs { roles, values, errors }
+    V-->>B: 200 HTML: empty form
+    B->>C: POST /users (email, role)
+    C->>S: create(body)
+    alt accepted
+        S-->>C: new user
+        C-->>B: 303 redirect to /users/:id
+        B->>C: GET /users/:id
+        C->>V: render show.hbs { user }
+        V-->>B: 200 HTML: the new user
+    else rejected (400 or 409)
+        C->>V: render create.hbs { values: what was typed, errors }
+        V-->>B: 400 or 409 HTML: form with the messages
+    end
+```
+
+- **`@Render('users/...')`** is used when a route always shows the same template with status `200` (`index`, `create`). Routes that may instead redirect, or answer `400`, `404` or `409`, call `res.render(...)` or `res.redirect(...)` themselves.
+- **Escaping is automatic.** `{{email}}` escapes HTML, so an e-mail such as `<b>x</b>@x.com` is shown as text. The only unescaped output is `{{{body}}}` in the layout, which is the already-rendered page. User data is never placed inside JavaScript (such as the `confirm(...)` of a delete button), where HTML escaping does not protect it.
+- **Templates hold no rules.** They only loop (`{{#each users}}`), test (`{{#if errors.length}}`), include a partial (`{{> errors}}`) and print. The one helper, `same`, compares two values ignoring case so that the right `<option>` is pre-selected.
+- **Setup** is in `src/common/views.ts`: the views folder, the `hbs` engine, the partials and the `same` helper. `main.ts` calls it. The Dockerfile copies `views/` into the image next to `dist/`.
+- **No global `/api` prefix.** A global prefix with an exclude list cannot tell `/users` and `/api/users` apart. The route map below sets each path explicitly instead.
+
+#### Routes: one file maps URLs to controllers
+
+Every URL path is defined in one place, `backend/src/app.routes.ts`, with NestJS's `RouterModule`. Controllers declare only the part after it (`''`, `':id'`, `':id/edit'`, ...). To move a group of routes, change this file and nothing else.
+
+```ts
+export const routes: Routes = [
+  // Web: pages for people in a browser
+  { path: 'users', module: UserWebModule },              // /users      -> UserController
+
+  // API: JSON for programs (Postman, later the React app)
+  {
+    path: 'api',
+    children: [
+      { path: 'users', module: ApiUserModule },          // /api/users  -> ApiUserController
+      { path: 'health', module: HealthModule },          // /api/health -> HealthController
+    ],
+  },
+];
+```
+
+`RouterModule` gives a path to a **module**, not to a single controller, so each controller sits in its own small module. Both import one shared module that holds the rules and the data:
+
+```mermaid
+flowchart TD
+    routes["app.routes.ts<br/>route map"]
+    routes -->|"/users"| web["UserWebModule<br/>UserController"]
+    routes -->|"/api/users"| api["ApiUserModule<br/>ApiUserController"]
+    routes -->|"/api/health"| health["HealthModule<br/>HealthController"]
+    web -->|imports| core["UsersModule<br/>UsersService + UserModel"]
+    api -->|imports| core
+```
+
+Nest creates `UsersModule` only once, even though two modules import it, so the pages and the API share one `UsersService` and one `UserModel`. A user created through `POST /api/users` appears on `/users` immediately, and the other way round.
+
+| Prefix (from `app.routes.ts`) | Module | Controller | Method paths in the controller | Full routes |
+|---|---|---|---|---|
+| `/users` | `UserWebModule` | `UserController` | `''`, `'create'`, `':id'`, `':id/edit'` | `GET` and `POST /users`, `GET /users/create`, `GET`, `PUT`, `PATCH` and `DELETE /users/:id`, `GET /users/:id/edit` |
+| `/api/users` | `ApiUserModule` | `ApiUserController` | `''`, `':id'` | `GET` and `POST /api/users`, `GET`, `PUT`, `PATCH` and `DELETE /api/users/:id` |
+| `/api/health` | `HealthModule` | `HealthController` | `''` | `GET /api/health` |
+| *(none)* | `AppModule` | `AppController` | `''`, `'hello'`, `'hello/:name'`, `'sum/:number1/:number2'`, `'about'` | Week 2 demo routes at the root |
+
+#### Directories and files
+
+```
+alumni/
+├── README.md                     this file: what the system is, how to run it, how it is built
+├── LICENSE
+├── .env.example                  configuration defaults; copy to .env to change them
+├── .gitattributes                keeps LF line endings so scripts run in Linux containers
+├── .gitignore                    keeps .env, node_modules/ and dist/ out of git
+├── docker-compose.yml            the whole system: db (PostgreSQL 18) and backend (NestJS)
+│
+├── backend/                      NestJS REST API
+│   ├── Dockerfile                two-stage build: compile TypeScript, then run dist/main.js with views/
+│   ├── README.md
+│   ├── nest-cli.json             Nest CLI settings (source root is src/)
+│   ├── package.json              dependencies (NestJS, Swagger, hbs) and npm scripts
+│   ├── package-lock.json
+│   ├── tsconfig.json             TypeScript compiler settings, decorators enabled
+│   │
+│   ├── views/                    VIEW layer: Handlebars templates for the web pages
+│   │   ├── layout.hbs                frame of every page: head, styles, navigation
+│   │   ├── partials/
+│   │   │   └── errors.hbs            {{> errors}}: messages of a rejected form
+│   │   └── users/
+│   │       ├── index.hbs             GET /users: table with View, Edit, Delete
+│   │       ├── create.hbs            GET /users/create (form for POST /users)
+│   │       ├── show.hbs              GET /users/:id, status form (PATCH), Delete
+│   │       ├── edit.hbs              GET /users/:id/edit (form for PUT /users/:id)
+│   │       └── not-found.hbs         404 page for an unknown user
+│   │
+│   └── src/
+│       ├── main.ts               bootstrap: view engine, CORS, /health alias, Swagger, port
+│       ├── app.module.ts         root module: registers the route map and the feature modules
+│       ├── app.routes.ts         route map: /users, /api/users, /api/health -> their modules
+│       ├── app.controller.ts     week 2 demo routes: /, /hello, /hello/:name, /sum/:a/:b, /about
+│       │
+│       ├── common/               code shared by every feature
+│       │   ├── views.ts              view engine setup: views/ folder, hbs, partials, "same" helper
+│       │   ├── method-override.ts    lets forms send PUT, PATCH, DELETE with ?_method=
+│       │   └── html.ts               escapeHtml(), used by the health page
+│       │
+│       ├── users/                feature module: users CRUD (in memory)
+│       │   ├── users.module.ts       MODULE      shared core: UsersService and UserModel, no URL
+│       │   ├── user-web.module.ts    MODULE      UserController, mounted at /users
+│       │   ├── api-user.module.ts    MODULE      ApiUserController, mounted at /api/users
+│       │   ├── user.controller.ts    CONTROLLER  web CRUD on /users: index, create, store, show, edit, update, patch, destroy
+│       │   ├── api-user.controller.ts CONTROLLER JSON API: GET, POST, PUT, PATCH, DELETE on /api/users
+│       │   ├── users.service.ts      SERVICE     validation, unique e-mail, 404 and 409 decisions
+│       │   ├── user.model.ts         MODEL       User type, ROLES, STATUSES and UserModel (CRUD in memory)
+│       │   └── user.dto.ts           MODEL/VIEW  JSON request and response shapes for Swagger
+│       │
+│       └── health/               feature module: liveness check
+│           ├── health.module.ts      MODULE      wires HealthController
+│           ├── health.controller.ts  CONTROLLER  GET /api/health, chooses JSON or HTML
+│           └── health.page.ts        VIEW        renders the HTML status page
+│
+├── frontend/                     React app; only a README until week 10
+│   └── README.md
+│
+└── postman/                      Postman collection used to exercise every route by hand
+    ├── collections/ATS - Alumni Tracking System API/
+    │   ├── Demo routes/              /, /about, /hello, /hello/:name, /sum/:a/:b
+    │   ├── Health/                   /health and /api/health
+    │   ├── Users (CRUD)/             create, list, get, replace, update, delete
+    │   └── Users - error cases/      400, 404 and 409 responses
+    └── globals/workspace.globals.yaml    Postman workspace globals (empty for now)
+```
+
+#### What each back-end file does
+
+| File | Layer | Responsibility | Depends on |
+|---|---|---|---|
+| `src/main.ts` | Bootstrap | Creates the Nest application, enables CORS, adds a plain `/health` alias, publishes Swagger at `/api/swagger` and listens on `BACKEND_PORT` (default 3000). There is no global prefix: every path comes from `app.routes.ts` | `AppModule` |
+| `src/common/views.ts` | View setup | `setupViews(app)`: points Nest at `backend/views/`, selects the `hbs` engine, registers the partials in `views/partials/` and the `same` helper. Called from `main.ts` | `hbs` |
+| `src/common/method-override.ts` | Middleware | Turns a `POST` with `?_method=PUT`, `PATCH` or `DELETE` into that method before routing, so HTML forms can reach `@Put`, `@Patch` and `@Delete` routes. Never changes a `GET`. Registered in `main.ts` | – |
+| `src/common/html.ts` | Shared helper | `escapeHtml()`, used by the health page (written as a TypeScript string, not a template) so values are shown as text and never run as markup | – |
+| `views/layout.hbs` | View | The frame every page is rendered into: `<head>`, styles (light and dark), navigation, then the page at `{{{body}}}` | – |
+| `views/partials/errors.hbs` | View (partial) | `{{> errors}}`: the list of messages shown above a rejected form. Used by `create`, `edit` and `show` | – |
+| `views/users/index.hbs` | View | `GET /users`: the table of users, with View, Edit and Delete (`DELETE /users/:id`) for each, and a "New user" button | data from `UserController` |
+| `views/users/create.hbs` | View | `GET /users/create`: the form that posts to `POST /users`; shown again with the messages and typed values when rejected | data from `UserController` |
+| `views/users/show.hbs` | View | `GET /users/:id`: one user, a "Change status" form (`PATCH /users/:id`), Edit, and Delete (`DELETE /users/:id`) | data from `UserController` |
+| `views/users/edit.hbs` | View | `GET /users/:id/edit`: the form that sends `PUT /users/:id`; shown again with the messages when rejected | data from `UserController` |
+| `views/users/not-found.hbs` | View | The `404` page for an unknown or non-numeric id | data from `UserController` |
+| `src/app.module.ts` | Module | Root of the module tree. Registers the route map with `RouterModule.register(routes)` and imports every module the map points to | `app.routes.ts`, `HealthModule`, `UserWebModule`, `ApiUserModule`, `AppController` |
+| `src/app.routes.ts` | Routes | The route map: `/users` → `UserWebModule`, `/api/users` → `ApiUserModule`, `/api/health` → `HealthModule`. The only place where these URL prefixes are written | the three modules |
+| `src/app.controller.ts` | Controller + view | Week 2 routing exercises. Returns plain text, or HTML written inline in the controller | – |
+| `src/users/users.module.ts` | Module | The shared core of the feature: registers `UsersService` and `UserModel` and exports the service. Has no controller and no URL | service, model |
+| `src/users/user-web.module.ts` | Module | Holds `UserController`; imports `UsersModule`. Mounted at `/users` by the route map | `UsersModule` |
+| `src/users/api-user.module.ts` | Module | Holds `ApiUserController`; imports `UsersModule`. Mounted at `/api/users` by the route map | `UsersModule` |
+| `src/users/user.controller.ts` | Controller (pages) | CRUD for people at `/users`, one method per route: `index` (`GET /users`), `create` (`GET /users/create`), `store` (`POST /users`), `show` (`GET /users/:id`), `edit` (`GET /users/:id/edit`), `update` (`PUT /users/:id`), `patch` (`PATCH /users/:id`), `destroy` (`DELETE /users/:id`). Passes data to a template, redirects (`303`) after a successful change, renders the form again with the service's messages on `400` or `409`, renders the "not found" template on `404`. Hidden from Swagger | `UsersService`, `views/users/*.hbs` |
+| `src/users/api-user.controller.ts` | Controller (JSON) | CRUD for programs at `/api/users`: `findAll`, `findOne`, `create`, `replace`, `update`, `remove`. Maps each verb to a service method, sets status codes (`201` for create, `204` for delete), turns `:id` into a number with `ParseIntPipe` (`400` if it is not one), documents every response for Swagger | `UsersService`, DTOs |
+| `src/users/users.service.ts` | Service | Validates the body per mode (`create`, `replace`, `update`), normalises e-mail and role, rejects unknown or read-only fields, enforces a unique e-mail, sets `PENDING` on create, then calls the model. Throws `NotFoundException`, `BadRequestException` and `ConflictException` | `UserModel` |
+| `src/users/user.model.ts` | Model | The `User` interface and the allowed `ROLES` and `STATUSES`, matching the `USER` table in [Domain model](#8-domain-model). The `UserModel` class stores users in memory and provides the CRUD functions `create`, `findAll`, `findById`, `findByEmail`, `update` and `delete` | – |
+| `src/users/user.dto.ts` | Model (wire shapes) | `CreateUserDto`, `ReplaceUserDto`, `UpdateUserDto` for requests; `UserResponse` and `ErrorResponse` for responses. Used by Swagger, not yet for validation | `user.model.ts` |
+| `src/health/health.module.ts` | Module | Declares `HealthController`. Mounted at `/api/health` by the route map | controller |
+| `src/health/health.controller.ts` | Controller | `GET /api/health`. Builds the health payload (status, service, version, environment, uptime, time) and picks the view: HTML for a browser, JSON for curl, Postman or `?format=json` | `health.page.ts` |
+| `src/health/health.page.ts` | View | Turns the health payload into an HTML status page, escaping every value | – |
+
+#### Rules of the layers
+
+1. **Controllers stay thin.** No validation, no storage, no business rule. They read the request, call one service method and return its result.
+2. **Services own the rules.** Only a service decides whether an input is acceptable and what a missing record means. It reaches the data only through the model.
+3. **Models own the data.** They describe it (types, enums) and store and fetch it (CRUD), and nothing else: no validation, no HTTP errors.
+4. **Views only format.** A view receives finished data and never decides anything.
+5. **Dependencies point one way:** controller → service → model. A service never imports a controller, and a model imports nothing from the feature.
+6. **One folder per feature.** Everything about users lives in `users/`; a new resource (for example `events/`) gets its own module, controller, service, model and DTO files.
+7. **One service, many controllers.** A page controller and an API controller for the same resource share one service, so a rule is never written twice.
+
+#### Where the code does not follow MVC yet
+
+Honest gaps, closed in later weeks:
+
+| Gap | Why it is there | Fixed in |
+|---|---|---|
+| Validation is hand-written in `UsersService` instead of DTOs with `class-validator` and a global `ValidationPipe` | DTO validation is the week 4 topic | Week 4 |
+| `HealthController` builds its own payload; there is no `HealthService` | The payload has no business logic yet | Week 6, when `/health/ready` checks the database |
+| `AppController` writes HTML inside the controller | Week 2 demo pages; they are removed when the React app arrives | Week 10 |
+| `UserModel` keeps its data in an array, so it is lost on restart | No database before week 5 | Weeks 5 and 6: the same CRUD functions, backed by Prisma and PostgreSQL |
+
+### 7.4 Planned code layout of the back end
 
 ```
 backend/
@@ -655,6 +1008,8 @@ Tests cover the rules, not the framework: permissions, state changes (approval, 
 ---
 
 ## 13. Repository layout and conventions
+
+The target layout is below. The files that exist today, and the MVC role of each, are listed in [MVC in the current code](#73-mvc-in-the-current-code-).
 
 ```
 alumni/
