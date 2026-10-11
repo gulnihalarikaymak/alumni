@@ -31,5 +31,5 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 ## Homework 1 — Announcements (no database)
 - [x] Create the Announcement model
 - [x] Create 2 controllers (web pages + JSON API)
-- [ ] Create routes for both controllers
+- [x] Create routes for both controllers
 - [ ] Create an interface to manage announcements

@@ -41,6 +41,8 @@ async function bootstrap() {
   console.log(`  - Health API:    http://localhost:${port}/api/health (browser: status page, curl: JSON)`);
   console.log(`  - Users (pages): http://localhost:${port}/users (list, create, edit, delete in the browser)`);
   console.log(`  - Users (API):   GET/POST http://localhost:${port}/api/users, GET/PUT/PATCH/DELETE /api/users/:id (in memory)`);
+  console.log(`  - Announcements (pages): http://localhost:${port}/announcements`);
+  console.log(`  - Announcements (API):   GET/POST http://localhost:${port}/api/announcements, GET/PUT/PATCH/DELETE /api/announcements/:id (in memory)`);
   console.log(`  - Swagger UI:    http://localhost:${port}/api/swagger`);
 }
 bootstrap();

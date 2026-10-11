@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
+import { AnnouncementWebModule } from './announcements/announcement-web.module';
+import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { AppController } from './app.controller';
 import { routes } from './app.routes';
 import { HealthModule } from './health/health.module';
@@ -13,6 +15,8 @@ import { UserWebModule } from './users/user-web.module';
     HealthModule,
     UserWebModule,
     ApiUserModule,
+    AnnouncementWebModule,
+    ApiAnnouncementModule,
   ],
   controllers: [AppController],
 })
