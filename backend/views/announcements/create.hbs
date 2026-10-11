@@ -1,0 +1,17 @@
+{{!-- CREATE: GET /announcements/create shows it; POST /announcements renders it again when the input is rejected.
+      Data: values (what was typed), errors --}}
+<h1>New announcement</h1>
+<p class="sub">Title up to 120 characters, content up to 2000.</p>
+{{> errors}}
+<form class="stack" method="post" action="/announcements">
+  <label>Title
+    <input type="text" name="title" value="{{values.title}}" maxlength="120" required autofocus>
+  </label>
+  <label>Content
+    <textarea name="content" rows="6" maxlength="2000" required>{{values.content}}</textarea>
+  </label>
+  <div class="actions">
+    <button class="btn" type="submit">Publish</button>
+    <a href="/announcements">Cancel</a>
+  </div>
+</form>

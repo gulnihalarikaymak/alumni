@@ -9,7 +9,7 @@ A web system that helps a university stay in touch with its graduates: who they 
 | **Stack** | NestJS (TypeScript) · PostgreSQL + Prisma · React + Vite |
 | **Run it with** | `docker compose up` |
 | **AI assistant** | Claude Code |
-| **Status** | Users CRUD (web pages + JSON API) in MVC, in memory. Database comes in week 5. |
+| **Status** | Users and announcements CRUD (web pages + JSON API) in MVC, in memory. Database comes in week 5. |
 
 ## Contents
 
@@ -57,6 +57,8 @@ docker compose up
 |---|---|
 | `http://localhost:3000/users` | Web pages: list, create, edit and delete users |
 | `http://localhost:3000/api/users` | JSON API for the same users |
+| `http://localhost:3000/announcements` | Web pages: list, create, edit and delete announcements |
+| `http://localhost:3000/api/announcements` | JSON API for the same announcements |
 | `http://localhost:3000/api/swagger` | Interactive API docs |
 | `http://localhost:3000/api/health` | Health check (JSON for curl, a status page in a browser) |
 
