@@ -56,6 +56,8 @@ Tasks are given live in class, e.g. "5. haftadayız, task 1: ...".
 4. When every task of a week is ticked: add ✅ to the week heading in `TODO.md` and set the week to ✅
    in the README roadmap, in the same commit.
 
+Homework is tracked the same way under its own heading, `## Homework N — <topic>`, separate from the weeks.
+
 ## Commits
 
 - One task = one commit, Conventional Commits with the module as scope:

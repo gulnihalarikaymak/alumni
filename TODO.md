@@ -27,3 +27,9 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 
 ## Week 05 — Database and ORM
 <!-- Tasks are added here during the lecture. -->
+
+## Homework 1 — Announcements (no database)
+- [ ] Create the Announcement model
+- [ ] Create 2 controllers (web pages + JSON API)
+- [ ] Create routes for both controllers
+- [ ] Create an interface to manage announcements
