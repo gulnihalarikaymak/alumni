@@ -7,7 +7,7 @@
   <dt>E-mail</dt><dd>{{user.email}}</dd>
   <dt>Role</dt><dd><span class="tag">{{user.role}}</span></dd>
   <dt>Status</dt><dd><span class="tag">{{user.status}}</span></dd>
-  <dt>Created</dt><dd>{{user.createdAt}}</dd>
+  <dt>Created</dt><dd><time datetime="{{user.createdAt}}">{{date user.createdAt}}</time></dd>
 </dl>
 
 <h2>Change status</h2>
@@ -24,7 +24,7 @@
 </form>
 
 <div class="actions" style="margin-top:28px">
-  <a class="btn" href="/users/{{user.id}}/edit">Edit</a>
+  <a class="btn quiet" href="/users/{{user.id}}/edit">Edit</a>
   <form method="post" action="/users/{{user.id}}?_method=DELETE" onsubmit="return confirm('Delete this user?')">
     <button class="btn danger" type="submit">Delete</button>
   </form>

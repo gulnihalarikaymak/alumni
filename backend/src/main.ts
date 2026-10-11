@@ -36,7 +36,7 @@ async function bootstrap() {
   const port = process.env.PORT || process.env.BACKEND_PORT || 3000;
   await app.listen(port);
   console.log(`ATS Backend running on: http://localhost:${port}`);
-  console.log(`  - Root (Browser): http://localhost:${port}/ -> "ok"`);
+  console.log(`  - Home (Browser): http://localhost:${port}/`);
   console.log(`  - Health direct: http://localhost:${port}/health -> {"status":"ok"}`);
   console.log(`  - Health API:    http://localhost:${port}/api/health (browser: status page, curl: JSON)`);
   console.log(`  - Users (pages): http://localhost:${port}/users (list, create, edit, delete in the browser)`);

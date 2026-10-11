@@ -1,13 +1,15 @@
 {{!-- READ one: GET /announcements/:id. Data: announcement --}}
+<p class="sub" style="margin-bottom:12px"><a href="/announcements">All announcements</a></p>
 <h1>{{announcement.title}}</h1>
-<p class="sub">Announcement #{{announcement.id}} · created {{announcement.createdAt}}{{#unless (same announcement.createdAt announcement.updatedAt)}} · updated {{announcement.updatedAt}}{{/unless}}</p>
+<p class="sub">
+  <time datetime="{{announcement.createdAt}}">{{date announcement.createdAt}}</time>{{#unless (same (date announcement.createdAt) (date announcement.updatedAt))}}, edited <time datetime="{{announcement.updatedAt}}">{{date announcement.updatedAt}}</time>{{/unless}}
+</p>
 
 <p class="content">{{announcement.content}}</p>
 
-<div class="actions" style="margin-top:28px">
-  <a class="btn" href="/announcements/{{announcement.id}}/edit">Edit</a>
+<div class="actions" style="margin-top:32px">
+  <a class="btn quiet" href="/announcements/{{announcement.id}}/edit">Edit</a>
   <form method="post" action="/announcements/{{announcement.id}}?_method=DELETE" onsubmit="return confirm('Delete this announcement?')">
     <button class="btn danger" type="submit">Delete</button>
   </form>
-  <a href="/announcements">Back to the list</a>
 </div>

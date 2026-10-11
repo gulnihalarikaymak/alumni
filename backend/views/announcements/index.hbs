@@ -1,37 +1,30 @@
 {{!-- READ all: GET /announcements. Data: announcements (newest first) --}}
-<h1>Announcements</h1>
-<p class="sub">{{announcements.length}} {{#if (same announcements.length 1)}}announcement{{else}}announcements{{/if}}</p>
-
-<div class="actions" style="margin-bottom:16px">
+<div class="page-head">
+  <div>
+    <h1>Announcements</h1>
+    <p class="sub">{{announcements.length}} {{#if (same announcements.length 1)}}announcement{{else}}announcements{{/if}}, newest first</p>
+  </div>
   <a class="btn" href="/announcements/create">New announcement</a>
 </div>
 
 {{#if announcements.length}}
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Id</th><th>Title</th><th>Created</th><th>Actions</th></tr></thead>
-      <tbody>
-        {{#each announcements}}
-          <tr>
-            <td>{{id}}</td>
-            <td><a href="/announcements/{{id}}">{{title}}</a></td>
-            <td>{{createdAt}}</td>
-            <td>
-              <div class="actions">
-                <a href="/announcements/{{id}}">View</a>
-                <a href="/announcements/{{id}}/edit">Edit</a>
-                <form method="post" action="/announcements/{{id}}?_method=DELETE" onsubmit="return confirm('Delete this announcement?')">
-                  <button class="link danger" type="submit">Delete</button>
-                </form>
-              </div>
-            </td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
-  </div>
+  <ol class="entries">
+    {{#each announcements}}
+      <li>
+        <h3><a href="/announcements/{{id}}">{{title}}</a></h3>
+        <time datetime="{{createdAt}}">{{date createdAt}}</time>
+        <p>{{excerpt content 160}}</p>
+        <div class="actions">
+          <a href="/announcements/{{id}}/edit">Edit</a>
+          <form method="post" action="/announcements/{{id}}?_method=DELETE" onsubmit="return confirm('Delete this announcement?')">
+            <button class="link danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </li>
+    {{/each}}
+  </ol>
 {{else}}
-  <p class="empty">No announcements yet. <a href="/announcements/create">Create the first one</a>.</p>
+  <p class="empty">No announcements yet. <a href="/announcements/create">Write the first one</a>.</p>
 {{/if}}
 
 <p class="foot">Kept in memory: restarting the server empties this list. The same data as JSON: <a href="/api/announcements">/api/announcements</a></p>

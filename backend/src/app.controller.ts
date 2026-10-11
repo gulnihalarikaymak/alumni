@@ -1,42 +1,14 @@
-import { Controller, Get, Param, Header } from '@nestjs/common';
+import { Controller, Get, Param, Header, Render } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('demo')
 @Controller()
 export class AppController {
+  // Home page, rendered from views/home.hbs inside the shared layout.
   @Get()
-  @Header('Content-Type', 'text/html')
-  getRoot(): string {
-    return `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ATS Test Domain</title>
-        <style>
-          body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f9; }
-          .container { text-align: center; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-          h1 { color: #2c3e50; }
-          p { color: #7f8c8d; }
-          .links a { margin: 0 10px; color: #3498db; text-decoration: none; }
-          .links a:hover { text-decoration: underline; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>Welcome to ATS Test Domain</h1>
-          <p>This is a temporary main page.</p>
-          <div class="links">
-            <a href="/api/health">API Health Check</a>
-            <a href="/users">Users</a>
-            <a href="/hello">Hello API</a>
-            <a href="/about">About</a>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+  @Render('home')
+  getRoot() {
+    return { title: 'Home' };
   }
 
   @Get('hello')
