@@ -1,6 +1,6 @@
 {{!-- {{> errors}}: the service's messages when a form is rejected. Data: errors --}}
 {{#if errors.length}}
-  <ul class="errors">
+  <ul class="errors" role="alert">
     {{#each errors}}<li>{{this}}</li>{{/each}}
   </ul>
 {{/if}}

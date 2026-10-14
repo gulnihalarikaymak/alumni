@@ -1,4 +1,7 @@
 {{!-- Any /announcements/:id page whose announcement does not exist. Data: id --}}
-<h1>Announcement not found</h1>
-<p class="sub">There is no announcement with id {{id}}.</p>
-<a href="/announcements">Back to the list</a>
+<div class="card missing narrow" style="margin:0 auto">
+  <p class="code" aria-hidden="true">404</p>
+  <h1>Announcement not found</h1>
+  <p class="sub">There is no announcement with id {{id}}.</p>
+  <a class="btn" href="/announcements">Back to the list</a>
+</div>

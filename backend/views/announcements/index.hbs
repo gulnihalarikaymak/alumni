@@ -24,7 +24,12 @@
     {{/each}}
   </ol>
 {{else}}
-  <p class="empty">No announcements yet. <a href="/announcements/create">Write the first one</a>.</p>
+  <div class="card empty">
+    <p>No announcements yet.</p>
+    <a class="btn" href="/announcements/create">Write the first one</a>
+  </div>
 {{/if}}
 
-<p class="foot">Stored in PostgreSQL: the list survives a restart. The same data as JSON: <a href="/api/announcements">/api/announcements</a></p>
+<footer class="foot">
+  <p>Stored in PostgreSQL: the list survives a restart. The same data as JSON: <a href="/api/announcements">/api/announcements</a></p>
+</footer>

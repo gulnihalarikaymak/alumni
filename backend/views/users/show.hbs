@@ -1,32 +1,46 @@
 {{!-- READ one: GET /users/:id; also PATCH /users/:id when the status change is rejected.
       Data: user, statuses, errors --}}
-<h1>{{user.email}}</h1>
-<p class="sub">User #{{user.id}}</p>
-<dl>
-  <dt>Id</dt><dd>{{user.id}}</dd>
-  <dt>E-mail</dt><dd>{{user.email}}</dd>
-  <dt>Role</dt><dd><span class="tag">{{user.role}}</span></dd>
-  <dt>Status</dt><dd><span class="tag">{{user.status}}</span></dd>
-  <dt>Created</dt><dd><time datetime="{{user.createdAt}}">{{date user.createdAt}}</time></dd>
-</dl>
+<a class="back" href="/users">All users</a>
+<div class="page-head">
+  <div class="profile">
+    <span class="initial" aria-hidden="true">{{user.email}}</span>
+    <div>
+      <h1>{{user.email}}</h1>
+      <p class="sub">User #{{user.id}}</p>
+    </div>
+  </div>
+  <div class="actions">
+    <a class="btn quiet" href="/users/{{user.id}}/edit">Edit</a>
+    <form method="post" action="/users/{{user.id}}?_method=DELETE" onsubmit="return confirm('Delete this user?')">
+      <button class="btn danger" type="submit">Delete</button>
+    </form>
+  </div>
+</div>
 
-<h2>Change status</h2>
-{{> errors}}
-<form class="inline" method="post" action="/users/{{user.id}}?_method=PATCH">
-  <label>Status
-    <select name="status" required>
-      {{#each statuses}}
-        <option value="{{this}}" {{#if (same this ../user.status)}}selected{{/if}}>{{this}}</option>
-      {{/each}}
-    </select>
-  </label>
-  <button class="btn" type="submit">Save status</button>
-</form>
+<div class="split">
+  <section class="card">
+    <h2>Details</h2>
+    <dl class="record">
+      <dt>Id</dt><dd>{{user.id}}</dd>
+      <dt>E-mail</dt><dd>{{user.email}}</dd>
+      <dt>Role</dt><dd><span class="badge role">{{user.role}}</span></dd>
+      <dt>Status</dt><dd><span class="badge {{user.status}}">{{user.status}}</span></dd>
+      <dt>Created</dt><dd><time datetime="{{user.createdAt}}">{{date user.createdAt}}</time></dd>
+    </dl>
+  </section>
 
-<div class="actions" style="margin-top:28px">
-  <a class="btn quiet" href="/users/{{user.id}}/edit">Edit</a>
-  <form method="post" action="/users/{{user.id}}?_method=DELETE" onsubmit="return confirm('Delete this user?')">
-    <button class="btn danger" type="submit">Delete</button>
-  </form>
-  <a href="/users">Back to the list</a>
+  <section class="card">
+    <h2>Change status</h2>
+    {{> errors}}
+    <form class="stack" method="post" action="/users/{{user.id}}?_method=PATCH">
+      <label>Status
+        <select name="status" required>
+          {{#each statuses}}
+            <option value="{{this}}" {{#if (same this ../user.status)}}selected{{/if}}>{{this}}</option>
+          {{/each}}
+        </select>
+      </label>
+      <div class="form-actions"><button class="btn" type="submit">Save status</button></div>
+    </form>
+  </section>
 </div>

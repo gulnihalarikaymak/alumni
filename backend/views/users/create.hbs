@@ -1,22 +1,31 @@
 {{!-- CREATE: GET /users/create shows it; POST /users renders it again when the input is rejected.
       Data: roles, values (what was typed), errors --}}
-<h1>New user</h1>
-<p class="sub">A new user always starts as PENDING.</p>
-{{> errors}}
-<form class="stack" method="post" action="/users">
-  <label>E-mail
-    <input type="email" name="email" value="{{values.email}}" required autofocus>
-  </label>
-  <label>Role
-    <select name="role" required>
-      <option value="" disabled {{#unless values.role}}selected{{/unless}}>Choose...</option>
-      {{#each roles}}
-        <option value="{{this}}" {{#if (same this ../values.role)}}selected{{/if}}>{{this}}</option>
-      {{/each}}
-    </select>
-  </label>
-  <div class="actions">
-    <button class="btn" type="submit">Create</button>
-    <a class="btn quiet" href="/users">Cancel</a>
+<div class="narrow">
+  <a class="back" href="/users">All users</a>
+  <div class="page-head">
+    <div>
+      <h1>New user</h1>
+      <p class="sub">A new user always starts as <span class="badge PENDING">PENDING</span></p>
+    </div>
   </div>
-</form>
+  <div class="card">
+    {{> errors}}
+    <form class="stack" method="post" action="/users">
+      <label>E-mail
+        <input type="email" name="email" value="{{values.email}}" required autofocus>
+      </label>
+      <label>Role
+        <select name="role" required>
+          <option value="" disabled {{#unless values.role}}selected{{/unless}}>Choose...</option>
+          {{#each roles}}
+            <option value="{{this}}" {{#if (same this ../values.role)}}selected{{/if}}>{{this}}</option>
+          {{/each}}
+        </select>
+      </label>
+      <div class="form-actions">
+        <button class="btn" type="submit">Create</button>
+        <a class="btn quiet" href="/users">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

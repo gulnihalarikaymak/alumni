@@ -1,4 +1,7 @@
 {{!-- Any /users/:id page whose user does not exist. Data: id --}}
-<h1>User not found</h1>
-<p class="sub">There is no user with id {{id}}.</p>
-<a href="/users">Back to the list</a>
+<div class="card missing narrow" style="margin:0 auto">
+  <p class="code" aria-hidden="true">404</p>
+  <h1>User not found</h1>
+  <p class="sub">There is no user with id {{id}}.</p>
+  <a class="btn" href="/users">Back to the list</a>
+</div>

@@ -1,15 +1,19 @@
 {{!-- READ one: GET /announcements/:id. Data: announcement --}}
-<p class="sub" style="margin-bottom:12px"><a href="/announcements">All announcements</a></p>
-<h1>{{announcement.title}}</h1>
-<p class="sub">
-  <time datetime="{{announcement.createdAt}}">{{date announcement.createdAt}}</time>{{#unless (same (date announcement.createdAt) (date announcement.updatedAt))}}, edited <time datetime="{{announcement.updatedAt}}">{{date announcement.updatedAt}}</time>{{/unless}}
-</p>
+<div class="narrow" style="max-width:760px">
+  <a class="back" href="/announcements">All announcements</a>
+  <article class="card">
+    <h1>{{announcement.title}}</h1>
+    <p class="meta">
+      <time datetime="{{announcement.createdAt}}">{{date announcement.createdAt}}</time>{{#unless (same (date announcement.createdAt) (date announcement.updatedAt))}}, edited <time datetime="{{announcement.updatedAt}}">{{date announcement.updatedAt}}</time>{{/unless}}
+    </p>
+    <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+    <p class="content">{{announcement.content}}</p>
+  </article>
 
-<p class="content">{{announcement.content}}</p>
-
-<div class="actions" style="margin-top:32px">
-  <a class="btn quiet" href="/announcements/{{announcement.id}}/edit">Edit</a>
-  <form method="post" action="/announcements/{{announcement.id}}?_method=DELETE" onsubmit="return confirm('Delete this announcement?')">
-    <button class="btn danger" type="submit">Delete</button>
-  </form>
+  <div class="actions" style="margin-top:20px">
+    <a class="btn quiet" href="/announcements/{{announcement.id}}/edit">Edit</a>
+    <form method="post" action="/announcements/{{announcement.id}}?_method=DELETE" onsubmit="return confirm('Delete this announcement?')">
+      <button class="btn danger" type="submit">Delete</button>
+    </form>
+  </div>
 </div>

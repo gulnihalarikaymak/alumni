@@ -1,25 +1,29 @@
 {{!-- Home page: GET /. Temporary until the React app arrives in week 10. --}}
-<div class="home">
+<section class="hero">
   <h1>Stay connected with Istanbul University alumni</h1>
-  <p class="lead">Post news for alumni and manage the people in the system. Everything is stored in the PostgreSQL database, so it is still here after a restart.</p>
+  <p>Post news for graduates and manage the people in the system. Everything is stored in PostgreSQL, so it is still here after a restart.</p>
+  <div class="actions">
+    <a class="btn" href="/announcements">Read announcements</a>
+    <a class="btn quiet" href="/users">Manage users</a>
+  </div>
+</section>
 
-  <ul class="destinations">
-    <li>
-      <a href="/announcements">Announcements</a>
-      <p>Read, publish, edit and remove news for graduates.</p>
-    </li>
-    <li>
-      <a href="/users">Users</a>
-      <p>Add students, alumni, staff and admins, and change their status.</p>
-    </li>
-    <li>
-      <a href="/api/swagger">API docs</a>
-      <p>Try every JSON endpoint from the browser.</p>
-    </li>
-  </ul>
-
-  <p class="foot">
-    System status: <a href="/api/health">/api/health</a>.
-    Week 2 routing exercises: <a href="/hello">/hello</a>, <a href="/hello/alumni">/hello/:name</a>, <a href="/sum/2/3">/sum/2/3</a>, <a href="/about">/about</a>.
-  </p>
+<div class="places">
+  <a class="card" href="/announcements">
+    <h3>Announcements</h3>
+    <p>Read, publish, edit and remove news for graduates.</p>
+  </a>
+  <a class="card" href="/users">
+    <h3>Users</h3>
+    <p>Add students, alumni, staff and admins, and change their status.</p>
+  </a>
+  <a class="card" href="/api/swagger">
+    <h3>API docs</h3>
+    <p>Try every JSON endpoint from the browser.</p>
+  </a>
 </div>
+
+<footer class="foot">
+  <p>System status: <a href="/api/health">/api/health</a></p>
+  <p>Week 2 routing exercises: <a href="/hello">/hello</a>, <a href="/hello/alumni">/hello/:name</a>, <a href="/sum/2/3">/sum/2/3</a>, <a href="/about">/about</a></p>
+</footer>

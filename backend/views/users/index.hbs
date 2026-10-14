@@ -8,32 +8,37 @@
 </div>
 
 {{#if users.length}}
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Id</th><th>E-mail</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody>
-        {{#each users}}
-          <tr>
-            <td>{{id}}</td>
-            <td><a href="/users/{{id}}">{{email}}</a></td>
-            <td><span class="tag">{{role}}</span></td>
-            <td><span class="tag">{{status}}</span></td>
-            <td>
-              <div class="actions">
-                <a href="/users/{{id}}">View</a>
+  <div class="card flush">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Id</th><th>E-mail</th><th>Role</th><th>Status</th><th>Created</th><th><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody>
+          {{#each users}}
+            <tr>
+              <td class="id">{{id}}</td>
+              <td><div class="person"><span class="initial" aria-hidden="true">{{email}}</span><a href="/users/{{id}}">{{email}}</a></div></td>
+              <td><span class="badge role">{{role}}</span></td>
+              <td><span class="badge {{status}}">{{status}}</span></td>
+              <td class="when"><time datetime="{{createdAt}}">{{date createdAt}}</time></td>
+              <td class="acts">
                 <a href="/users/{{id}}/edit">Edit</a>
                 <form method="post" action="/users/{{id}}?_method=DELETE" onsubmit="return confirm('Delete this user?')">
                   <button class="link danger" type="submit">Delete</button>
                 </form>
-              </div>
-            </td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
   </div>
 {{else}}
-  <p class="empty">No users yet. <a href="/users/create">Create the first one</a>.</p>
+  <div class="card empty">
+    <p>No users yet.</p>
+    <a class="btn" href="/users/create">Create the first one</a>
+  </div>
 {{/if}}
 
-<p class="foot">Stored in PostgreSQL: the list survives a restart. The same data as JSON: <a href="/api/users">/api/users</a></p>
+<footer class="foot">
+  <p>Stored in PostgreSQL: the list survives a restart. The same data as JSON: <a href="/api/users">/api/users</a></p>
+</footer>
