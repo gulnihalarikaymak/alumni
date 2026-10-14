@@ -3,3 +3,7 @@
 node_modules
 dist
 npm-debug.log*
+
+# Secrets stay out of the image; the container gets its variables from docker-compose.yml.
+.env
+.env.*

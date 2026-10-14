@@ -29,6 +29,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] The forgetting test: create a user in Postman, run `docker compose down` then `up`, check if the user is still there
 - [x] Data design documentation: collect the schema and tables in `DDD.md` and link it from the README
 - [x] Update `docker-compose.yml` so the database data persists (named volume `alumni-db-data`)
+- [x] Environment variables: `.env` is git-ignored, `.env.example` lists every variable with its default
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model
