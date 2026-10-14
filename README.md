@@ -10,6 +10,7 @@ A web system that helps a university stay in touch with its graduates: who they 
 | **Run it with** | `docker compose up` |
 | **AI assistant** | Claude Code |
 | **Status** | Users and announcements CRUD (web pages + JSON API) in MVC, in memory. Database comes in week 5. |
+| **Data design** | Entities, tables and constraints: [DDD.md](DDD.md) |
 
 ## Contents
 

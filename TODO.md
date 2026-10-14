@@ -27,6 +27,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 
 ## Week 05 — Database and ORM
 - [x] The forgetting test: create a user in Postman, run `docker compose down` then `up`, check if the user is still there
+- [x] Data design documentation: collect the schema and tables in `DDD.md` and link it from the README
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model
