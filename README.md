@@ -9,7 +9,7 @@ A web system that helps a university stay in touch with its graduates: who they 
 | **Stack** | NestJS (TypeScript) · PostgreSQL + Prisma · React + Vite |
 | **Run it with** | `docker compose up` |
 | **AI assistant** | Claude Code |
-| **Status** | Users and announcements CRUD (web pages + JSON API) in MVC, in memory. Database comes in week 5. |
+| **Status** | Users and announcements CRUD (web pages + JSON API) in MVC, still in memory. The database tables exist (Prisma migration); the code moves onto them in week 6. |
 | **Data design** | Entities, tables and constraints: [DDD.md](DDD.md) |
 
 ## Contents
@@ -71,6 +71,10 @@ Only `db` (PostgreSQL) and `backend` (NestJS) run so far. The React front end jo
 | Follow the API logs | `docker compose logs -f backend` |
 | Stop, keep the data | `docker compose down` |
 | Stop and **delete the database** (volume `alumni-db-data`) | `docker compose down -v` |
+| Create a migration after editing `schema.prisma` | `cd backend` then `npx prisma migrate dev --name <change>` (with `db` running) |
+| See which migrations are applied | `docker compose exec backend npx prisma migrate status` |
+
+Migrations in `backend/prisma/migrations/` are applied automatically when the backend container starts.
 
 Settings (database name, user, password, ports) have defaults in `docker-compose.yml`. To change one, copy `.env.example` to `.env`. If a port is taken, set `DB_PORT` or `BACKEND_PORT` there.
 
@@ -127,6 +131,8 @@ alumni/
 ├── docker-compose.yml       db + backend
 ├── .env.example             optional overrides
 ├── backend/
+│   ├── prisma/              schema.prisma and migrations/ (the database schema, see DDD.md)
+│   ├── prisma.config.ts     Prisma settings: schema path and database URL
 │   ├── views/               Handlebars templates (layout, partials, users/)
 │   └── src/
 │       ├── main.ts          bootstrap: views, method override, Swagger, port
@@ -141,7 +147,7 @@ alumni/
 ### Known gaps
 
 - Validation is hand-written in the service; `class-validator` DTOs replace it.
-- Data lives in memory and is lost on restart until week 5.
+- The tables exist in PostgreSQL, but the models still keep data in memory until week 6.
 - `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) with inline HTML; removed in week 10.
 
 ---

@@ -7,8 +7,8 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 |---|---|
 | **Database** | PostgreSQL 18 (Docker service `db`) |
 | **Storage** | Docker volume `alumni-db-data`: kept by `docker compose down`, deleted by `docker compose down -v` |
-| **Access** | Prisma *(week 5)*; until then the models in `backend/src/*/*.model.ts` keep the data in memory |
-| **Status** | Two entities exist in code (`users`, `announcements`); the rest are planned from the roadmap and will change |
+| **Access** | Prisma 7: schema in `backend/prisma/schema.prisma`, migrations in `backend/prisma/migrations/`. The models in `backend/src/*/*.model.ts` still keep data in memory until week 6 |
+| **Status** | All tables below exist in the database (first migration). Two are used by the code (`users`, `announcements`); the rest wait for week 7 and may still change |
 
 ## 1. Conventions
 

@@ -1,0 +1,107 @@
+// The database schema of ATS. It implements the tables in DDD.md:
+// change both in the same commit. Models use camelCase in TypeScript and
+// @map / @@map give the snake_case names the tables have in PostgreSQL.
+// After a change: `npx prisma migrate dev --name <what-changed>` (see README).
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  ALUMNI
+  STUDENT
+}
+
+enum Status {
+  PENDING
+  ACTIVE
+  REJECTED
+  SUSPENDED
+}
+
+// In code since week 3 (in memory until now)
+model User {
+  id                 Int                 @id @default(autoincrement())
+  email              String              @unique // stored lower-case by UsersService
+  role               Role
+  status             Status              @default(PENDING)
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  alumniProfile      AlumniProfile?
+  eventRegistrations EventRegistration[]
+
+  @@map("users")
+}
+
+// In code since homework 1 (in memory until now)
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(120)
+  content   String   @db.VarChar(2000)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("announcements")
+}
+
+// Planned for week 7: the tables exist, the code does not use them yet
+model AlumniProfile {
+  id               Int              @id @default(autoincrement())
+  userId           Int              @unique @map("user_id")
+  fullName         String           @map("full_name")
+  graduationYear   Int              @map("graduation_year")
+  city             String? // city level only, no street address
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  careerEntries    CareerEntry[]
+  educationEntries EducationEntry[]
+
+  @@map("alumni_profiles")
+}
+
+model CareerEntry {
+  id              Int           @id @default(autoincrement())
+  alumniProfileId Int           @map("alumni_profile_id")
+  company         String
+  position        String
+  startDate       DateTime      @map("start_date") @db.Date
+  endDate         DateTime?     @map("end_date") @db.Date // empty = current job
+  alumniProfile   AlumniProfile @relation(fields: [alumniProfileId], references: [id], onDelete: Cascade)
+
+  @@map("career_entries")
+}
+
+model EducationEntry {
+  id              Int           @id @default(autoincrement())
+  alumniProfileId Int           @map("alumni_profile_id")
+  institution     String
+  degree          String
+  graduationYear  Int           @map("graduation_year")
+  alumniProfile   AlumniProfile @relation(fields: [alumniProfileId], references: [id], onDelete: Cascade)
+
+  @@map("education_entries")
+}
+
+model Event {
+  id            Int                 @id @default(autoincrement())
+  title         String
+  description   String?
+  startsAt      DateTime            @map("starts_at") @db.Timestamptz
+  location      String?
+  capacity      Int? // empty = no limit
+  registrations EventRegistration[]
+
+  @@map("events")
+}
+
+model EventRegistration {
+  id        Int      @id @default(autoincrement())
+  eventId   Int      @map("event_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId]) // a user registers once per event
+  @@map("event_registrations")
+}
