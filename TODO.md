@@ -25,7 +25,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Route map in `app.routes.ts`
 - [x] Handlebars views for the user pages
 
-## Week 05 — Database and ORM
+## Week 05 — Database and ORM ✅
 - [x] The forgetting test: create a user in Postman, run `docker compose down` then `up`, check if the user is still there
 - [x] Data design documentation: collect the schema and tables in `DDD.md` and link it from the README
 - [x] Update `docker-compose.yml` so the database data persists (named volume `alumni-db-data`)
