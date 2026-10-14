@@ -31,6 +31,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Update `docker-compose.yml` so the database data persists (named volume `alumni-db-data`)
 - [x] Environment variables: `.env` is git-ignored, `.env.example` lists every variable with its default
 - [x] Migration: Prisma schema for every table in `DDD.md` and the first migration, applied when the backend starts
+- [x] Factory and seed: factories for every table and `npx prisma db seed` that adds synthetic demo data
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

@@ -2,6 +2,7 @@
 # A local node_modules (for the editor) must not be copied over them.
 node_modules
 dist
+src/generated
 npm-debug.log*
 
 # Secrets stay out of the image; the container gets its variables from docker-compose.yml.

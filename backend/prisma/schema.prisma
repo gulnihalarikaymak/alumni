@@ -7,6 +7,14 @@ datasource db {
   provider = "postgresql"
 }
 
+// Generates the typed Prisma Client into src/generated/prisma (git-ignored).
+// Run `npx prisma generate` after every change to this file.
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
 enum Role {
   ADMIN
   STAFF

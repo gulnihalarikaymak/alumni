@@ -73,6 +73,7 @@ Only `db` (PostgreSQL) and `backend` (NestJS) run so far. The React front end jo
 | Stop and **delete the database** (volume `alumni-db-data`) | `docker compose down -v` |
 | Create a migration after editing `schema.prisma` | `cd backend` then `npx prisma migrate dev --name <change>` (with `db` running) |
 | See which migrations are applied | `docker compose exec backend npx prisma migrate status` |
+| Add synthetic demo data (adds, never deletes) | `cd backend` then `npx prisma db seed` (with `db` running) |
 
 Migrations in `backend/prisma/migrations/` are applied automatically when the backend container starts.
 
@@ -131,7 +132,7 @@ alumni/
 ├── docker-compose.yml       db + backend
 ├── .env.example             optional overrides
 ├── backend/
-│   ├── prisma/              schema.prisma and migrations/ (the database schema, see DDD.md)
+│   ├── prisma/              schema.prisma, migrations/, factories.ts and seed.ts (demo data)
 │   ├── prisma.config.ts     Prisma settings: schema path and database URL
 │   ├── views/               Handlebars templates (layout, partials, users/)
 │   └── src/

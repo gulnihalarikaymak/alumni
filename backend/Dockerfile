@@ -6,6 +6,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+# The Prisma Client is generated code (git-ignored), so the image makes its own.
+RUN npx prisma generate
 RUN npm run build
 
 FROM node:20-alpine AS runner
