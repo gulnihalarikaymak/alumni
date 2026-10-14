@@ -29,7 +29,7 @@ enum Status {
   SUSPENDED
 }
 
-// In code since week 3 (in memory until now)
+// In code since week 3 (in memory until week 5)
 model User {
   id                 Int                 @id @default(autoincrement())
   email              String              @unique // stored lower-case by UsersService
@@ -42,7 +42,7 @@ model User {
   @@map("users")
 }
 
-// In code since homework 1 (in memory until now)
+// In code since homework 1 (in memory until week 5)
 model Announcement {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(120)

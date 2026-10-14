@@ -1,5 +1,5 @@
 $kind: http-request
-description: "Creates a user in memory. Saves the new id to {{userId}} for the next requests. role: ADMIN | STAFF | ALUMNI | STUDENT"
+description: "Creates a user in the database. The e-mail is unique per run ({{$timestamp}}), so the collection can run again without 409. Saves the new id to {{userId}} for the next requests. role: ADMIN | STAFF | ALUMNI | STUDENT"
 url: "{{baseUrl}}/api/users"
 method: POST
 headers:
@@ -8,7 +8,7 @@ body:
   type: json
   content: |-
     {
-      "email": "recep@gmail.com",
+      "email": "alumni-{{$timestamp}}@example.com",
       "role": "ALUMNI"
     }
 scripts:

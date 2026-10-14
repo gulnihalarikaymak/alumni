@@ -36,6 +36,7 @@ export interface AnnouncementFormValues {
 // After a change the browser is redirected (303); rejected input renders the
 // form again with the messages (400).
 // Both this controller and ApiAnnouncementController call AnnouncementsService.
+// The service waits for the database, so every method here is async.
 // Path: /announcements, set in app.routes.ts.
 @ApiExcludeController()
 @Controller()
@@ -45,8 +46,8 @@ export class AnnouncementController {
   // READ all: GET /announcements
   @Get()
   @Render('announcements/index')
-  index() {
-    return { title: 'Announcements', announcements: this.announcementsService.findAll() };
+  async index() {
+    return { title: 'Announcements', announcements: await this.announcementsService.findAll() };
   }
 
   // CREATE, form: GET /announcements/create (before ':id' so it is not taken as an id)
@@ -58,9 +59,9 @@ export class AnnouncementController {
 
   // CREATE, save: POST /announcements
   @Post()
-  store(@Body() body: AnnouncementFormValues, @Res() res: Response): void {
+  async store(@Body() body: AnnouncementFormValues, @Res() res: Response): Promise<void> {
     try {
-      const announcement = this.announcementsService.create(body);
+      const announcement = await this.announcementsService.create(body);
       res.redirect(303, `/announcements/${announcement.id}`);
     } catch (err) {
       const { status, errors } = this.formErrors(err);
@@ -70,31 +71,31 @@ export class AnnouncementController {
 
   // READ one: GET /announcements/:id
   @Get(':id')
-  show(@Param('id') id: string, @Res() res: Response): void {
-    const announcement = this.find(id);
+  async show(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    const announcement = await this.find(id);
     if (!announcement) return this.notFound(res, id);
     res.render('announcements/show', { title: announcement.title, announcement });
   }
 
   // UPDATE, form: GET /announcements/:id/edit
   @Get(':id/edit')
-  edit(@Param('id') id: string, @Res() res: Response): void {
-    const announcement = this.find(id);
+  async edit(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    const announcement = await this.find(id);
     if (!announcement) return this.notFound(res, id);
     res.render('announcements/edit', this.editView(announcement, announcement));
   }
 
   // UPDATE, save: PUT /announcements/:id
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() body: AnnouncementFormValues,
     @Res() res: Response,
-  ): void {
-    const announcement = this.find(id);
+  ): Promise<void> {
+    const announcement = await this.find(id);
     if (!announcement) return this.notFound(res, id);
     try {
-      this.announcementsService.replace(announcement.id, body);
+      await this.announcementsService.replace(announcement.id, body);
       res.redirect(303, `/announcements/${announcement.id}`);
     } catch (err) {
       const { status, errors } = this.formErrors(err);
@@ -104,10 +105,10 @@ export class AnnouncementController {
 
   // DELETE: DELETE /announcements/:id
   @Delete(':id')
-  destroy(@Param('id') id: string, @Res() res: Response): void {
-    const announcement = this.find(id);
+  async destroy(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    const announcement = await this.find(id);
     if (!announcement) return this.notFound(res, id);
-    this.announcementsService.remove(announcement.id);
+    await this.announcementsService.remove(announcement.id);
     res.redirect(303, '/announcements');
   }
 
@@ -126,10 +127,10 @@ export class AnnouncementController {
   }
 
   // The announcement with this id, or undefined if the id is not a number or unknown.
-  private find(id: string): Announcement | undefined {
+  private async find(id: string): Promise<Announcement | undefined> {
     if (!/^\d+$/.test(id)) return undefined;
     try {
-      return this.announcementsService.findOne(Number(id));
+      return await this.announcementsService.findOne(Number(id));
     } catch (err) {
       if (err instanceof NotFoundException) return undefined;
       throw err;

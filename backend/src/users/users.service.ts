@@ -17,53 +17,54 @@ interface UserFields {
 }
 
 // Business rules for users. Storage is the UserModel's job (user.model.ts).
+// The model talks to the database, so every method here is async and awaits it.
 @Injectable()
 export class UsersService {
   constructor(private readonly userModel: UserModel) {}
 
-  findAll(): User[] {
+  findAll(): Promise<User[]> {
     return this.userModel.findAll();
   }
 
-  findOne(id: number): User {
-    const user = this.userModel.findById(id);
+  async findOne(id: number): Promise<User> {
+    const user = await this.userModel.findById(id);
     if (!user) throw new NotFoundException(`User ${id} not found`);
     return user;
   }
 
   // POST: email + role required, status always starts as PENDING
-  create(body: unknown): User {
+  async create(body: unknown): Promise<User> {
     const f = this.validate(body, 'create');
-    this.assertEmailFree(f.email!);
+    await this.assertEmailFree(f.email!);
 
     return this.userModel.create({ email: f.email!, role: f.role!, status: 'PENDING' });
   }
 
   // PUT: full replacement, email + role + status all required
-  replace(id: number, body: unknown): User {
-    this.findOne(id);
+  async replace(id: number, body: unknown): Promise<User> {
+    await this.findOne(id);
     const f = this.validate(body, 'replace');
-    this.assertEmailFree(f.email!, id);
+    await this.assertEmailFree(f.email!, id);
 
-    return this.userModel.update(id, { email: f.email!, role: f.role!, status: f.status! })!;
+    return (await this.userModel.update(id, { email: f.email!, role: f.role!, status: f.status! }))!;
   }
 
   // PATCH: partial update, at least one of email / role / status
-  update(id: number, body: unknown): User {
-    this.findOne(id);
+  async update(id: number, body: unknown): Promise<User> {
+    await this.findOne(id);
     const f = this.validate(body, 'update');
-    if (f.email !== undefined) this.assertEmailFree(f.email, id);
+    if (f.email !== undefined) await this.assertEmailFree(f.email, id);
 
-    return this.userModel.update(id, f)!;
+    return (await this.userModel.update(id, f))!;
   }
 
   // DELETE: remove the user through the model
-  remove(id: number): void {
-    if (!this.userModel.delete(id)) throw new NotFoundException(`User ${id} not found`);
+  async remove(id: number): Promise<void> {
+    if (!(await this.userModel.delete(id))) throw new NotFoundException(`User ${id} not found`);
   }
 
-  private assertEmailFree(email: string, exceptId?: number): void {
-    const owner = this.userModel.findByEmail(email);
+  private async assertEmailFree(email: string, exceptId?: number): Promise<void> {
+    const owner = await this.userModel.findByEmail(email);
     if (owner && owner.id !== exceptId) {
       throw new ConflictException(`A user with email "${email}" already exists`);
     }

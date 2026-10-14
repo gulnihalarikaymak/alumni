@@ -41,6 +41,7 @@ export interface UserFormValues {
 // (303), so a refresh never submits a form twice. Rejected input renders the
 // form again with the messages (400 invalid, 409 e-mail taken).
 // Both this controller and ApiUserController call the same UsersService.
+// UsersService waits for the database, so every method here is async.
 // Path: /users, set in app.routes.ts.
 @ApiExcludeController()
 @Controller()
@@ -50,8 +51,8 @@ export class UserController {
   // READ all: GET /users
   @Get()
   @Render('users/index')
-  index() {
-    return { title: 'Users', users: this.usersService.findAll() };
+  async index() {
+    return { title: 'Users', users: await this.usersService.findAll() };
   }
 
   // CREATE, form: GET /users/create (declared before ':id' so it is not taken as an id)
@@ -63,9 +64,9 @@ export class UserController {
 
   // CREATE, save: POST /users
   @Post()
-  store(@Body() body: UserFormValues, @Res() res: Response): void {
+  async store(@Body() body: UserFormValues, @Res() res: Response): Promise<void> {
     try {
-      const user = this.usersService.create(body);
+      const user = await this.usersService.create(body);
       res.redirect(303, `/users/${user.id}`);
     } catch (err) {
       const { status, errors } = this.formErrors(err);
@@ -75,27 +76,27 @@ export class UserController {
 
   // READ one: GET /users/:id
   @Get(':id')
-  show(@Param('id') id: string, @Res() res: Response): void {
-    const user = this.findUser(id);
+  async show(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    const user = await this.findUser(id);
     if (!user) return this.notFound(res, id);
     res.render('users/show', this.showView(user));
   }
 
   // UPDATE, form: GET /users/:id/edit
   @Get(':id/edit')
-  edit(@Param('id') id: string, @Res() res: Response): void {
-    const user = this.findUser(id);
+  async edit(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    const user = await this.findUser(id);
     if (!user) return this.notFound(res, id);
     res.render('users/edit', this.editView(user, user));
   }
 
   // UPDATE, save every field: PUT /users/:id (the edit form)
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: UserFormValues, @Res() res: Response): void {
-    const user = this.findUser(id);
+  async update(@Param('id') id: string, @Body() body: UserFormValues, @Res() res: Response): Promise<void> {
+    const user = await this.findUser(id);
     if (!user) return this.notFound(res, id);
     try {
-      this.usersService.replace(user.id, body);
+      await this.usersService.replace(user.id, body);
       res.redirect(303, `/users/${user.id}`);
     } catch (err) {
       const { status, errors } = this.formErrors(err);
@@ -105,11 +106,11 @@ export class UserController {
 
   // UPDATE, save some fields: PATCH /users/:id (the status form on the detail page)
   @Patch(':id')
-  patch(@Param('id') id: string, @Body() body: UserFormValues, @Res() res: Response): void {
-    const user = this.findUser(id);
+  async patch(@Param('id') id: string, @Body() body: UserFormValues, @Res() res: Response): Promise<void> {
+    const user = await this.findUser(id);
     if (!user) return this.notFound(res, id);
     try {
-      this.usersService.update(user.id, body);
+      await this.usersService.update(user.id, body);
       res.redirect(303, `/users/${user.id}`);
     } catch (err) {
       const { status, errors } = this.formErrors(err);
@@ -119,10 +120,10 @@ export class UserController {
 
   // DELETE: DELETE /users/:id
   @Delete(':id')
-  destroy(@Param('id') id: string, @Res() res: Response): void {
-    const user = this.findUser(id);
+  async destroy(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    const user = await this.findUser(id);
     if (!user) return this.notFound(res, id);
-    this.usersService.remove(user.id);
+    await this.usersService.remove(user.id);
     res.redirect(303, '/users');
   }
 
@@ -145,10 +146,10 @@ export class UserController {
   }
 
   // The user with this id, or undefined if the id is not a number or unknown.
-  private findUser(id: string): User | undefined {
+  private async findUser(id: string): Promise<User | undefined> {
     if (!/^\d+$/.test(id)) return undefined;
     try {
-      return this.usersService.findOne(Number(id));
+      return await this.usersService.findOne(Number(id));
     } catch (err) {
       if (err instanceof NotFoundException) return undefined;
       throw err;

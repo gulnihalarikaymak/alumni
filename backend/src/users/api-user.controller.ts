@@ -43,7 +43,7 @@ export class ApiUserController {
   @Get()
   @ApiOperation({ summary: 'List all users' })
   @ApiOkResponse({ type: [UserResponse] })
-  findAll(): User[] {
+  findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
@@ -53,7 +53,7 @@ export class ApiUserController {
   @ApiOkResponse({ type: UserResponse })
   @ApiBadRequestResponse({ type: ErrorResponse, description: 'id is not a number' })
   @ApiNotFoundResponse({ type: ErrorResponse })
-  findOne(@Param('id', ParseIntPipe) id: number): User {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOne(id);
   }
 
@@ -64,7 +64,7 @@ export class ApiUserController {
   @ApiCreatedResponse({ type: UserResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiConflictResponse({ type: ErrorResponse, description: 'e-mail already in use' })
-  create(@Body() body: unknown): User {
+  create(@Body() body: unknown): Promise<User> {
     return this.usersService.create(body);
   }
 
@@ -76,7 +76,7 @@ export class ApiUserController {
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
   @ApiConflictResponse({ type: ErrorResponse, description: 'e-mail already in use' })
-  replace(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): User {
+  replace(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): Promise<User> {
     return this.usersService.replace(id, body);
   }
 
@@ -88,7 +88,7 @@ export class ApiUserController {
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
   @ApiConflictResponse({ type: ErrorResponse, description: 'e-mail already in use' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): User {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): Promise<User> {
     return this.usersService.update(id, body);
   }
 
@@ -99,7 +99,7 @@ export class ApiUserController {
   @ApiNoContentResponse({ description: 'Deleted' })
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
-  remove(@Param('id', ParseIntPipe) id: number): void {
-    this.usersService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.usersService.remove(id);
   }
 }

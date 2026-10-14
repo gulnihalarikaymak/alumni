@@ -1,5 +1,5 @@
 $kind: collection
-description: "All backend routes. Users are held in memory (no database yet), so run 'Users' top to bottom: Create saves {{userId}} for the rest. Change {{baseUrl}} if the backend runs on another port."
+description: "All backend routes. Data is stored in PostgreSQL and kept between restarts. Run 'Users' top to bottom: Create saves {{userId}} for the rest. Change {{baseUrl}} if the backend runs on another port."
 variables:
   baseUrl: http://localhost:3000
   userId: "1"

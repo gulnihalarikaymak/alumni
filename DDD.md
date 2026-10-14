@@ -7,7 +7,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 |---|---|
 | **Database** | PostgreSQL 18 (Docker service `db`) |
 | **Storage** | Docker volume `alumni-db-data`: kept by `docker compose down`, deleted by `docker compose down -v` |
-| **Access** | Prisma 7: schema in `backend/prisma/schema.prisma`, migrations in `backend/prisma/migrations/`. The models in `backend/src/*/*.model.ts` still keep data in memory until week 6 |
+| **Access** | Prisma 7: schema in `backend/prisma/schema.prisma`, migrations in `backend/prisma/migrations/`. The models in `backend/src/*/*.model.ts` read and write through `PrismaService` |
 | **Demo data** | `backend/prisma/seed.ts` builds records with the factories in `backend/prisma/factories.ts`: synthetic Turkish names (fakerTR), e-mails at `example.com` |
 | **Status** | All tables below exist in the database (first migration). Two are used by the code (`users`, `announcements`); the rest wait for week 7 and may still change |
 
@@ -27,8 +27,8 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 
 | Entity | Table | Purpose | Status |
 |---|---|---|---|
-| User | `users` | An account: who can sign in, with which role | in code (memory) |
-| Announcement | `announcements` | News posted for everyone | in code (memory) |
+| User | `users` | An account: who can sign in, with which role | in code (PostgreSQL) |
+| Announcement | `announcements` | News posted for everyone | in code (PostgreSQL) |
 | Alumni profile | `alumni_profiles` | Name, graduation year and city of a graduate | planned, week 7 |
 | Career entry | `career_entries` | One job a graduate has held | planned, week 7 |
 | Education entry | `education_entries` | One degree a graduate has earned | planned, week 7 |

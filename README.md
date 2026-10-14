@@ -9,7 +9,7 @@ A web system that helps a university stay in touch with its graduates: who they 
 | **Stack** | NestJS (TypeScript) · PostgreSQL + Prisma · React + Vite |
 | **Run it with** | `docker compose up` |
 | **AI assistant** | Claude Code |
-| **Status** | Users and announcements CRUD (web pages + JSON API) in MVC, still in memory. The database tables exist (Prisma migration); the code moves onto them in week 6. |
+| **Status** | Users and announcements CRUD (web pages + JSON API) in MVC, stored in PostgreSQL through Prisma. |
 | **Data design** | Entities, tables and constraints: [DDD.md](DDD.md) |
 
 ## Contents
@@ -101,12 +101,12 @@ Alternatives considered: ASP.NET Core (a second language to defend), Django (its
 
 | Layer | Job | File in `backend/src/users/` |
 |---|---|---|
-| **Model** | The `User` type and in-memory CRUD: `create`, `findAll`, `findById`, `findByEmail`, `update`, `delete` | `user.model.ts` |
+| **Model** | The `User` type and CRUD on the `users` table through Prisma: `create`, `findAll`, `findById`, `findByEmail`, `update`, `delete` | `user.model.ts` |
 | **Service** | Business rules: validation, unique e-mail, new users start as `PENDING`, missing record → `404` | `users.service.ts` |
 | **Controller** | HTTP only: route, verb, status code. One line per method, calling the service | `user.controller.ts` (pages), `api-user.controller.ts` (JSON) |
 | **View** | Handlebars templates for the pages, DTO shapes for the JSON | `backend/views/users/*.hbs`, `user.dto.ts` |
 
-The rule: **controller → service → model**, never the other way. Both controllers share one `UsersService`, so a user created through the API shows up on the web pages immediately, and the rules are written once. When the in-memory array is replaced by PostgreSQL in week 5, only `UserModel` changes.
+The rule: **controller → service → model**, never the other way. Both controllers share one `UsersService`, so a user created through the API shows up on the web pages immediately, and the rules are written once. When the in-memory array was replaced by PostgreSQL (week 5), the models changed and the service and controllers only learned to wait (`async`/`await`) for them.
 
 ### Routes
 
@@ -139,6 +139,7 @@ alumni/
 │       ├── main.ts          bootstrap: views, method override, Swagger, port
 │       ├── app.routes.ts    route map
 │       ├── common/          shared helpers (views setup, method override)
+│       ├── prisma/          PrismaService: the one database connection the models share
 │       ├── users/           model, service, controllers, DTOs, modules
 │       └── health/          GET /api/health
 ├── frontend/                React app (week 10)
@@ -148,7 +149,7 @@ alumni/
 ### Known gaps
 
 - Validation is hand-written in the service; `class-validator` DTOs replace it.
-- The tables exist in PostgreSQL, but the models still keep data in memory until week 6.
+- Database errors other than "not found" (for example two requests taking the same e-mail at the same moment) still end as `500`; mapping them to HTTP codes is week 6.
 - `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) with inline HTML; removed in week 10.
 
 ---

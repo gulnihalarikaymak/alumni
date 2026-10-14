@@ -32,6 +32,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Environment variables: `.env` is git-ignored, `.env.example` lists every variable with its default
 - [x] Migration: Prisma schema for every table in `DDD.md` and the first migration, applied when the backend starts
 - [x] Factory and seed: factories for every table and `npx prisma db seed` that adds synthetic demo data
+- [x] CRUD on the database: users and announcements models use Prisma (PostgreSQL) instead of in-memory arrays
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

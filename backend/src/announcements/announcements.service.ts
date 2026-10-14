@@ -8,43 +8,44 @@ type Mode = 'create' | 'replace' | 'update';
 
 // Business rules for announcements. Storage is the AnnouncementModel's job.
 // Both controllers (web pages and JSON API) call this one service.
+// The model talks to the database, so every method here is async and awaits it.
 @Injectable()
 export class AnnouncementsService {
   constructor(private readonly announcementModel: AnnouncementModel) {}
 
-  findAll(): Announcement[] {
+  findAll(): Promise<Announcement[]> {
     return this.announcementModel.findAll();
   }
 
-  findOne(id: number): Announcement {
-    const announcement = this.announcementModel.findById(id);
+  async findOne(id: number): Promise<Announcement> {
+    const announcement = await this.announcementModel.findById(id);
     if (!announcement) throw new NotFoundException(`Announcement ${id} not found`);
     return announcement;
   }
 
   // POST: title and content required
-  create(body: unknown): Announcement {
+  create(body: unknown): Promise<Announcement> {
     const f = this.validate(body, 'create');
     return this.announcementModel.create({ title: f.title!, content: f.content! });
   }
 
   // PUT: full replacement, title and content required
-  replace(id: number, body: unknown): Announcement {
-    this.findOne(id);
+  async replace(id: number, body: unknown): Promise<Announcement> {
+    await this.findOne(id);
     const f = this.validate(body, 'replace');
-    return this.announcementModel.update(id, f)!;
+    return (await this.announcementModel.update(id, f))!;
   }
 
   // PATCH: partial update, at least one of title / content
-  update(id: number, body: unknown): Announcement {
-    this.findOne(id);
+  async update(id: number, body: unknown): Promise<Announcement> {
+    await this.findOne(id);
     const f = this.validate(body, 'update');
-    return this.announcementModel.update(id, f)!;
+    return (await this.announcementModel.update(id, f))!;
   }
 
   // DELETE
-  remove(id: number): void {
-    if (!this.announcementModel.delete(id)) {
+  async remove(id: number): Promise<void> {
+    if (!(await this.announcementModel.delete(id))) {
       throw new NotFoundException(`Announcement ${id} not found`);
     }
   }

@@ -42,7 +42,7 @@ export class ApiAnnouncementController {
   @Get()
   @ApiOperation({ summary: 'List all announcements, newest first' })
   @ApiOkResponse({ type: [AnnouncementResponse] })
-  findAll(): Announcement[] {
+  findAll(): Promise<Announcement[]> {
     return this.announcementsService.findAll();
   }
 
@@ -52,7 +52,7 @@ export class ApiAnnouncementController {
   @ApiOkResponse({ type: AnnouncementResponse })
   @ApiBadRequestResponse({ type: ErrorResponse, description: 'id is not a number' })
   @ApiNotFoundResponse({ type: ErrorResponse })
-  findOne(@Param('id', ParseIntPipe) id: number): Announcement {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Announcement> {
     return this.announcementsService.findOne(id);
   }
 
@@ -62,7 +62,7 @@ export class ApiAnnouncementController {
   @ApiBody({ type: CreateAnnouncementDto })
   @ApiCreatedResponse({ type: AnnouncementResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
-  create(@Body() body: unknown): Announcement {
+  create(@Body() body: unknown): Promise<Announcement> {
     return this.announcementsService.create(body);
   }
 
@@ -73,7 +73,7 @@ export class ApiAnnouncementController {
   @ApiOkResponse({ type: AnnouncementResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
-  replace(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): Announcement {
+  replace(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): Promise<Announcement> {
     return this.announcementsService.replace(id, body);
   }
 
@@ -84,7 +84,7 @@ export class ApiAnnouncementController {
   @ApiOkResponse({ type: AnnouncementResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): Announcement {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): Promise<Announcement> {
     return this.announcementsService.update(id, body);
   }
 
@@ -95,7 +95,7 @@ export class ApiAnnouncementController {
   @ApiNoContentResponse({ description: 'Deleted' })
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
-  remove(@Param('id', ParseIntPipe) id: number): void {
-    this.announcementsService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.announcementsService.remove(id);
   }
 }
