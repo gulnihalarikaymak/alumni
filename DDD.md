@@ -6,6 +6,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | | |
 |---|---|
 | **Database** | PostgreSQL 18 (Docker service `db`) |
+| **Storage** | Docker volume `alumni-db-data`: kept by `docker compose down`, deleted by `docker compose down -v` |
 | **Access** | Prisma *(week 5)*; until then the models in `backend/src/*/*.model.ts` keep the data in memory |
 | **Status** | Two entities exist in code (`users`, `announcements`); the rest are planned from the roadmap and will change |
 

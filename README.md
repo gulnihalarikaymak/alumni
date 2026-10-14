@@ -70,7 +70,7 @@ Only `db` (PostgreSQL) and `backend` (NestJS) run so far. The React front end jo
 | Rebuild after code changes | `docker compose up --build` |
 | Follow the API logs | `docker compose logs -f backend` |
 | Stop, keep the data | `docker compose down` |
-| Stop and **delete the database** | `docker compose down -v` |
+| Stop and **delete the database** (volume `alumni-db-data`) | `docker compose down -v` |
 
 Settings (database name, user, password, ports) have defaults in `docker-compose.yml`. To change one, copy `.env.example` to `.env`. If a port is taken, set `DB_PORT` or `BACKEND_PORT` there.
 

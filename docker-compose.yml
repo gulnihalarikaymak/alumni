@@ -1,7 +1,11 @@
 # The whole system comes up with a single command:
 #   docker compose up
 #
-# db and backend run in week 02. The frontend joins in week 10.
+# db and backend run since week 02. The frontend joins in week 10.
+#
+# Persistence: PostgreSQL writes its files to the named volume "alumni-db-data",
+# which lives outside the container. `docker compose down` removes the containers
+# but keeps the volume, so the data survives a restart. Only `down -v` deletes it.
 
 services:
   db:
@@ -14,6 +18,8 @@ services:
     ports:
       - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
+      # PostgreSQL 18 keeps its data under /var/lib/postgresql/18/docker, so the
+      # volume is mounted on the parent folder (not .../data as in version 17 and older).
       - db-data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
@@ -28,6 +34,8 @@ services:
     restart: unless-stopped
     environment:
       BACKEND_PORT: ${BACKEND_PORT:-3000}
+      # Used by Prisma from week 5. "db" is the service name above: inside the
+      # compose network the backend reaches PostgreSQL by that name, not localhost.
       DATABASE_URL: postgresql://${POSTGRES_USER:-alumni}:${POSTGRES_PASSWORD:-alumni}@db:5432/${POSTGRES_DB:-alumni}
     ports:
       - "${BACKEND_PORT:-3000}:3000"
@@ -39,3 +47,6 @@ services:
 
 volumes:
   db-data:
+    # A fixed name, so the volume does not depend on the project folder name
+    # and is easy to find with `docker volume ls`.
+    name: alumni-db-data
