@@ -47,7 +47,9 @@ export class JobPostingModel {
 
   // CREATE
   async create(data: NewJobPosting): Promise<JobPosting> {
-    return toJobPosting(await this.prisma.jobPosting.create({ data }));
+    return toJobPosting(
+      await this.prisma.jobPosting.create({ data: { ...data, deadline: toDeadline(data.deadline) } }),
+    );
   }
 
   // READ: all records, newest first
@@ -77,7 +79,12 @@ export class JobPostingModel {
   async update(id: number, changes: JobPostingChanges): Promise<JobPosting | undefined> {
     if (id > MAX_ID) return undefined;
     try {
-      return toJobPosting(await this.prisma.jobPosting.update({ where: { id }, data: changes }));
+      return toJobPosting(
+        await this.prisma.jobPosting.update({
+          where: { id },
+          data: { ...changes, deadline: toDeadline(changes.deadline) },
+        }),
+      );
     } catch (err) {
       if (isRecordNotFound(err)) return undefined;
       throw err;
@@ -95,6 +102,14 @@ export class JobPostingModel {
       throw err;
     }
   }
+}
+
+// Prisma rejects a date-only string for a DateTime field, so yyyy-mm-dd becomes a
+// Date at UTC midnight and "" becomes null. undefined stays undefined: a PATCH
+// without a deadline keeps the old one.
+function toDeadline(deadline: string | null | undefined): Date | null | undefined {
+  if (deadline === undefined) return undefined;
+  return deadline ? new Date(deadline) : null;
 }
 
 // Dates leave the model as ISO strings; deadline is a date, so we keep yyyy-mm-dd.
