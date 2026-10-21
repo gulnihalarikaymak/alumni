@@ -123,6 +123,13 @@ All URL prefixes live in one file, `backend/src/app.routes.ts`.
 
 Errors: invalid input → `400`, e-mail already used → `409`, unknown id → `404`. Pages show the form again with the messages; the API returns JSON.
 
+Job postings (JSON only) use a **direct** route for one posting and a **nested** route for a user's postings:
+
+| Direct (`/api/job-postings`) | Nested (`/api/users/:userId/job-postings`) |
+|---|---|
+| `GET /api/job-postings`, `GET /api/job-postings/:id` → `200` | `GET` → `200`, the user's postings (unknown user → `404`) |
+| `PUT`, `PATCH /api/job-postings/:id` → `200`; `DELETE` → `204` | `POST` → `201`, posted by that user (`STUDENT` → `400`) |
+
 HTML forms can only send `GET` and `POST`, so they post with `?_method=PUT|PATCH|DELETE`, and `src/common/method-override.ts` rewrites the method before routing. A `GET` is never rewritten.
 
 ### Folders

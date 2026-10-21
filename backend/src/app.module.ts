@@ -5,6 +5,8 @@ import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { AppController } from './app.controller';
 import { routes } from './app.routes';
 import { HealthModule } from './health/health.module';
+import { ApiJobPostingModule } from './job-postings/api-job-posting.module';
+import { ApiUserJobPostingModule } from './job-postings/api-user-job-posting.module';
 import { ApiUserModule } from './users/api-user.module';
 import { UserWebModule } from './users/user-web.module';
 
@@ -17,6 +19,8 @@ import { UserWebModule } from './users/user-web.module';
     ApiUserModule,
     AnnouncementWebModule,
     ApiAnnouncementModule,
+    ApiJobPostingModule,
+    ApiUserJobPostingModule,
   ],
   controllers: [AppController],
 })

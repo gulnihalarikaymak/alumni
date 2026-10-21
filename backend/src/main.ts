@@ -43,6 +43,7 @@ async function bootstrap() {
   console.log(`  - Users (API):   GET/POST http://localhost:${port}/api/users, GET/PUT/PATCH/DELETE /api/users/:id (PostgreSQL)`);
   console.log(`  - Announcements (pages): http://localhost:${port}/announcements`);
   console.log(`  - Announcements (API):   GET/POST http://localhost:${port}/api/announcements, GET/PUT/PATCH/DELETE /api/announcements/:id (PostgreSQL)`);
+  console.log(`  - Job postings (API):    GET http://localhost:${port}/api/job-postings, GET/PUT/PATCH/DELETE /api/job-postings/:id, GET/POST /api/users/:userId/job-postings`);
   console.log(`  - Swagger UI:    http://localhost:${port}/api/swagger`);
 }
 bootstrap();
