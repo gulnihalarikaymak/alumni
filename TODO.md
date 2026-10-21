@@ -36,6 +36,8 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 
 ## Week 06 — Database integration
 - [x] Update `DDD.md`: add the job postings table (`job_postings`)
+- [x] Migration: add `job_postings` to the Prisma schema and create its migration
+- [x] `JobPostingModel` with Prisma CRUD
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model
