@@ -9,7 +9,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | **Storage** | Docker volume `alumni-db-data`: kept by `docker compose down`, deleted by `docker compose down -v` |
 | **Access** | Prisma 7: schema in `backend/prisma/schema.prisma`, migrations in `backend/prisma/migrations/`. The models in `backend/src/*/*.model.ts` read and write through `PrismaService` |
 | **Demo data** | `backend/prisma/seed.ts` builds records with the factories in `backend/prisma/factories.ts`: synthetic Turkish names (fakerTR), e-mails at `example.com` |
-| **Status** | All tables below exist in the database (first migration). Two are used by the code (`users`, `announcements`); the rest wait for week 7 and may still change |
+| **Status** | All tables below exist in the database (first migration). Three are used by the code (`users`, `announcements`, `job_postings`); the rest wait for week 7 and may still change |
 
 ## 1. Conventions
 
@@ -34,7 +34,8 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | Education entry | `education_entries` | One degree a graduate has earned | planned, week 7 |
 | Event | `events` | A meetup or talk organised by staff | planned, week 7 |
 | Event registration | `event_registrations` | Which user registered for which event | planned, week 7 |
-| Job posting | `job_postings` | An open position shared with graduates and students | planned, week 7 |
+| Job posting | `job_postings` | An open position shared with graduates and students | in code (PostgreSQL) |
+| Job application | `job_applications` | A user's application to a job posting | planned, week 6 |
 
 ## 3. Relationships
 
@@ -46,6 +47,8 @@ erDiagram
     users ||--o{ event_registrations : makes
     events ||--o{ event_registrations : receives
     users ||--o{ job_postings : posts
+    users ||--o{ job_applications : submits
+    job_postings ||--o{ job_applications : receives
     announcements
 ```
 
@@ -131,7 +134,7 @@ The list is shown newest first.
 | `created_at` | timestamptz | NN, default now | |
 | | | UQ (`event_id`, `user_id`) | a user registers once per event; duplicate → `409` |
 
-### 4.8 `job_postings` *(planned)*
+### 4.8 `job_postings` *(in code)*
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
@@ -150,6 +153,22 @@ The list is shown newest first.
 
 The list is shown newest first. Only `ADMIN`, `STAFF` and `ALUMNI` may post; `STUDENT` can only read.
 
+### 4.9 `job_applications` *(planned)*
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| `id` | integer | PK | |
+| `job_posting_id` | integer | FK → `job_postings.id`, NN | delete the posting → delete its applications |
+| `applicant_id` | integer | FK → `users.id`, NN | delete the user → delete their applications |
+| `cover_letter` | text | | trimmed, at most 2000 characters; empty = none |
+| `status` | enum `ApplicationStatus` | NN, default `SUBMITTED` | a new application always starts as `SUBMITTED` |
+| `created_at` | timestamptz | NN, default now | |
+| `updated_at` | timestamptz | NN | set on every edit |
+| | | UQ (`job_posting_id`, `applicant_id`) | a user applies once per posting; duplicate → `409` |
+
+The list is shown newest first. Only `ALUMNI` and `STUDENT` may apply, never to their own posting,
+and not after the posting's `deadline`.
+
 ## 5. Enums
 
 | Enum | Values |
@@ -158,6 +177,7 @@ The list is shown newest first. Only `ADMIN`, `STAFF` and `ALUMNI` may post; `ST
 | `Status` | `PENDING`, `ACTIVE`, `REJECTED`, `SUSPENDED` |
 | `WorkType` | `ONSITE`, `HYBRID`, `REMOTE` |
 | `EmploymentType` | `FULL_TIME`, `PART_TIME`, `INTERNSHIP`, `CONTRACT` |
+| `ApplicationStatus` | `SUBMITTED`, `REVIEWED`, `ACCEPTED`, `REJECTED` |
 
 ## 6. Where each rule lives
 
@@ -165,7 +185,7 @@ The list is shown newest first. Only `ADMIN`, `STAFF` and `ALUMNI` may post; `ST
 |---|---|
 | Required fields, length limits, enum values | service (`400`) |
 | Missing record | service (`404`), the model only returns `undefined` or `false` |
-| Duplicate e-mail / duplicate registration | service checks first (`409`); a database `UNIQUE` constraint is the safety net |
+| Duplicate e-mail / registration / application | service checks first (`409`); a database `UNIQUE` constraint is the safety net |
 | Row references that must exist | database foreign keys |
 
 ## 7. Privacy (KVKK)
