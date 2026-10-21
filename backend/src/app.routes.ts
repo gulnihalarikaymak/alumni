@@ -5,7 +5,10 @@ import { HealthModule } from './health/health.module';
 import { ApiJobApplicationModule } from './job-applications/api-job-application.module';
 import { ApiJobPostingApplicationModule } from './job-applications/api-job-posting-application.module';
 import { ApiUserJobApplicationModule } from './job-applications/api-user-job-application.module';
+import { JobApplicationWebModule } from './job-applications/job-application-web.module';
+import { JobPostingApplicationWebModule } from './job-applications/job-posting-application-web.module';
 import { ApiJobPostingModule } from './job-postings/api-job-posting.module';
+import { JobPostingWebModule } from './job-postings/job-posting-web.module';
 import { ApiUserModule } from './users/api-user.module';
 import { UserWebModule } from './users/user-web.module';
 
@@ -14,6 +17,10 @@ import { UserWebModule } from './users/user-web.module';
 //
 //   /users               -> UserWebModule          -> UserController             HTML pages
 //   /announcements       -> AnnouncementWebModule  -> AnnouncementController     HTML pages
+//   /job-postings        -> JobPostingWebModule    -> JobPostingController       HTML pages
+//   /job-postings/:jobPostingId/applications
+//                        -> JobPostingApplicationWebModule -> JobPostingApplicationController HTML, nested
+//   /job-applications    -> JobApplicationWebModule -> JobApplicationController  HTML pages
 //   /api/users           -> ApiUserModule          -> ApiUserController          JSON
 //   /api/announcements   -> ApiAnnouncementModule  -> ApiAnnouncementController  JSON
 //   /api/job-postings    -> ApiJobPostingModule    -> ApiJobPostingController    JSON, direct
@@ -31,6 +38,12 @@ export const routes: Routes = [
   // Web: pages for people in a browser
   { path: 'users', module: UserWebModule },
   { path: 'announcements', module: AnnouncementWebModule },
+  {
+    path: 'job-postings',
+    module: JobPostingWebModule,
+    children: [{ path: ':jobPostingId/applications', module: JobPostingApplicationWebModule }],
+  },
+  { path: 'job-applications', module: JobApplicationWebModule },
 
   // API: JSON for programs (Postman, later the React app)
   {

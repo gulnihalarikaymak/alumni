@@ -1,0 +1,36 @@
+{{!-- {{> job-posting-fields}}: the fields of the create and edit forms.
+      Data: values (stored or typed), workTypes, employmentTypes --}}
+<label>Title
+  <input type="text" name="title" value="{{values.title}}" maxlength="120" required autofocus>
+</label>
+<label>Company
+  <input type="text" name="company" value="{{values.company}}" required>
+</label>
+<label>City (optional)
+  <input type="text" name="location" value="{{values.location}}">
+</label>
+<label>Work type
+  <select name="workType" required>
+    <option value="" disabled {{#unless values.workType}}selected{{/unless}}>Choose...</option>
+    {{#each workTypes}}
+      <option value="{{this}}" {{#if (same this ../values.workType)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+  </select>
+</label>
+<label>Employment type
+  <select name="employmentType" required>
+    <option value="" disabled {{#unless values.employmentType}}selected{{/unless}}>Choose...</option>
+    {{#each employmentTypes}}
+      <option value="{{this}}" {{#if (same this ../values.employmentType)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+  </select>
+</label>
+<label>Description
+  <textarea name="description" rows="6" required>{{values.description}}</textarea>
+</label>
+<label>Apply link (optional: https:// or mailto:)
+  <input type="text" name="applyUrl" value="{{values.applyUrl}}" placeholder="https://example.com/careers">
+</label>
+<label>Deadline (optional: empty = open until removed)
+  <input type="date" name="deadline" value="{{values.deadline}}">
+</label>

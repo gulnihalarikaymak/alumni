@@ -11,6 +11,7 @@ import {
 
 const TITLE_MAX = 120;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const APPLY_URL_RE = /^(https?:\/\/|mailto:)\S+$/i;
 const FIELDS = [
   'title',
   'company',
@@ -117,6 +118,11 @@ export class JobPostingsService {
     };
     checkOptional('location');
     checkOptional('applyUrl');
+    // DDD 4.8: a link or mailto:. The web page puts it in <a href>, so a
+    // "javascript:" value must never be stored.
+    if (out.applyUrl && !APPLY_URL_RE.test(out.applyUrl)) {
+      errors.push('applyUrl must start with http://, https:// or mailto:');
+    }
 
     // Enums: case-insensitive, stored upper-case
     if (b.workType === undefined) {

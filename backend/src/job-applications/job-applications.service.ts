@@ -4,14 +4,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { JobPosting } from '../job-postings/job-posting.model';
 import { JobPostingsService } from '../job-postings/job-postings.service';
-import { Role } from '../users/user.model';
+import { Role, User } from '../users/user.model';
 import { UsersService } from '../users/users.service';
 import {
   APPLICATION_STATUSES,
   ApplicationStatus,
   JobApplication,
   JobApplicationChanges,
+  JobApplicationDetails,
   JobApplicationModel,
 } from './job-application.model';
 
@@ -38,6 +40,31 @@ export class JobApplicationsService {
     const application = await this.jobApplicationModel.findById(id);
     if (!application) throw new NotFoundException(`Job application ${id} not found`);
     return application;
+  }
+
+  // Web pages: applications together with their posting's title and applicant's e-mail
+  findAllDetails(): Promise<JobApplicationDetails[]> {
+    return this.jobApplicationModel.findAllDetails();
+  }
+
+  async findOneDetails(id: number): Promise<JobApplicationDetails> {
+    const application = await this.jobApplicationModel.findDetailsById(id);
+    if (!application) throw new NotFoundException(`Job application ${id} not found`);
+    return application;
+  }
+
+  // Web page of one posting's applications: the posting (404 if missing), its
+  // applications, and the users who may apply (for the form's applicant list).
+  async findForJobPostingPage(jobPostingId: number): Promise<{
+    jobPosting: JobPosting;
+    applications: JobApplicationDetails[];
+    applicants: User[];
+  }> {
+    const jobPosting = await this.jobPostingsService.findOne(jobPostingId);
+    const applications = await this.jobApplicationModel.findAllDetails({ jobPostingId });
+    const users = await this.usersService.findAll();
+    const applicants = users.filter((u) => APPLICANT_ROLES.includes(u.role));
+    return { jobPosting, applications, applicants };
   }
 
   // Nested GET under a posting: the posting must exist

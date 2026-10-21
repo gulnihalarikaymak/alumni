@@ -86,6 +86,11 @@
     .badge.REJECTED { color: var(--rejected); background: var(--rejected-bg); }
     .badge.SUSPENDED { color: var(--suspended); background: var(--suspended-bg); }
     .badge.role { color: var(--text); background: transparent; border: 1px solid var(--line); }
+    /* Application status: reuses the user status colours */
+    .badge.SUBMITTED { color: var(--pending); background: var(--pending-bg); }
+    .badge.REVIEWED { color: var(--suspended); background: var(--suspended-bg); }
+    .badge.ACCEPTED { color: var(--active); background: var(--active-bg); }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 
     /* ---- Buttons ---- */
     .btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--teal-ink); background: var(--teal-ink); color: var(--on-teal); font: 700 14px/1 var(--font); cursor: pointer; white-space: nowrap; }
@@ -158,7 +163,7 @@
     .hero .btn { background: var(--teal); border-color: var(--teal); color: #fff; }
     .hero .btn.quiet { background: transparent; color: var(--on-navy); border-color: rgba(168,218,220,.45); }
     .hero .btn.quiet:hover { background: var(--navy-2); }
-    .places { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 22px; }
+    .places { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-top: 22px; }
     .places a { display: block; color: var(--text); }
     .places a:hover { text-decoration: none; border-color: var(--teal); }
     .places h3 { font-size: 17px; margin: 0 0 6px; color: var(--teal-ink); }
@@ -196,6 +201,8 @@
       <a class="brand" href="/"><span class="mark" aria-hidden="true">A</span><span><b>Alumni Tracking System</b><small>Istanbul University</small></span></a>
       <nav class="nav" aria-label="Main">
         <a href="/announcements" {{navCurrent "/announcements"}}>Announcements</a>
+        <a href="/job-postings" {{navCurrent "/job-postings"}}>Jobs</a>
+        <a href="/job-applications" {{navCurrent "/job-applications"}}>Applications</a>
         <a href="/users" {{navCurrent "/users"}}>Users</a>
         <a href="/api/swagger">API docs</a>
       </nav>

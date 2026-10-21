@@ -1,0 +1,39 @@
+{{!-- READ all: GET /job-postings. Data: jobPostings (newest first) --}}
+<div class="page-head">
+  <div>
+    <h1>Job postings</h1>
+    <p class="sub">{{jobPostings.length}} {{#if (same jobPostings.length 1)}}posting{{else}}postings{{/if}}, newest first</p>
+  </div>
+  <a class="btn" href="/job-postings/create">New job posting</a>
+</div>
+
+{{#if jobPostings.length}}
+  <ol class="entries">
+    {{#each jobPostings}}
+      <li>
+        <h3><a href="/job-postings/{{id}}">{{title}}</a></h3>
+        <p>{{company}}{{#if location}} · {{location}}{{/if}} · {{#if deadline}}apply by <time datetime="{{deadline}}">{{day deadline}}</time>{{else}}open until removed{{/if}}</p>
+        <div class="tags">
+          <span class="badge role">{{workType}}</span>
+          <span class="badge role">{{employmentType}}</span>
+        </div>
+        <div class="actions">
+          <a href="/job-postings/{{id}}/applications">Applications</a>
+          <a href="/job-postings/{{id}}/edit">Edit</a>
+          <form method="post" action="/job-postings/{{id}}?_method=DELETE" onsubmit="return confirm('Delete this job posting and its applications?')">
+            <button class="link danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </li>
+    {{/each}}
+  </ol>
+{{else}}
+  <div class="card empty">
+    <p>No job postings yet.</p>
+    <a class="btn" href="/job-postings/create">Post the first one</a>
+  </div>
+{{/if}}
+
+<footer class="foot">
+  <p>Stored in PostgreSQL. The same data as JSON: <a href="/api/job-postings">/api/job-postings</a></p>
+</footer>

@@ -53,3 +53,6 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Create 2 controllers (web pages + JSON API)
 - [x] Create routes for both controllers
 - [x] Create an interface to manage announcements
+
+## Homework 2 — Job postings and applications UI ✅
+- [x] Prepare a basic UI for job postings and applications, in the style of the existing pages

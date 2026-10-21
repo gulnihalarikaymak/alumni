@@ -40,6 +40,14 @@ export function setupViews(app: NestExpressApplication): void {
     return Number.isNaN(d.getTime()) ? '' : dateFormat.format(d);
   });
 
+  // {{day deadline}}: a date-only "yyyy-mm-dd" shown as "30 Nov 2026". Read in UTC,
+  // as the model writes it, so no time zone moves it to another day.
+  const dayFormat = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  hbs.registerHelper('day', (ymd: unknown) => {
+    const d = new Date(String(ymd));
+    return ymd && !Number.isNaN(d.getTime()) ? dayFormat.format(d) : '';
+  });
+
   // {{excerpt content 160}}: the first characters of a long text, for lists.
   hbs.registerHelper('excerpt', (text: unknown, max: unknown) => {
     const s = String(text ?? '').replace(/\s+/g, ' ').trim();

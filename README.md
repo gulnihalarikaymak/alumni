@@ -123,8 +123,9 @@ All URL prefixes live in one file, `backend/src/app.routes.ts`.
 
 Errors: invalid input → `400`, e-mail already used → `409`, unknown id → `404`. Pages show the form again with the messages; the API returns JSON.
 
-Job postings (JSON only) belong to no user and have **direct** routes only, the same CRUD as users:
+Job postings belong to no user and have **direct** routes only, the same CRUD as users:
 `GET`/`POST /api/job-postings`, `GET`/`PUT`/`PATCH`/`DELETE /api/job-postings/:id`.
+Their pages are at `/job-postings` (list, create, show, edit, delete).
 
 Users meet postings through job applications, which have two parents and are nested under both:
 
@@ -133,6 +134,9 @@ Users meet postings through job applications, which have two parents and are nes
 | `GET /api/job-applications`, `GET /api/job-applications/:id` → `200` | `GET /api/job-postings/:jobPostingId/applications` → `200` |
 | `PATCH /api/job-applications/:id` (status, cover letter) → `200`; `DELETE` → `204` | `POST /api/job-postings/:jobPostingId/applications` → `201` (applied twice → `409`) |
 | | `GET /api/users/:userId/job-applications` → `200` |
+
+Pages: `/job-postings/:jobPostingId/applications` lists one posting's applications and has the apply form;
+`/job-applications` lists all of them, and `/job-applications/:id` changes the status or withdraws one.
 
 HTML forms can only send `GET` and `POST`, so they post with `?_method=PUT|PATCH|DELETE`, and `src/common/method-override.ts` rewrites the method before routing. A `GET` is never rewritten.
 

@@ -1,0 +1,59 @@
+{{!-- Nested page: GET /job-postings/:jobPostingId/applications; POST renders it again when applying is rejected.
+      Data: jobPosting, applications (with applicant), applicants (ALUMNI and STUDENT users), values, errors --}}
+<a class="back" href="/job-postings/{{jobPosting.id}}">Back to the job posting</a>
+<div class="page-head">
+  <div>
+    <h1>Applications</h1>
+    <p class="sub">{{jobPosting.title}} at {{jobPosting.company}} · {{applications.length}} {{#if (same applications.length 1)}}application{{else}}applications{{/if}}</p>
+  </div>
+</div>
+
+<div class="split">
+  {{#if applications.length}}
+    <div class="card flush">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Id</th><th>Applicant</th><th>Status</th><th>Applied</th><th><span class="sr-only">Actions</span></th></tr></thead>
+          <tbody>
+            {{#each applications}}
+              <tr>
+                <td class="id">{{id}}</td>
+                <td><div class="person"><span class="initial" aria-hidden="true">{{applicant.email}}</span><a href="/users/{{applicant.id}}">{{applicant.email}}</a></div></td>
+                <td><span class="badge {{status}}">{{status}}</span></td>
+                <td class="when"><time datetime="{{createdAt}}">{{date createdAt}}</time></td>
+                <td class="acts"><a href="/job-applications/{{id}}">Open</a></td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {{else}}
+    <div class="card empty">
+      <p>No applications yet.</p>
+    </div>
+  {{/if}}
+
+  <section class="card">
+    <h2>Apply</h2>
+    {{> errors}}
+    {{#if applicants.length}}
+      <form class="stack" method="post" action="/job-postings/{{jobPosting.id}}/applications">
+        <label>Applicant
+          <select name="applicantId" required>
+            <option value="" disabled {{#unless values.applicantId}}selected{{/unless}}>Choose...</option>
+            {{#each applicants}}
+              <option value="{{id}}" {{#if (same id ../values.applicantId)}}selected{{/if}}>{{email}} ({{role}})</option>
+            {{/each}}
+          </select>
+        </label>
+        <label>Cover letter (optional)
+          <textarea name="coverLetter" rows="5" maxlength="2000">{{values.coverLetter}}</textarea>
+        </label>
+        <div class="form-actions"><button class="btn" type="submit">Submit application</button></div>
+      </form>
+    {{else}}
+      <p class="sub">Only alumni and students can apply, and there are none yet. <a href="/users/create">Add a user</a>.</p>
+    {{/if}}
+  </section>
+</div>

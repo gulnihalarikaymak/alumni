@@ -4,7 +4,7 @@
 // cascades and removes the application. A user applies once per posting
 // (@@unique([jobPostingId, applicantId])).
 import { Injectable } from '@nestjs/common';
-import { JobApplication as JobApplicationRow } from '../generated/prisma/client';
+import { JobApplication as JobApplicationRow, Prisma } from '../generated/prisma/client';
 import { MAX_ID, isRecordNotFound } from '../prisma/prisma.helpers';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -29,6 +29,19 @@ export type NewJobApplication = Pick<
 >;
 // The two parents never change: an application is not moved to another posting or user.
 export type JobApplicationChanges = Partial<Pick<JobApplication, 'coverLetter' | 'status'>>;
+
+// An application with a few fields of both parents, for the web pages: they show
+// the posting's title and the applicant's e-mail instead of bare ids.
+export interface JobApplicationDetails extends JobApplication {
+  jobPosting: { id: number; title: string; company: string };
+  applicant: { id: number; email: string; role: string };
+}
+
+// Prisma "include": read the related rows in the same query (a JOIN), only these columns.
+const WITH_PARENTS = {
+  jobPosting: { select: { id: true, title: true, company: true } },
+  applicant: { select: { id: true, email: true, role: true } },
+} as const;
 
 /**
  * Owns the job-application data and the CRUD operations on it.
@@ -87,6 +100,26 @@ export class JobApplicationModel {
     return row ? toJobApplication(row) : undefined;
   }
 
+  // READ with parents (web pages): all, or only one posting's / one user's, newest first
+  async findAllDetails(
+    filter: { jobPostingId?: number; applicantId?: number } = {},
+  ): Promise<JobApplicationDetails[]> {
+    if ((filter.jobPostingId ?? 0) > MAX_ID || (filter.applicantId ?? 0) > MAX_ID) return [];
+    const rows = await this.prisma.jobApplication.findMany({
+      where: filter,
+      include: WITH_PARENTS,
+      orderBy: { id: 'desc' },
+    });
+    return rows.map(toDetails);
+  }
+
+  // READ with parents (web pages): one record by id
+  async findDetailsById(id: number): Promise<JobApplicationDetails | undefined> {
+    if (id > MAX_ID) return undefined;
+    const row = await this.prisma.jobApplication.findUnique({ where: { id }, include: WITH_PARENTS });
+    return row ? toDetails(row) : undefined;
+  }
+
   // UPDATE: changes only the fields given; updatedAt is set by Prisma (@updatedAt)
   async update(id: number, changes: JobApplicationChanges): Promise<JobApplication | undefined> {
     if (id > MAX_ID) return undefined;
@@ -124,4 +157,10 @@ function toJobApplication(row: JobApplicationRow): JobApplication {
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
+}
+
+function toDetails(
+  row: Prisma.JobApplicationGetPayload<{ include: typeof WITH_PARENTS }>,
+): JobApplicationDetails {
+  return { ...toJobApplication(row), jobPosting: row.jobPosting, applicant: row.applicant };
 }

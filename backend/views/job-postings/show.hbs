@@ -1,0 +1,34 @@
+{{!-- READ one: GET /job-postings/:id. Data: jobPosting --}}
+<a class="back" href="/job-postings">All job postings</a>
+<div class="page-head">
+  <div>
+    <h1>{{jobPosting.title}}</h1>
+    <p class="sub">{{jobPosting.company}}{{#if jobPosting.location}} · {{jobPosting.location}}{{/if}}</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/job-postings/{{jobPosting.id}}/applications">Applications</a>
+    <a class="btn quiet" href="/job-postings/{{jobPosting.id}}/edit">Edit</a>
+    <form method="post" action="/job-postings/{{jobPosting.id}}?_method=DELETE" onsubmit="return confirm('Delete this job posting and its applications?')">
+      <button class="btn danger" type="submit">Delete</button>
+    </form>
+  </div>
+</div>
+
+<div class="split">
+  <article class="card">
+    <h2>Description</h2>
+    <p class="content">{{jobPosting.description}}</p>
+  </article>
+
+  <section class="card">
+    <h2>Details</h2>
+    <dl class="record">
+      <dt>Work type</dt><dd><span class="badge role">{{jobPosting.workType}}</span></dd>
+      <dt>Employment</dt><dd><span class="badge role">{{jobPosting.employmentType}}</span></dd>
+      <dt>City</dt><dd>{{#if jobPosting.location}}{{jobPosting.location}}{{else}}Not stated{{/if}}</dd>
+      <dt>Deadline</dt><dd>{{#if jobPosting.deadline}}<time datetime="{{jobPosting.deadline}}">{{day jobPosting.deadline}}</time>{{else}}Open until removed{{/if}}</dd>
+      <dt>Apply</dt><dd>{{#if jobPosting.applyUrl}}<a href="{{jobPosting.applyUrl}}" rel="noopener noreferrer">{{jobPosting.applyUrl}}</a>{{else}}<a href="/job-postings/{{jobPosting.id}}/applications">In ATS</a>{{/if}}</dd>
+      <dt>Posted</dt><dd><time datetime="{{jobPosting.createdAt}}">{{date jobPosting.createdAt}}</time></dd>
+    </dl>
+  </section>
+</div>

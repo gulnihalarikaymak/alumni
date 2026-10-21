@@ -1,0 +1,21 @@
+{{!-- UPDATE: GET /job-postings/:id/edit shows it; PUT /job-postings/:id renders it again when the input is rejected.
+      Data: jobPosting, workTypes, employmentTypes, values (stored or typed), errors --}}
+<div class="narrow">
+  <a class="back" href="/job-postings/{{jobPosting.id}}">Back to the job posting</a>
+  <div class="page-head">
+    <div>
+      <h1>Edit job posting #{{jobPosting.id}}</h1>
+      <p class="sub">Change the fields and save. An emptied optional field is removed.</p>
+    </div>
+  </div>
+  <div class="card">
+    {{> errors}}
+    <form class="stack" method="post" action="/job-postings/{{jobPosting.id}}?_method=PUT">
+      {{> job-posting-fields}}
+      <div class="form-actions">
+        <button class="btn" type="submit">Save changes</button>
+        <a class="btn quiet" href="/job-postings/{{jobPosting.id}}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+{{!-- READ all: GET /job-applications. Data: applications (with posting and applicant, newest first) --}}
+<div class="page-head">
+  <div>
+    <h1>Job applications</h1>
+    <p class="sub">{{applications.length}} {{#if (same applications.length 1)}}application{{else}}applications{{/if}}, newest first. To apply, open a <a href="/job-postings">job posting</a>.</p>
+  </div>
+</div>
+
+{{#if applications.length}}
+  <div class="card flush">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Id</th><th>Applicant</th><th>Status</th><th>Job posting</th><th>Applied</th><th><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody>
+          {{#each applications}}
+            <tr>
+              <td class="id">{{id}}</td>
+              <td><div class="person"><span class="initial" aria-hidden="true">{{applicant.email}}</span><a href="/users/{{applicant.id}}">{{applicant.email}}</a></div></td>
+              <td><span class="badge {{status}}">{{status}}</span></td>
+              <td><a href="/job-postings/{{jobPosting.id}}">{{jobPosting.title}}</a><br><span class="sub">{{jobPosting.company}}</span></td>
+              <td class="when"><time datetime="{{createdAt}}">{{date createdAt}}</time></td>
+              <td class="acts">
+                <a href="/job-applications/{{id}}">Open</a>
+                <form method="post" action="/job-applications/{{id}}?_method=DELETE" onsubmit="return confirm('Withdraw this application?')">
+                  <button class="link danger" type="submit">Withdraw</button>
+                </form>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{{else}}
+  <div class="card empty">
+    <p>No applications yet.</p>
+    <a class="btn" href="/job-postings">Browse job postings</a>
+  </div>
+{{/if}}
+
+<footer class="foot">
+  <p>Stored in PostgreSQL. The same data as JSON: <a href="/api/job-applications">/api/job-applications</a></p>
+</footer>

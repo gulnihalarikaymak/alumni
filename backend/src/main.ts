@@ -42,6 +42,7 @@ async function bootstrap() {
   console.log(`  - Users (pages): http://localhost:${port}/users (list, create, edit, delete in the browser)`);
   console.log(`  - Users (API):   GET/POST http://localhost:${port}/api/users, GET/PUT/PATCH/DELETE /api/users/:id (PostgreSQL)`);
   console.log(`  - Announcements (pages): http://localhost:${port}/announcements`);
+  console.log(`  - Jobs (pages):          http://localhost:${port}/job-postings, http://localhost:${port}/job-applications`);
   console.log(`  - Announcements (API):   GET/POST http://localhost:${port}/api/announcements, GET/PUT/PATCH/DELETE /api/announcements/:id (PostgreSQL)`);
   console.log(`  - Job postings (API):    GET/POST http://localhost:${port}/api/job-postings, GET/PUT/PATCH/DELETE /api/job-postings/:id`);
   console.log(`  - Job applications (API): GET http://localhost:${port}/api/job-applications, GET/PATCH/DELETE /api/job-applications/:id, GET/POST /api/job-postings/:jobPostingId/applications, GET /api/users/:userId/job-applications`);

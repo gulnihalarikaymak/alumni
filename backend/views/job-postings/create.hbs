@@ -1,0 +1,21 @@
+{{!-- CREATE: GET /job-postings/create shows it; POST /job-postings renders it again when the input is rejected.
+      Data: workTypes, employmentTypes, values (what was typed), errors --}}
+<div class="narrow">
+  <a class="back" href="/job-postings">All job postings</a>
+  <div class="page-head">
+    <div>
+      <h1>New job posting</h1>
+      <p class="sub">Title up to 120 characters. City, apply link and deadline are optional.</p>
+    </div>
+  </div>
+  <div class="card">
+    {{> errors}}
+    <form class="stack" method="post" action="/job-postings">
+      {{> job-posting-fields}}
+      <div class="form-actions">
+        <button class="btn" type="submit">Publish</button>
+        <a class="btn quiet" href="/job-postings">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
