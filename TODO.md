@@ -34,12 +34,13 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Factory and seed: factories for every table and `npx prisma db seed` that adds synthetic demo data
 - [x] CRUD on the database: users and announcements models use Prisma (PostgreSQL) instead of in-memory arrays
 
-## Week 06 — Database integration
+## Week 06 — Database integration ✅
 - [x] Update `DDD.md`: add the job postings table (`job_postings`)
 - [x] Migration: add `job_postings` to the Prisma schema and create its migration
 - [x] `JobPostingModel` with Prisma CRUD
 - [x] Define direct (`/api/job-postings/:id`) and nested (`/api/users/:userId/job-postings`) routes
-- Repeat steps 1–4 for job applications (`job_applications`):
+  (the nested route was removed with the `users` → `job_postings` relation, see the last task)
+- [x] Repeat steps 1–4 for job applications (`job_applications`):
   - [x] Update `DDD.md`: add the job applications table
   - [x] Migration: add `job_applications` to the Prisma schema and create its migration
   - [x] `JobApplicationModel` with Prisma CRUD and its relationships

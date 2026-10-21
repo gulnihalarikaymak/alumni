@@ -174,7 +174,7 @@ alumni/
 | 03 | HTTP methods and CRUD | Users CRUD with correct verbs, status codes and validation | ✅ |
 | 04 | MVC | Model, service and controller split; web pages and JSON API share one service | ✅ |
 | 05 | Database and ORM | Prisma schema, first migration, synthetic seed data | ✅ |
-| 06 | Database integration | CRUD on PostgreSQL, transactions, DB errors mapped to HTTP | 🗓️ |
+| 06 | Database integration | CRUD on PostgreSQL, transactions, DB errors mapped to HTTP | ✅ |
 | 07 | Relational data | Career and education history, event registrations, directory search and pagination | 🗓️ |
 | 08 | **Midterm** | Core features running on PostgreSQL, documented and tested | 🗓️ |
 | 09 | Middleware | Logging, request ids, security headers, rate limiting, one error format | 🗓️ |
