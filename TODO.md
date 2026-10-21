@@ -34,6 +34,9 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Factory and seed: factories for every table and `npx prisma db seed` that adds synthetic demo data
 - [x] CRUD on the database: users and announcements models use Prisma (PostgreSQL) instead of in-memory arrays
 
+## Week 06 — Database integration
+- [x] Update `DDD.md`: add the job postings table (`job_postings`)
+
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model
 - [x] Create 2 controllers (web pages + JSON API)

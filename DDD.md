@@ -34,6 +34,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | Education entry | `education_entries` | One degree a graduate has earned | planned, week 7 |
 | Event | `events` | A meetup or talk organised by staff | planned, week 7 |
 | Event registration | `event_registrations` | Which user registered for which event | planned, week 7 |
+| Job posting | `job_postings` | An open position shared with graduates and students | planned, week 7 |
 
 ## 3. Relationships
 
@@ -44,6 +45,7 @@ erDiagram
     alumni_profiles ||--o{ education_entries : has
     users ||--o{ event_registrations : makes
     events ||--o{ event_registrations : receives
+    users ||--o{ job_postings : posts
     announcements
 ```
 
@@ -129,12 +131,33 @@ The list is shown newest first.
 | `created_at` | timestamptz | NN, default now | |
 | | | UQ (`event_id`, `user_id`) | a user registers once per event; duplicate → `409` |
 
+### 4.8 `job_postings` *(planned)*
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| `id` | integer | PK | |
+| `posted_by_id` | integer | FK → `users.id`, NN | who posted it; delete the user → delete their postings |
+| `title` | varchar(120) | NN | trimmed, 1–120 characters |
+| `company` | varchar | NN | |
+| `location` | varchar | | city level; empty = not stated |
+| `work_type` | enum `WorkType` | NN | `ONSITE`, `HYBRID`, `REMOTE` |
+| `employment_type` | enum `EmploymentType` | NN | `FULL_TIME`, `PART_TIME`, `INTERNSHIP`, `CONTRACT` |
+| `description` | text | NN | |
+| `apply_url` | varchar | | link or `mailto:`; empty = apply through the poster |
+| `deadline` | date | | empty = open until removed |
+| `created_at` | timestamptz | NN, default now | |
+| `updated_at` | timestamptz | NN | set on every edit |
+
+The list is shown newest first. Only `ADMIN`, `STAFF` and `ALUMNI` may post; `STUDENT` can only read.
+
 ## 5. Enums
 
 | Enum | Values |
 |---|---|
 | `Role` | `ADMIN`, `STAFF`, `ALUMNI`, `STUDENT` |
 | `Status` | `PENDING`, `ACTIVE`, `REJECTED`, `SUSPENDED` |
+| `WorkType` | `ONSITE`, `HYBRID`, `REMOTE` |
+| `EmploymentType` | `FULL_TIME`, `PART_TIME`, `INTERNSHIP`, `CONTRACT` |
 
 ## 6. Where each rule lives
 
