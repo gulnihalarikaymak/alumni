@@ -9,7 +9,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | **Storage** | Docker volume `alumni-db-data`: kept by `docker compose down`, deleted by `docker compose down -v` |
 | **Access** | Prisma 7: schema in `backend/prisma/schema.prisma`, migrations in `backend/prisma/migrations/`. The models in `backend/src/*/*.model.ts` read and write through `PrismaService` |
 | **Demo data** | `backend/prisma/seed.ts` builds records with the factories in `backend/prisma/factories.ts`: synthetic Turkish names (fakerTR), e-mails at `example.com` |
-| **Status** | All tables below exist in the database (first migration). Three are used by the code (`users`, `announcements`, `job_postings`); the rest wait for week 7 and may still change |
+| **Status** | All tables below exist in the database (first migration). Four are used by the code (`users`, `announcements`, `job_postings`, `job_applications`); the rest wait for week 7 and may still change |
 
 ## 1. Conventions
 
@@ -35,7 +35,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | Event | `events` | A meetup or talk organised by staff | planned, week 7 |
 | Event registration | `event_registrations` | Which user registered for which event | planned, week 7 |
 | Job posting | `job_postings` | An open position shared with graduates and students | in code (PostgreSQL) |
-| Job application | `job_applications` | A user's application to a job posting | planned, week 6 |
+| Job application | `job_applications` | A user's application to a job posting | in code (PostgreSQL) |
 
 ## 3. Relationships
 
@@ -153,7 +153,7 @@ The list is shown newest first.
 
 The list is shown newest first. Only `ADMIN`, `STAFF` and `ALUMNI` may post; `STUDENT` can only read.
 
-### 4.9 `job_applications` *(planned)*
+### 4.9 `job_applications` *(in code)*
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|

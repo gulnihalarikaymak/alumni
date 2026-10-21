@@ -130,6 +130,14 @@ Job postings (JSON only) use a **direct** route for one posting and a **nested**
 | `GET /api/job-postings`, `GET /api/job-postings/:id` → `200` | `GET` → `200`, the user's postings (unknown user → `404`) |
 | `PUT`, `PATCH /api/job-postings/:id` → `200`; `DELETE` → `204` | `POST` → `201`, posted by that user (`STUDENT` → `400`) |
 
+Job applications have two parents, so they are nested under both:
+
+| Direct (`/api/job-applications`) | Nested |
+|---|---|
+| `GET /api/job-applications`, `GET /api/job-applications/:id` → `200` | `GET /api/job-postings/:jobPostingId/applications` → `200` |
+| `PATCH /api/job-applications/:id` (status, cover letter) → `200`; `DELETE` → `204` | `POST /api/job-postings/:jobPostingId/applications` → `201` (applied twice → `409`) |
+| | `GET /api/users/:userId/job-applications` → `200` |
+
 HTML forms can only send `GET` and `POST`, so they post with `?_method=PUT|PATCH|DELETE`, and `src/common/method-override.ts` rewrites the method before routing. A `GET` is never rewritten.
 
 ### Folders

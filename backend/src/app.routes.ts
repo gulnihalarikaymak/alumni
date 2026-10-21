@@ -2,6 +2,9 @@ import { Routes } from '@nestjs/core';
 import { AnnouncementWebModule } from './announcements/announcement-web.module';
 import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { HealthModule } from './health/health.module';
+import { ApiJobApplicationModule } from './job-applications/api-job-application.module';
+import { ApiJobPostingApplicationModule } from './job-applications/api-job-posting-application.module';
+import { ApiUserJobApplicationModule } from './job-applications/api-user-job-application.module';
 import { ApiJobPostingModule } from './job-postings/api-job-posting.module';
 import { ApiUserJobPostingModule } from './job-postings/api-user-job-posting.module';
 import { ApiUserModule } from './users/api-user.module';
@@ -17,7 +20,12 @@ import { UserWebModule } from './users/user-web.module';
 //   /api/job-postings    -> ApiJobPostingModule    -> ApiJobPostingController    JSON, direct
 //   /api/users/:userId/job-postings
 //                        -> ApiUserJobPostingModule -> ApiUserJobPostingController JSON, nested
-//   /api/health          -> HealthModule           -> HealthController           JSON or status page
+//   /api/job-applications -> ApiJobApplicationModule -> ApiJobApplicationController JSON, direct
+//   /api/job-postings/:jobPostingId/applications
+//                        -> ApiJobPostingApplicationModule -> ApiJobPostingApplicationController JSON, nested
+//   /api/users/:userId/job-applications
+//                        -> ApiUserJobApplicationModule -> ApiUserJobApplicationController JSON, nested
+//   /api/health         -> HealthModule           -> HealthController           JSON or status page
 //
 // Direct route: a resource by its own id (/api/job-postings/7).
 // Nested route: a resource inside its parent (/api/users/3/job-postings), declared
@@ -34,10 +42,18 @@ export const routes: Routes = [
       {
         path: 'users',
         module: ApiUserModule,
-        children: [{ path: ':userId/job-postings', module: ApiUserJobPostingModule }],
+        children: [
+          { path: ':userId/job-postings', module: ApiUserJobPostingModule },
+          { path: ':userId/job-applications', module: ApiUserJobApplicationModule },
+        ],
       },
       { path: 'announcements', module: ApiAnnouncementModule },
-      { path: 'job-postings', module: ApiJobPostingModule },
+      {
+        path: 'job-postings',
+        module: ApiJobPostingModule,
+        children: [{ path: ':jobPostingId/applications', module: ApiJobPostingApplicationModule }],
+      },
+      { path: 'job-applications', module: ApiJobApplicationModule },
       { path: 'health', module: HealthModule },
     ],
   },
