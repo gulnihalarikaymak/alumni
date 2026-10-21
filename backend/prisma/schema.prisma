@@ -42,6 +42,13 @@ enum EmploymentType {
   CONTRACT
 }
 
+enum ApplicationStatus {
+  SUBMITTED
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
 // In code since week 3 (in memory until week 5)
 model User {
   id                 Int                 @id @default(autoincrement())
@@ -52,6 +59,7 @@ model User {
   alumniProfile      AlumniProfile?
   eventRegistrations EventRegistration[]
   jobPostings        JobPosting[]
+  jobApplications    JobApplication[]
 
   @@map("users")
 }
@@ -129,19 +137,35 @@ model EventRegistration {
 }
 
 model JobPosting {
-  id             Int            @id @default(autoincrement())
-  postedById     Int            @map("posted_by_id")
-  title          String         @db.VarChar(120)
+  id             Int              @id @default(autoincrement())
+  postedById     Int              @map("posted_by_id")
+  title          String           @db.VarChar(120)
   company        String
   location       String? // city level; empty = not stated
-  workType       WorkType       @map("work_type")
-  employmentType EmploymentType @map("employment_type")
+  workType       WorkType         @map("work_type")
+  employmentType EmploymentType   @map("employment_type")
   description    String
-  applyUrl       String?        @map("apply_url") // empty = apply through the poster
-  deadline       DateTime?      @db.Date // empty = open until removed
-  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz
-  postedBy       User           @relation(fields: [postedById], references: [id], onDelete: Cascade)
+  applyUrl       String?          @map("apply_url") // empty = apply through the poster
+  deadline       DateTime?        @db.Date // empty = open until removed
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  postedBy       User             @relation(fields: [postedById], references: [id], onDelete: Cascade)
+  applications   JobApplication[]
 
   @@map("job_postings")
+}
+
+model JobApplication {
+  id           Int               @id @default(autoincrement())
+  jobPostingId Int               @map("job_posting_id")
+  applicantId  Int               @map("applicant_id")
+  coverLetter  String?           @map("cover_letter") // empty = none
+  status       ApplicationStatus @default(SUBMITTED)
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+  jobPosting   JobPosting        @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  applicant    User              @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@unique([jobPostingId, applicantId]) // a user applies once per posting
+  @@map("job_applications")
 }
