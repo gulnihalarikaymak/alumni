@@ -4,10 +4,10 @@ import { fakerTR as faker } from '@faker-js/faker';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { databaseUrl } from '../prisma.config';
 import { PrismaClient, Role } from '../src/generated/prisma/client';
-import { alumniFactory, announcementFactory, eventFactory, userFactory } from './factories';
+import { alumniFactory, announcementFactory, eventFactory, jobPostingFactory, userFactory } from './factories';
 
 // How many records one run adds
-const COUNT = { admins: 1, staff: 2, students: 5, alumni: 12, announcements: 5, events: 3 };
+const COUNT = { admins: 1, staff: 2, students: 5, alumni: 12, announcements: 5, events: 3, jobPostings: 8 };
 
 // Prisma 7 talks to PostgreSQL through a driver adapter (here: node-postgres, "pg").
 const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseUrl }) });
@@ -16,8 +16,8 @@ async function main() {
   const createUsers = (n: number, make: () => Parameters<typeof prisma.user.create>[0]['data']) =>
     Promise.all(Array.from({ length: n }, () => prisma.user.create({ data: make() })));
 
-  await createUsers(COUNT.admins, () => userFactory(Role.ADMIN));
-  await createUsers(COUNT.staff, () => userFactory(Role.STAFF));
+  const admins = await createUsers(COUNT.admins, () => userFactory(Role.ADMIN));
+  const staff = await createUsers(COUNT.staff, () => userFactory(Role.STAFF));
   const students = await createUsers(COUNT.students, () => userFactory(Role.STUDENT));
   const alumni = await createUsers(COUNT.alumni, () => alumniFactory());
 
@@ -35,6 +35,16 @@ async function main() {
     });
   }
 
+  // Each job posting is posted by a random ADMIN, STAFF or ALUMNI user made above;
+  // students are left out because they cannot post (DDD 4.8).
+  const posters = [...admins, ...staff, ...alumni];
+  for (let i = 0; i < COUNT.jobPostings; i++) {
+    const poster = faker.helpers.arrayElement(posters);
+    await prisma.jobPosting.create({
+      data: { ...jobPostingFactory(), postedBy: { connect: { id: poster.id } } },
+    });
+  }
+
   // Totals in the database after this run
   console.table({
     users: await prisma.user.count(),
@@ -44,6 +54,7 @@ async function main() {
     announcements: await prisma.announcement.count(),
     events: await prisma.event.count(),
     event_registrations: await prisma.eventRegistration.count(),
+    job_postings: await prisma.jobPosting.count(),
   });
 }
 

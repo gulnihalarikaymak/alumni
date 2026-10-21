@@ -3,7 +3,7 @@
 // All data is synthetic: fakerTR gives Turkish names, companies and cities, and
 // every e-mail uses example.com, a domain reserved for examples (no real inbox).
 import { fakerTR as faker } from '@faker-js/faker';
-import { Prisma, Role, Status } from '../src/generated/prisma/client';
+import { EmploymentType, Prisma, Role, Status, WorkType } from '../src/generated/prisma/client';
 
 const UNIVERSITIES = ['Boğaziçi Üniversitesi', 'Marmara Üniversitesi', 'Yıldız Teknik Üniversitesi', 'Orta Doğu Teknik Üniversitesi'];
 const DEGREES = ['Yönetim Bilişim Sistemleri', 'İşletme', 'İktisat', 'Bilgisayar Mühendisliği', 'Endüstri Mühendisliği'];
@@ -102,6 +102,29 @@ export function eventFactory(): Prisma.EventCreateInput {
     startsAt: faker.date.soon({ days: 90 }),
     location: faker.location.city(),
     capacity: faker.helpers.maybe(() => faker.number.int({ min: 20, max: 200 }), { probability: 0.66 }) ?? null,
+  };
+}
+
+// A job posting without its poster: seed.ts connects it to an ADMIN, STAFF or
+// ALUMNI user (STUDENT cannot post, DDD 4.8). Optional fields are sometimes empty,
+// so the data shows both cases. Links and e-mails use example.com only.
+export function jobPostingFactory(): Prisma.JobPostingCreateWithoutPostedByInput {
+  const employmentType = faker.helpers.enumValue(EmploymentType);
+  const position = faker.helpers.arrayElement(POSITIONS);
+  return {
+    title: employmentType === EmploymentType.INTERNSHIP ? `Stajyer ${position}` : position, // under 120 characters
+    company: faker.company.name(),
+    location: faker.helpers.maybe(() => faker.location.city(), { probability: 0.8 }) ?? null, // city level only
+    workType: faker.helpers.enumValue(WorkType),
+    employmentType,
+    description: faker.lorem.paragraphs(2),
+    applyUrl:
+      faker.helpers.maybe(
+        () => faker.helpers.arrayElement([`https://example.com/kariyer/${faker.string.alphanumeric({ length: 6, casing: 'lower' })}`, 'mailto:ik@example.com']),
+        { probability: 0.7 },
+      ) ?? null,
+    // A date column: Prisma keeps only the day. Empty = open until removed.
+    deadline: faker.helpers.maybe(() => faker.date.soon({ days: 60 }), { probability: 0.7 }) ?? null,
   };
 }
 
