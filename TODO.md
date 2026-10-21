@@ -42,7 +42,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - Repeat steps 1–4 for job applications (`job_applications`):
   - [x] Update `DDD.md`: add the job applications table
   - [x] Migration: add `job_applications` to the Prisma schema and create its migration
-  - [ ] `JobApplicationModel` with Prisma CRUD and its relationships
+  - [x] `JobApplicationModel` with Prisma CRUD and its relationships
   - [ ] Define direct (`/api/job-applications/:id`) and nested routes (under a posting and under a user)
 
 ## Homework 1 — Announcements (no database) ✅
