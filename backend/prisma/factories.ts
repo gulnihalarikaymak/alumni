@@ -105,10 +105,9 @@ export function eventFactory(): Prisma.EventCreateInput {
   };
 }
 
-// A job posting without its poster: seed.ts connects it to an ADMIN, STAFF or
-// ALUMNI user (STUDENT cannot post, DDD 4.8). Optional fields are sometimes empty,
+// A job posting; it belongs to no user. Optional fields are sometimes empty,
 // so the data shows both cases. Links and e-mails use example.com only.
-export function jobPostingFactory(): Prisma.JobPostingCreateWithoutPostedByInput {
+export function jobPostingFactory(): Prisma.JobPostingCreateInput {
   const employmentType = faker.helpers.enumValue(EmploymentType);
   const position = faker.helpers.arrayElement(POSITIONS);
   return {

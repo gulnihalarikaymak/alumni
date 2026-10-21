@@ -58,7 +58,6 @@ model User {
   createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz
   alumniProfile      AlumniProfile?
   eventRegistrations EventRegistration[]
-  jobPostings        JobPosting[]
   jobApplications    JobApplication[]
 
   @@map("users")
@@ -138,18 +137,16 @@ model EventRegistration {
 
 model JobPosting {
   id             Int              @id @default(autoincrement())
-  postedById     Int              @map("posted_by_id")
   title          String           @db.VarChar(120)
   company        String
   location       String? // city level; empty = not stated
   workType       WorkType         @map("work_type")
   employmentType EmploymentType   @map("employment_type")
   description    String
-  applyUrl       String?          @map("apply_url") // empty = apply through the poster
+  applyUrl       String?          @map("apply_url") // empty = apply in ATS (job_applications)
   deadline       DateTime?        @db.Date // empty = open until removed
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz
-  postedBy       User             @relation(fields: [postedById], references: [id], onDelete: Cascade)
   applications   JobApplication[]
 
   @@map("job_postings")

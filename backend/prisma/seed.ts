@@ -16,8 +16,8 @@ async function main() {
   const createUsers = (n: number, make: () => Parameters<typeof prisma.user.create>[0]['data']) =>
     Promise.all(Array.from({ length: n }, () => prisma.user.create({ data: make() })));
 
-  const admins = await createUsers(COUNT.admins, () => userFactory(Role.ADMIN));
-  const staff = await createUsers(COUNT.staff, () => userFactory(Role.STAFF));
+  await createUsers(COUNT.admins, () => userFactory(Role.ADMIN));
+  await createUsers(COUNT.staff, () => userFactory(Role.STAFF));
   const students = await createUsers(COUNT.students, () => userFactory(Role.STUDENT));
   const alumni = await createUsers(COUNT.alumni, () => alumniFactory());
 
@@ -35,15 +35,7 @@ async function main() {
     });
   }
 
-  // Each job posting is posted by a random ADMIN, STAFF or ALUMNI user made above;
-  // students are left out because they cannot post (DDD 4.8).
-  const posters = [...admins, ...staff, ...alumni];
-  for (let i = 0; i < COUNT.jobPostings; i++) {
-    const poster = faker.helpers.arrayElement(posters);
-    await prisma.jobPosting.create({
-      data: { ...jobPostingFactory(), postedBy: { connect: { id: poster.id } } },
-    });
-  }
+  await prisma.jobPosting.createMany({ data: Array.from({ length: COUNT.jobPostings }, jobPostingFactory) });
 
   // Totals in the database after this run
   console.table({

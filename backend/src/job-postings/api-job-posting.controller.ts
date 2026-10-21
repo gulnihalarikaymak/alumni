@@ -1,12 +1,23 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { JobPostingsService } from './job-postings.service';
 import { JobPosting } from './job-posting.model';
 
 // Direct routes: a job posting addressed by its own id.
 // Path: /api/job-postings, set in app.routes.ts.
-// Creating goes through the nested route (ApiUserJobPostingController),
-// because a posting always belongs to the user in the URL.
+// The nested route under a posting (/:jobPostingId/applications) is in
+// ApiJobPostingApplicationController.
 @ApiTags('job-postings')
 @Controller()
 export class ApiJobPostingController {
@@ -23,6 +34,13 @@ export class ApiJobPostingController {
   @ApiParam({ name: 'id', type: Number, example: 1 })
   findOne(@Param('id', ParseIntPipe) id: number): Promise<JobPosting> {
     return this.jobPostingsService.findOne(id);
+  }
+
+  @Post()
+  @HttpCode(201)
+  @ApiOperation({ summary: 'Create a job posting' })
+  create(@Body() body: unknown): Promise<JobPosting> {
+    return this.jobPostingsService.create(body);
   }
 
   @Put(':id')

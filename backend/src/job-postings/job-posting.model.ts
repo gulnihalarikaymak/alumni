@@ -1,6 +1,6 @@
 // The JobPosting model and the "job_postings" table (prisma/schema.prisma).
-// The row belongs to the User who posted it (postedById → users.id); when
-// that user is deleted, Prisma cascades and removes the postings too.
+// A posting belongs to no user. Users are linked to postings only through
+// their applications (job_applications), see JobApplicationModel.
 import { Injectable } from '@nestjs/common';
 import { JobPosting as JobPostingRow } from '../generated/prisma/client';
 import { MAX_ID, isRecordNotFound } from '../prisma/prisma.helpers';
@@ -14,7 +14,6 @@ export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
 
 export interface JobPosting {
   id: number;
-  postedById: number;
   title: string;
   company: string;
   location: string | null;
@@ -30,16 +29,15 @@ export interface JobPosting {
 // Fields the caller provides; id, createdAt and updatedAt are set by the database.
 export type NewJobPosting = Pick<
   JobPosting,
-  'postedById' | 'title' | 'company' | 'location' | 'workType' | 'employmentType' | 'description' | 'applyUrl' | 'deadline'
+  'title' | 'company' | 'location' | 'workType' | 'employmentType' | 'description' | 'applyUrl' | 'deadline'
 >;
-export type JobPostingChanges = Partial<Omit<NewJobPosting, 'postedById'>>;
+export type JobPostingChanges = Partial<NewJobPosting>;
 
 /**
  * Owns the job-posting data and the CRUD operations on it.
- * Records live in the PostgreSQL table "job_postings", reached through Prisma,
- * and reference a user through postedById. No validation and no HTTP here:
- * a missing record is reported as undefined or false, and the service decides
- * what that means (404). FK violations surface as thrown errors.
+ * Records live in the PostgreSQL table "job_postings", reached through Prisma.
+ * No validation and no HTTP here: a missing record is reported as undefined
+ * or false, and the service decides what that means (404).
  */
 @Injectable()
 export class JobPostingModel {
@@ -55,15 +53,6 @@ export class JobPostingModel {
   // READ: all records, newest first
   async findAll(): Promise<JobPosting[]> {
     const rows = await this.prisma.jobPosting.findMany({ orderBy: { id: 'desc' } });
-    return rows.map(toJobPosting);
-  }
-
-  // READ: every posting a given user has made, newest first
-  async findByPoster(postedById: number): Promise<JobPosting[]> {
-    const rows = await this.prisma.jobPosting.findMany({
-      where: { postedById },
-      orderBy: { id: 'desc' },
-    });
     return rows.map(toJobPosting);
   }
 
@@ -116,7 +105,6 @@ function toDeadline(deadline: string | null | undefined): Date | null | undefine
 function toJobPosting(row: JobPostingRow): JobPosting {
   return {
     id: row.id,
-    postedById: row.postedById,
     title: row.title,
     company: row.company,
     location: row.location,

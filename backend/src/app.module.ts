@@ -9,7 +9,6 @@ import { ApiJobApplicationModule } from './job-applications/api-job-application.
 import { ApiJobPostingApplicationModule } from './job-applications/api-job-posting-application.module';
 import { ApiUserJobApplicationModule } from './job-applications/api-user-job-application.module';
 import { ApiJobPostingModule } from './job-postings/api-job-posting.module';
-import { ApiUserJobPostingModule } from './job-postings/api-user-job-posting.module';
 import { ApiUserModule } from './users/api-user.module';
 import { UserWebModule } from './users/user-web.module';
 
@@ -23,7 +22,6 @@ import { UserWebModule } from './users/user-web.module';
     AnnouncementWebModule,
     ApiAnnouncementModule,
     ApiJobPostingModule,
-    ApiUserJobPostingModule,
     ApiJobApplicationModule,
     ApiJobPostingApplicationModule,
     ApiUserJobApplicationModule,

@@ -123,14 +123,10 @@ All URL prefixes live in one file, `backend/src/app.routes.ts`.
 
 Errors: invalid input → `400`, e-mail already used → `409`, unknown id → `404`. Pages show the form again with the messages; the API returns JSON.
 
-Job postings (JSON only) use a **direct** route for one posting and a **nested** route for a user's postings:
+Job postings (JSON only) belong to no user and have **direct** routes only, the same CRUD as users:
+`GET`/`POST /api/job-postings`, `GET`/`PUT`/`PATCH`/`DELETE /api/job-postings/:id`.
 
-| Direct (`/api/job-postings`) | Nested (`/api/users/:userId/job-postings`) |
-|---|---|
-| `GET /api/job-postings`, `GET /api/job-postings/:id` → `200` | `GET` → `200`, the user's postings (unknown user → `404`) |
-| `PUT`, `PATCH /api/job-postings/:id` → `200`; `DELETE` → `204` | `POST` → `201`, posted by that user (`STUDENT` → `400`) |
-
-Job applications have two parents, so they are nested under both:
+Users meet postings through job applications, which have two parents and are nested under both:
 
 | Direct (`/api/job-applications`) | Nested |
 |---|---|

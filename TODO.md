@@ -45,6 +45,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
   - [x] `JobApplicationModel` with Prisma CRUD and its relationships
   - [x] Define direct (`/api/job-applications/:id`) and nested routes (under a posting and under a user)
 - [x] Seed the job postings table: `jobPostingFactory` and job postings in `npx prisma db seed`
+- [x] Remove the `users` → `job_postings` relation; users reach postings only through `job_applications`
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

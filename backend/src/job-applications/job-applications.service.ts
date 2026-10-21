@@ -62,9 +62,6 @@ export class JobApplicationsService {
     if (!APPLICANT_ROLES.includes(applicant.role)) {
       throw new BadRequestException(`A ${applicant.role} user cannot apply to job postings`);
     }
-    if (posting.postedById === applicant.id) {
-      throw new BadRequestException('A user cannot apply to their own job posting');
-    }
     // Both are yyyy-mm-dd, so comparing the strings compares the days
     const today = new Date().toISOString().slice(0, 10);
     if (posting.deadline && posting.deadline < today) {

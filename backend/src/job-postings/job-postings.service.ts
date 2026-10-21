@@ -1,6 +1,4 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Role } from '../users/user.model';
-import { UsersService } from '../users/users.service';
 import {
   EMPLOYMENT_TYPES,
   EmploymentType,
@@ -13,7 +11,6 @@ import {
 
 const TITLE_MAX = 120;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const POSTER_ROLES: Role[] = ['ADMIN', 'STAFF', 'ALUMNI']; // DDD 4.8: STUDENT can only read
 const FIELDS = [
   'title',
   'company',
@@ -28,15 +25,11 @@ const FIELDS = [
 type Mode = 'create' | 'replace' | 'update';
 
 // Business rules for job postings. Storage is the JobPostingModel's job.
-// Two controllers call it: the direct routes (/api/job-postings/...) and the
-// nested routes under a user (/api/users/:userId/job-postings). The poster is
-// checked through UsersService, so "user not found" is written once.
+// A posting belongs to no user; users meet postings only through applications.
+// JobApplicationsService also calls findOne, so "posting not found" is written once.
 @Injectable()
 export class JobPostingsService {
-  constructor(
-    private readonly jobPostingModel: JobPostingModel,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly jobPostingModel: JobPostingModel) {}
 
   findAll(): Promise<JobPosting[]> {
     return this.jobPostingModel.findAll();
@@ -48,21 +41,10 @@ export class JobPostingsService {
     return posting;
   }
 
-  // Nested GET: the user must exist (404), then their postings (maybe none)
-  async findByPoster(userId: number): Promise<JobPosting[]> {
-    await this.usersService.findOne(userId);
-    return this.jobPostingModel.findByPoster(userId);
-  }
-
-  // Nested POST: the poster comes from the URL, never from the body
-  async createForUser(userId: number, body: unknown): Promise<JobPosting> {
-    const user = await this.usersService.findOne(userId);
-    if (!POSTER_ROLES.includes(user.role)) {
-      throw new BadRequestException(`A ${user.role} user cannot post job postings`);
-    }
+  // POST: title, company, workType, employmentType and description required
+  create(body: unknown): Promise<JobPosting> {
     const f = this.validate(body, 'create');
     return this.jobPostingModel.create({
-      postedById: userId,
       title: f.title!,
       company: f.company!,
       location: f.location!,

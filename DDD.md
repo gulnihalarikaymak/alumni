@@ -46,7 +46,6 @@ erDiagram
     alumni_profiles ||--o{ education_entries : has
     users ||--o{ event_registrations : makes
     events ||--o{ event_registrations : receives
-    users ||--o{ job_postings : posts
     users ||--o{ job_applications : submits
     job_postings ||--o{ job_applications : receives
     announcements
@@ -139,19 +138,19 @@ The list is shown newest first.
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
 | `id` | integer | PK | |
-| `posted_by_id` | integer | FK → `users.id`, NN | who posted it; delete the user → delete their postings |
 | `title` | varchar(120) | NN | trimmed, 1–120 characters |
 | `company` | varchar | NN | |
 | `location` | varchar | | city level; empty = not stated |
 | `work_type` | enum `WorkType` | NN | `ONSITE`, `HYBRID`, `REMOTE` |
 | `employment_type` | enum `EmploymentType` | NN | `FULL_TIME`, `PART_TIME`, `INTERNSHIP`, `CONTRACT` |
 | `description` | text | NN | |
-| `apply_url` | varchar | | link or `mailto:`; empty = apply through the poster |
+| `apply_url` | varchar | | link or `mailto:`; empty = apply in ATS (`job_applications`) |
 | `deadline` | date | | empty = open until removed |
 | `created_at` | timestamptz | NN, default now | |
 | `updated_at` | timestamptz | NN | set on every edit |
 
-The list is shown newest first. Only `ADMIN`, `STAFF` and `ALUMNI` may post; `STUDENT` can only read.
+The list is shown newest first. A posting belongs to no user: users are linked to postings
+only through their applications (4.9).
 
 ### 4.9 `job_applications` *(in code)*
 
@@ -166,8 +165,8 @@ The list is shown newest first. Only `ADMIN`, `STAFF` and `ALUMNI` may post; `ST
 | `updated_at` | timestamptz | NN | set on every edit |
 | | | UQ (`job_posting_id`, `applicant_id`) | a user applies once per posting; duplicate → `409` |
 
-The list is shown newest first. Only `ALUMNI` and `STUDENT` may apply, never to their own posting,
-and not after the posting's `deadline`.
+The list is shown newest first. Only `ALUMNI` and `STUDENT` may apply, and not after the
+posting's `deadline`.
 
 ## 5. Enums
 
