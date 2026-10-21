@@ -29,6 +29,19 @@ enum Status {
   SUSPENDED
 }
 
+enum WorkType {
+  ONSITE
+  HYBRID
+  REMOTE
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  CONTRACT
+}
+
 // In code since week 3 (in memory until week 5)
 model User {
   id                 Int                 @id @default(autoincrement())
@@ -38,6 +51,7 @@ model User {
   createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz
   alumniProfile      AlumniProfile?
   eventRegistrations EventRegistration[]
+  jobPostings        JobPosting[]
 
   @@map("users")
 }
@@ -112,4 +126,22 @@ model EventRegistration {
 
   @@unique([eventId, userId]) // a user registers once per event
   @@map("event_registrations")
+}
+
+model JobPosting {
+  id             Int            @id @default(autoincrement())
+  postedById     Int            @map("posted_by_id")
+  title          String         @db.VarChar(120)
+  company        String
+  location       String? // city level; empty = not stated
+  workType       WorkType       @map("work_type")
+  employmentType EmploymentType @map("employment_type")
+  description    String
+  applyUrl       String?        @map("apply_url") // empty = apply through the poster
+  deadline       DateTime?      @db.Date // empty = open until removed
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  postedBy       User           @relation(fields: [postedById], references: [id], onDelete: Cascade)
+
+  @@map("job_postings")
 }
