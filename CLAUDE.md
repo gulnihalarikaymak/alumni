@@ -5,8 +5,10 @@ The student owns the intent, the architecture and every bug. You write code she 
 
 ## Stack
 
-- `backend/`: NestJS 10, TypeScript, Express, Handlebars (`hbs`) views, Swagger. Data is **in memory** until week 5.
-- `db`: PostgreSQL 18 in Docker (not used by the code yet). Prisma arrives in week 5.
+- `backend/`: NestJS 10, TypeScript, Express, Handlebars (`hbs`) views, Swagger.
+- `db`: PostgreSQL 18 in Docker, reached through Prisma 7 since week 5. Models use the shared `PrismaService`.
+  Schema in `backend/prisma/schema.prisma`; it and `DDD.md` change in the same commit.
+  After a schema change: `npx prisma migrate dev --name <change>`; never edit a committed migration.
 - `frontend/`: empty until week 10. Do not add a front end before then.
 
 ## Commands
@@ -37,7 +39,7 @@ There are no automated tests or linter yet. Verify by building and by calling th
 
 ## How to work
 
-- **Stay inside the week's topic.** Do not pull in later-week tech (Prisma, auth, class-validator, React …)
+- **Stay inside the week's topic.** Do not pull in later-week tech (auth, class-validator, React …)
   unless the task asks for it. If a task seems to need it, say so and ask.
 - **Small diffs.** Change only what the task needs. No drive-by refactors, renames or formatting of untouched files.
 - **No new dependency** without saying why and asking first.
@@ -65,5 +67,6 @@ Homework is tracked the same way under its own heading, `## Homework N — <topi
   `feat(users): add PATCH /api/users/:id`, `fix(users): return 409 on duplicate e-mail`, `docs(readme): ...`.
 - Only commit after `npm run build` passes and the changed routes were exercised.
 - If behaviour described in README.md changes (routes, run steps, status), update README in the same commit.
-  Keep README short: no new long sections, no diagrams unless asked.
+  Keep the README's Mermaid diagrams: when a change makes one wrong (routes, rules, tables, roadmap),
+  update that diagram in the same commit. Add a new diagram only when asked.
 - Do not push unless asked.
