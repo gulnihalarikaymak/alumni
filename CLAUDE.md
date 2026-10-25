@@ -54,7 +54,8 @@ Tasks are given live in class, e.g. "5. haftadayız, task 1: ...".
 2. Do the task, build, verify (see Commands).
 3. Tick it (`- [x]`) **in the same commit** as the code. Never tick a task whose code is not in that commit.
 4. When every task of a week is ticked: add ✅ to the week heading in `TODO.md` and set the week to ✅
-   in the README roadmap, in the same commit.
+   in the README roadmap, in the same commit as the week's last task. Never a separate commit just for
+   the tick. If it is unclear whether more tasks will come that week, ask before committing.
 
 Homework is tracked the same way under its own heading, `## Homework N — <topic>`, separate from the weeks.
 
