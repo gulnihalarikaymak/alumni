@@ -1,7 +1,7 @@
 # TODO
 
 Tasks given in class, week by week. A task is ticked (`[x]`) in the same commit that finishes it.
-When every task of a week is ticked, the week is marked ✅ in the [README roadmap](README.md#5-roadmap).
+When every task of a week is ticked, the week is marked ✅ in the [README roadmap](README.md#6-roadmap).
 
 ## Week 01 — Project inception ✅
 - [x] Public repository named `alumni`
