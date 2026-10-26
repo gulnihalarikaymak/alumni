@@ -3,7 +3,7 @@
 // All data is synthetic: fakerTR gives Turkish names, companies and cities, and
 // every e-mail uses example.com, a domain reserved for examples (no real inbox).
 import { fakerTR as faker } from '@faker-js/faker';
-import { EmploymentType, Prisma, Role, Status, WorkType } from '../src/generated/prisma/client';
+import { EmploymentType, Prisma, Role, Status, WorkType } from '../generated/prisma/client';
 
 const UNIVERSITIES = ['Boğaziçi Üniversitesi', 'Marmara Üniversitesi', 'Yıldız Teknik Üniversitesi', 'Orta Doğu Teknik Üniversitesi'];
 const DEGREES = ['Yönetim Bilişim Sistemleri', 'İşletme', 'İktisat', 'Bilgisayar Mühendisliği', 'Endüstri Mühendisliği'];

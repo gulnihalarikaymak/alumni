@@ -3,6 +3,7 @@ import { RouterModule } from '@nestjs/core';
 import { AnnouncementWebModule } from './announcements/announcement-web.module';
 import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { AppController } from './app.controller';
+import { DatabaseModule } from './database/database.module';
 import { routes } from './app.routes';
 import { HealthModule } from './health/health.module';
 import { ApiJobApplicationModule } from './job-applications/api-job-application.module';
@@ -19,6 +20,7 @@ import { UserWebModule } from './users/user-web.module';
   imports: [
     // URL paths for the modules below are defined in app.routes.ts
     RouterModule.register(routes),
+    DatabaseModule,
     HealthModule,
     UserWebModule,
     ApiUserModule,
