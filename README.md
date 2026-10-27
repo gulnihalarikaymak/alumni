@@ -165,9 +165,9 @@ Only `db` and `backend` run so far; the React front end joins in week 10 on port
 | Stop and **delete the database** (volume `alumni-db-data`) | `docker compose down -v` |
 | Create a migration after editing `schema.prisma` | `cd backend` then `npx prisma migrate dev --name <change>` (with `db` running) |
 | See which migrations are applied | `docker compose exec backend npx prisma migrate status` |
-| Add synthetic demo data (adds, never deletes) | `cd backend` then `npx prisma db seed` (with `db` running) |
+| Add **more** synthetic demo data | `cd backend` then `npx prisma db seed` (dev host with Node.js and `db` running; adds, never deletes) |
 
-Migrations in `backend/prisma/migrations/` are applied automatically when the backend container starts.
+Migrations in `backend/prisma/migrations/` are applied automatically when the backend container starts. An **empty** database is then filled with synthetic demo data automatically on first start, so `docker compose up` on a fresh volume already has something to show. It is idempotent (once there is at least one user it does nothing), and `AUTO_SEED=false` turns it off.
 
 Settings (database name, user, password, ports) have defaults in `docker-compose.yml`. To change one, copy `.env.example` to `.env`. If a port is taken, set `DB_PORT` or `BACKEND_PORT` there.
 
@@ -357,7 +357,7 @@ alumni/
 ├── DDD.md                      data design: entities, tables, constraints
 ├── TODO.md                     tasks given in class, week by week
 ├── backend/
-│   ├── prisma/                 schema.prisma, migrations/, factories.ts and seed.ts (demo data)
+│   ├── prisma/                 schema.prisma, migrations/, seed.ts (manual demo-data command)
 │   ├── prisma.config.ts        Prisma settings: schema path and database URL
 │   ├── views/                  Handlebars: layout, partials/, one folder per feature
 │   └── src/
@@ -365,6 +365,7 @@ alumni/
 │       ├── app.routes.ts       route map
 │       ├── common/             shared helpers (views setup, method override)
 │       ├── prisma/             PrismaService: the one database connection the models share
+│       ├── database/           startup seed: demo data on first run (empty DB), factories
 │       ├── users/              ┐
 │       ├── announcements/      │ one folder per feature:
 │       ├── job-postings/       │ model, service, controllers, modules
