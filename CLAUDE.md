@@ -15,7 +15,8 @@ The student owns the intent, the architecture and every bug. You write code she 
 
 ```bash
 docker compose up --build                 # whole system; must always work on main
-docker compose logs -f backend
+docker compose logs -f backend            # one line per request: time method route status duration
+# failed requests (400 and above) with their reasons: backend/logs/error.logs
 cd backend && npm run build               # type check + compile; run after every change
 curl http://localhost:3000/api/health     # smoke test
 ```
@@ -36,6 +37,12 @@ There are no automated tests or linter yet. Verify by building and by calling th
 - **Views** (`backend/views/**/*.hbs`) only format. Use `{{ }}` (escaped); never `{{{ }}}` except `body` in the layout.
 - Forms send `PUT/PATCH/DELETE` via `?_method=`; never let a `GET` change data.
 - Status codes: `201` create, `204` delete, `400` invalid, `404` missing, `409` conflict.
+- **Errors are handled in `src/common/`, not per controller.** A service throws an HTTP exception with a clear reason;
+  the 404 filter and the 5xx filter answer (JSON for the API, a page for browsers). Never put a raw error message of a
+  `5xx` in a response, and never add a per-feature "not found" template: a web page that cannot find its record calls
+  `redirectToNotFound(res)` (303 to the generic `/404` page).
+- **The request logger and `logs/error.logs`** are in `src/common/` too. Do not add other `console.log` request logging;
+  `logs/` is git-ignored and may hold e-mail addresses, so it is never committed.
 
 ## How to work
 

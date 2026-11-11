@@ -48,7 +48,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Seed the job postings table: `jobPostingFactory` and job postings in `npx prisma db seed`
 - [x] Remove the `users` → `job_postings` relation; users reach postings only through `job_applications`
 
-## Week 07 — Relational data
+## Week 07 — Errors and logging ✅
 - [x] Try invalid requests on Postman: error-case requests for announcements, job postings and job applications
 - [x] Update `DDD.md` with the JobPosting rules: title required (max 120 characters), company required, city and description optional
 - [x] Logger middleware: write one log line per request on the terminal, e.g. `10:20:30 POST /user 201 18 ms` (time, method, route, status, duration)
@@ -56,6 +56,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] 5xx Guardian: catch every server error, log the details on the terminal and return a safe message (JSON for the API, a "Something went wrong" page for browsers)
 - [x] Logs -> `logs/error.logs`: write every error response (4xx and 5xx) to this file, with the reason and, for a 5xx, the stack
 - [x] Define a generic 404 page (`/404`) and redirect invalid web requests to it (unknown URL, missing record, bad id)
+- [x] Update `README.md` and the other `.md` files with today's work
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

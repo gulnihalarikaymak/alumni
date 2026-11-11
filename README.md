@@ -12,7 +12,7 @@ who they are, where they work, and how they can help the students who come after
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Docker](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-![Progress](https://img.shields.io/badge/progress-week_6_of_14-blue?style=flat-square)
+![Progress](https://img.shields.io/badge/progress-week_7_of_14-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 ![AI](https://img.shields.io/badge/AI_assistant-Claude_Code-D97757?style=flat-square)
 
@@ -25,7 +25,7 @@ who they are, where they work, and how they can help the students who come after
 > [!NOTE]
 > **Web Programming (YBSB3001)** · Istanbul University, Faculty of Economics, MIS · Fall 2026<br/>
 > **Author:** [@gulnihalarikaymak](https://github.com/gulnihalarikaymak)<br/>
-> **Status:** Users, announcements, job postings and job applications: CRUD as web pages and a JSON API, in MVC, stored in PostgreSQL through Prisma.
+> **Status:** Users, announcements, job postings and job applications: CRUD as web pages and a JSON API, in MVC, stored in PostgreSQL through Prisma, with a request logger, 404 and 5xx error handling and an error log file.
 
 ## Contents
 
@@ -105,7 +105,7 @@ flowchart LR
     CORE --> LATER --> EXTRA
 ```
 
-Job postings and applications were added to the core in class (week 6).
+Job postings and applications were added to the core in class (week 6). Error handling and logging came in week 7.
 
 ---
 
@@ -153,7 +153,7 @@ flowchart LR
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
 | `http://localhost:3000/api/health` | 💚 Health check (JSON for curl, a status page in a browser) |
 
-Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. A Postman collection with error cases is in `postman/`.
+Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. A Postman collection is in `postman/`: normal requests for users, and error cases (`400`, `404`, `409`) for users, announcements, job postings and job applications. Each error-case folder creates its own records in a Setup step and deletes them in Cleanup; run it top to bottom.
 
 <details>
 <summary><b>🛠️ Everyday commands</b> (click to expand)</summary>
@@ -161,7 +161,8 @@ Only `db` and `backend` run so far; the React front end joins in week 10 on port
 | Task | Command |
 |---|---|
 | Rebuild after code changes | `docker compose up --build` |
-| Follow the API logs | `docker compose logs -f backend` |
+| Follow the API logs (one line per request) | `docker compose logs -f backend` |
+| Read the error log (failed requests with their reasons) | open `backend/logs/error.logs` (created on the first error) |
 | Stop, keep the data | `docker compose down` |
 | Stop and **delete the database** (volume `alumni-db-data`) | `docker compose down -v` |
 | Create a migration after editing `schema.prisma` | `cd backend` then `npx prisma migrate dev --name <change>` (with `db` running) |
@@ -298,11 +299,7 @@ All URL prefixes live in one file, `backend/src/app.routes.ts`. Users, announcem
 
 **Errors:** invalid input or non-numeric id → `400` · e-mail already used → `409` · unknown id → `404`. Pages show the form again with the messages; the API returns JSON.
 
-**Every `404` carries a reason**, whether the id or the URL is unknown. One filter, `src/common/not-found.filter.ts` (the "404 Guardian"), answers them: JSON `{statusCode, error, message, path}` for the API and for curl. A browser outside `/api` is **redirected** (`303`) to the one generic 404 page, `/404?from=<path>`, which answers with status `404` and says what was not found. This covers an unknown URL, a missing record (`/users/999999`) and a bad id (`/users/abc`); there are no per-page "not found" templates any more. For example `GET /api/users/999999` → `"message": "User 999999 not found"`, and `GET /api/nope` → `"message": "No route matches GET /api/nope"`.
-
-**Every `5xx` is caught too** (`src/common/server-error.filter.ts`, the "5xx Guardian"). A bug or a database failure is written in full, with its stack, on the terminal (`docker compose logs -f backend`), while the client gets only `{statusCode, error, message, path}` with a fixed message, so no SQL, table name or file path leaks. A browser outside `/api` gets a "Something went wrong" page.
-
-**Every failed request is also written to `logs/error.logs`** (status `400` and above), one line each: `2026-11-11T08:10:57.127Z GET /api/users/999999 404 8 ms  User 999999 not found`. A `5xx` adds its stack under the line. Successful requests are only printed on the terminal. In Docker the file appears on your computer as `backend/logs/error.logs` (a bind mount in `docker-compose.yml`); the folder is git-ignored.
+Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
 
 ### Job postings and applications
 
@@ -343,6 +340,32 @@ flowchart LR
 ```
 
 Pages: `/job-postings` (list, create, show, edit, delete), `/job-postings/:jobPostingId/applications` (one posting's applications and the apply form), `/job-applications` (all), `/job-applications/:id` (change the status or withdraw).
+
+### Errors and logging
+
+Four small pieces in `backend/src/common/` (plus the `/404` page) make every request leave a trace and every error leave in one shape (week 7):
+
+| Piece | File | What it does |
+|---|---|---|
+| 📝 **Request logger** (middleware) | `logger.middleware.ts` | One terminal line per request, written when the response ends: `10:20:30 POST /api/users 201 18 ms` (time, method, route, status, duration). Read it with `docker compose logs -f backend` |
+| 🔎 **404 Guardian** (filter) | `not-found.filter.ts` | Every `404` has a reason. The API and curl get JSON `{statusCode, error, message, path}`; a browser is redirected, see below |
+| 🛡️ **5xx Guardian** (filter) | `server-error.filter.ts` | A bug or a database failure is written in full on the terminal, while the client gets only a fixed message, so no SQL, table name or file path leaks. A browser gets a "Something went wrong" page |
+| 🗂️ **Error log file** | `error-log.ts` | Every failed request (status `400` and above) is added to `logs/error.logs` |
+
+```
+GET /api/users/999999  → 404  {"message": "User 999999 not found", "path": "/api/users/999999", ...}
+GET /api/nope          → 404  {"message": "No route matches GET /api/nope", ...}
+GET /api/users (db down) → 500  {"message": "Something went wrong on our side. Please try again later.", ...}
+```
+
+**Why filters and not middleware?** A middleware runs *before* the router, so it cannot see a `404` or an error that comes later. Nest catches those with an exception filter. The two Guardians are registered in `app.module.ts`; the general one (all errors) first, the specific one (404) after it, because Nest asks the filter registered last first.
+
+**The generic 404 page.** A browser (header `Accept: text/html`) outside `/api` that makes an invalid request is **redirected** (`303`) to `/404?from=<path>`: an unknown URL, a missing record (`/users/999999`) or a bad id (`/users/abc`), also from a form delete. The page answers with status `404` and says what was not found. `from` is typed in the URL, so only a plain path of this site is shown, escaped; any other text gets a general sentence. The API never redirects: `/api/...` stays JSON.
+
+**The error log.** One line per failed request, with the reason: `2026-11-11T08:10:57.127Z GET /api/users/999999 404 8 ms  User 999999 not found`. A `5xx` adds its stack under the line; a redirect to `/404` shows as a `303` line. Successful requests are only printed on the terminal. In Docker the file appears on your computer as `backend/logs/error.logs` (a bind mount in `docker-compose.yml`); the folder is git-ignored.
+
+> [!NOTE]
+> The `/health` alias is added straight to Express in `main.ts`, so the logger does not see it. Log times are UTC, because the container has no `TZ` set.
 
 ### Method override for HTML forms
 
@@ -395,7 +418,7 @@ alumni/
 
 ## 5. Data model
 
-All nine tables exist in the database (created by the migrations). Four are used by the code; the rest wait for week 7. Columns, enums and delete rules are in **[DDD.md](DDD.md)**.
+All nine tables exist in the database (created by the migrations). Four are used by the code; the rest are not used yet (week still to be set, see the [roadmap](#6-roadmap)). Columns, enums and delete rules are in **[DDD.md](DDD.md)**.
 
 ```mermaid
 erDiagram
@@ -476,7 +499,7 @@ erDiagram
     }
 ```
 
-| | In code | Waiting for week 7 |
+| | In code | Not used yet |
 |---|---|---|
 | Tables | `users`, `announcements`, `job_postings`, `job_applications` | `alumni_profiles`, `career_entries`, `education_entries`, `events`, `event_registrations` |
 
@@ -489,7 +512,7 @@ erDiagram
 
 ```mermaid
 flowchart LR
-    W1["01<br/>Inception"]:::done --> W2["02<br/>Routing"]:::done --> W3["03<br/>CRUD"]:::done --> W4["04<br/>MVC"]:::done --> W5["05<br/>ORM"]:::done --> W6["06<br/>DB integration"]:::done --> W7["07<br/>Relations"]:::todo
+    W1["01<br/>Inception"]:::done --> W2["02<br/>Routing"]:::done --> W3["03<br/>CRUD"]:::done --> W4["04<br/>MVC"]:::done --> W5["05<br/>ORM"]:::done --> W6["06<br/>DB integration"]:::done --> W7["07<br/>Errors & logs"]:::done
     W7 --> W8["08<br/>⭐ MIDTERM"]:::exam --> W9["09<br/>Middleware"]:::todo --> W10["10<br/>Front end"]:::todo --> W11["11<br/>Auth"]:::todo --> W12["12<br/>Services"]:::todo --> W13["13<br/>CI/CD"]:::todo --> W14["14<br/>⭐ FINAL"]:::exam
 
     classDef done fill:#2da44e,color:#fff,stroke:#1a7f37
@@ -505,16 +528,16 @@ flowchart LR
 | 04 | MVC | Model, service and controller split; web pages and JSON API share one service | ✅ |
 | 05 | Database and ORM | `DDD.md`, Prisma schema and first migration, persistent volume, seed data; users and announcements on PostgreSQL | ✅ |
 | 06 | Database integration | Job postings and job applications: migrations, models, direct and nested routes, seed | ✅ |
-| 07 | Relational data | Career and education history, event registrations, directory search and pagination | 🗓️ |
+| 07 | Errors and logging | Postman error cases for every feature, optional job-posting fields, request logger, 404 and 5xx Guardians, generic `/404` page, `logs/error.logs` | ✅ |
 | 08 | **Midterm** | Core features running on PostgreSQL, documented and tested | 🗓️ |
-| 09 | Middleware | Logging, request ids, security headers, rate limiting, one error format | 🗓️ |
+| 09 | Middleware | Request ids, security headers, rate limiting, one error format for the `400`s too (the logger and the 404 and 5xx Guardians are already done) | 🗓️ |
 | 10 | Front end | React app served by nginx; full stack from one command | 🗓️ |
 | 11 | Auth | Sign-up with approval, sessions, role and ownership checks | 🗓️ |
 | 12 | Service layers | Mentorship, connections, notifications, reports | 🗓️ |
 | 13 | Deployment and CI/CD | GitHub Actions, production compose file, backups | 🗓️ |
 | 14 | **Final** | A stranger can run and understand the system from this README | 🗓️ |
 
-✅ done · 🚧 in progress · 🗓️ planned. Homework 1 (announcements) and homework 2 (job postings and applications UI) are done too. The tasks given in class each week are tracked in [`TODO.md`](TODO.md).
+✅ done · 🚧 in progress · 🗓️ planned. Homework 1 (announcements) and homework 2 (job postings and applications UI) are done too. Career and education history, event registrations and the directory search (the original week 7 plan) were not part of the week 7 tasks given in class; they stay in the scope, in a week still to be set. The tasks given in class each week are tracked in [`TODO.md`](TODO.md).
 
 ---
 
@@ -556,6 +579,7 @@ flowchart LR
 | 👁️ **Per-field visibility** | Alumni choose who sees each field: only themselves, their connections, or all signed-in users |
 | 🔑 **Passwords** | Hashed with argon2id; sessions in an `HttpOnly` cookie, revocable on the server |
 | 📉 **Minimum data (KVKK)** | No national ID, birth date, grades or home address. Location is city level only. Reports hide groups smaller than five |
+| 🧯 **Errors and logs** | A `5xx` never shows SQL, table names or file paths to the client; the details go only to the terminal and `logs/error.logs`. That file can hold e-mail addresses (from messages like "a user with this e-mail already exists"), so it is git-ignored and, until week 11, holds synthetic data only |
 | 🧪 **No real data until week 11** | The API is open until authentication lands, so demo data is synthetic and `.env` is never committed. The database port is bound to `127.0.0.1` only |
 
 ---
