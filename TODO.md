@@ -52,6 +52,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Try invalid requests on Postman: error-case requests for announcements, job postings and job applications
 - [x] Update `DDD.md` with the JobPosting rules: title required (max 120 characters), company required, city and description optional
 - [x] Logger middleware: write one log line per request on the terminal, e.g. `10:20:30 POST /user 201 18 ms` (time, method, route, status, duration)
+- [x] 404 Guardian: return every 404 error with a reason (JSON for the API, a "Page not found" page for browsers)
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

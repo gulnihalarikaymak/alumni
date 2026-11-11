@@ -297,6 +297,8 @@ All URL prefixes live in one file, `backend/src/app.routes.ts`. Users, announcem
 
 **Errors:** invalid input or non-numeric id → `400` · e-mail already used → `409` · unknown id → `404`. Pages show the form again with the messages; the API returns JSON.
 
+**Every `404` carries a reason**, whether the id or the URL is unknown. One filter, `src/common/not-found.filter.ts` (the "404 Guardian"), answers them: JSON `{statusCode, error, message, path}` for the API and for curl, a "Page not found" page for a browser outside `/api`. For example `GET /api/users/999999` → `"message": "User 999999 not found"`, and `GET /api/nope` → `"message": "No route matches GET /api/nope"`.
+
 ### Job postings and applications
 
 Job postings belong to no user and have **direct** routes only. Users reach postings through job applications, which have two parents and are nested under both:
@@ -363,7 +365,7 @@ alumni/
 │   └── src/
 │       ├── main.ts             bootstrap: views, method override, Swagger, port
 │       ├── app.routes.ts       route map
-│       ├── common/             shared helpers (views setup, method override, request logger middleware)
+│       ├── common/             shared helpers (views setup, method override, request logger, 404 filter)
 │       ├── prisma/             PrismaService: the one database connection the models share
 │       ├── database/           startup seed: demo data on first run (empty DB), factories
 │       ├── users/              ┐
