@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpException, NotFoundException, Param, Post, Res } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import type { Response } from 'express';
+import { redirectToNotFound } from '../common/redirect-to-404';
 import { JobApplicationsService } from './job-applications.service';
 
 // What the apply form sends: every field arrives as text.
@@ -34,7 +35,7 @@ export class JobPostingApplicationController {
     @Body() body: ApplyFormValues,
     @Res() res: Response,
   ): Promise<void> {
-    if (!/^\d+$/.test(jobPostingId)) return this.notFound(res, jobPostingId);
+    if (!/^\d+$/.test(jobPostingId)) return this.notFound(res);
     try {
       // A <select> sends the id as text; the service expects a number (as in the JSON API).
       await this.jobApplicationsService.apply(Number(jobPostingId), {
@@ -57,7 +58,7 @@ export class JobPostingApplicationController {
     errors: string[] = [],
     status = 200,
   ): Promise<void> {
-    if (!/^\d+$/.test(jobPostingId)) return this.notFound(res, jobPostingId);
+    if (!/^\d+$/.test(jobPostingId)) return this.notFound(res);
     try {
       const page = await this.jobApplicationsService.findForJobPostingPage(Number(jobPostingId));
       res.status(status).render('job-applications/posting', {
@@ -67,13 +68,13 @@ export class JobPostingApplicationController {
         errors,
       });
     } catch (err) {
-      if (err instanceof NotFoundException) return this.notFound(res, jobPostingId);
+      if (err instanceof NotFoundException) return this.notFound(res);
       throw err;
     }
   }
 
-  private notFound(res: Response, id: string): void {
-    res.status(404).render('job-postings/not-found', { title: 'Job posting not found', id });
+  private notFound(res: Response): void {
+    redirectToNotFound(res);
   }
 
   // The messages of an error thrown by JobApplicationsService.

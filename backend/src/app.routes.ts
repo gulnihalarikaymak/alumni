@@ -9,6 +9,7 @@ import { JobApplicationWebModule } from './job-applications/job-application-web.
 import { JobPostingApplicationWebModule } from './job-applications/job-posting-application-web.module';
 import { ApiJobPostingModule } from './job-postings/api-job-posting.module';
 import { JobPostingWebModule } from './job-postings/job-posting-web.module';
+import { NotFoundModule } from './not-found/not-found.module';
 import { ApiUserModule } from './users/api-user.module';
 import { UserWebModule } from './users/user-web.module';
 
@@ -21,6 +22,7 @@ import { UserWebModule } from './users/user-web.module';
 //   /job-postings/:jobPostingId/applications
 //                        -> JobPostingApplicationWebModule -> JobPostingApplicationController HTML, nested
 //   /job-applications    -> JobApplicationWebModule -> JobApplicationController  HTML pages
+//   /404                 -> NotFoundModule         -> NotFoundController         HTML, the generic 404 page
 //   /api/users           -> ApiUserModule          -> ApiUserController          JSON
 //   /api/announcements   -> ApiAnnouncementModule  -> ApiAnnouncementController  JSON
 //   /api/job-postings    -> ApiJobPostingModule    -> ApiJobPostingController    JSON, direct
@@ -44,6 +46,7 @@ export const routes: Routes = [
     children: [{ path: ':jobPostingId/applications', module: JobPostingApplicationWebModule }],
   },
   { path: 'job-applications', module: JobApplicationWebModule },
+  { path: '404', module: NotFoundModule },
 
   // API: JSON for programs (Postman, later the React app)
   {

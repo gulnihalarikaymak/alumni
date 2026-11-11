@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import type { Response } from 'express';
+import { redirectToNotFound } from '../common/redirect-to-404';
 import { AnnouncementsService } from './announcements.service';
 import { Announcement } from './announcement.model';
 
@@ -73,7 +74,7 @@ export class AnnouncementController {
   @Get(':id')
   async show(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const announcement = await this.find(id);
-    if (!announcement) return this.notFound(res, id);
+    if (!announcement) return this.notFound(res);
     res.render('announcements/show', { title: announcement.title, announcement });
   }
 
@@ -81,7 +82,7 @@ export class AnnouncementController {
   @Get(':id/edit')
   async edit(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const announcement = await this.find(id);
-    if (!announcement) return this.notFound(res, id);
+    if (!announcement) return this.notFound(res);
     res.render('announcements/edit', this.editView(announcement, announcement));
   }
 
@@ -93,7 +94,7 @@ export class AnnouncementController {
     @Res() res: Response,
   ): Promise<void> {
     const announcement = await this.find(id);
-    if (!announcement) return this.notFound(res, id);
+    if (!announcement) return this.notFound(res);
     try {
       await this.announcementsService.replace(announcement.id, body);
       res.redirect(303, `/announcements/${announcement.id}`);
@@ -107,7 +108,7 @@ export class AnnouncementController {
   @Delete(':id')
   async destroy(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const announcement = await this.find(id);
-    if (!announcement) return this.notFound(res, id);
+    if (!announcement) return this.notFound(res);
     await this.announcementsService.remove(announcement.id);
     res.redirect(303, '/announcements');
   }
@@ -122,8 +123,8 @@ export class AnnouncementController {
     return { title: `Edit announcement #${announcement.id}`, announcement, values, errors };
   }
 
-  private notFound(res: Response, id: string): void {
-    res.status(404).render('announcements/not-found', { title: 'Announcement not found', id });
+  private notFound(res: Response): void {
+    redirectToNotFound(res);
   }
 
   // The announcement with this id, or undefined if the id is not a number or unknown.

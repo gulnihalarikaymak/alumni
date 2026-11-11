@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import type { Response } from 'express';
+import { redirectToNotFound } from '../common/redirect-to-404';
 import { JobApplicationsService } from './job-applications.service';
 import { APPLICATION_STATUSES, JobApplicationDetails } from './job-application.model';
 
@@ -50,7 +51,7 @@ export class JobApplicationController {
   @Get(':id')
   async show(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const application = await this.find(id);
-    if (!application) return this.notFound(res, id);
+    if (!application) return this.notFound(res);
     res.render('job-applications/show', this.showView(application, application));
   }
 
@@ -62,7 +63,7 @@ export class JobApplicationController {
     @Res() res: Response,
   ): Promise<void> {
     const application = await this.find(id);
-    if (!application) return this.notFound(res, id);
+    if (!application) return this.notFound(res);
     try {
       await this.jobApplicationsService.update(application.id, body);
       res.redirect(303, `/job-applications/${application.id}`);
@@ -76,7 +77,7 @@ export class JobApplicationController {
   @Delete(':id')
   async destroy(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const application = await this.find(id);
-    if (!application) return this.notFound(res, id);
+    if (!application) return this.notFound(res);
     await this.jobApplicationsService.remove(application.id);
     res.redirect(303, '/job-applications');
   }
@@ -97,8 +98,8 @@ export class JobApplicationController {
     };
   }
 
-  private notFound(res: Response, id: string): void {
-    res.status(404).render('job-applications/not-found', { title: 'Application not found', id });
+  private notFound(res: Response): void {
+    redirectToNotFound(res);
   }
 
   // The application with this id, or undefined if the id is not a number or unknown.

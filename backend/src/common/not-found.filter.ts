@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, NotFoundException } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { redirectToNotFound } from './redirect-to-404';
 import { wantsHtml } from './wants-html';
 
 // The 404 Guardian: every 404 leaves the app through here, with a reason.
@@ -11,8 +12,8 @@ import { wantsHtml } from './wants-html';
 // A middleware runs before the controllers, so it cannot see a 404 that the
 // router or a service raises later. Catching the exception is the Nest way.
 //
-// Who gets what: a browser (Accept: text/html) outside /api gets the
-// "Page not found" page; everyone else (curl, Postman, the API) gets JSON.
+// Who gets what: a browser (Accept: text/html) outside /api is redirected to the
+// generic 404 page (/404); everyone else (curl, Postman, the API) gets JSON.
 @Catch(NotFoundException)
 export class NotFoundFilter implements ExceptionFilter {
   catch(exception: NotFoundException, host: ArgumentsHost): void {
@@ -22,11 +23,11 @@ export class NotFoundFilter implements ExceptionFilter {
 
     const path = req.originalUrl.split('?')[0];
     const reason = reasonOf(exception.message, req.method, path);
-    res.locals.errorReason = reason; // for logs/error.logs, see LoggerMiddleware
 
     if (wantsHtml(req)) {
-      res.status(404).render('not-found', { title: 'Page not found', reason });
+      redirectToNotFound(res, reason); // also leaves the reason for logs/error.logs
     } else {
+      res.locals.errorReason = reason; // for logs/error.logs, see LoggerMiddleware
       res.status(404).json({ statusCode: 404, error: 'Not Found', message: reason, path });
     }
   }

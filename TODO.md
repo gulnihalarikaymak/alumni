@@ -55,6 +55,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] 404 Guardian: return every 404 error with a reason (JSON for the API, a "Page not found" page for browsers)
 - [x] 5xx Guardian: catch every server error, log the details on the terminal and return a safe message (JSON for the API, a "Something went wrong" page for browsers)
 - [x] Logs -> `logs/error.logs`: write every error response (4xx and 5xx) to this file, with the reason and, for a 5xx, the stack
+- [x] Define a generic 404 page (`/404`) and redirect invalid web requests to it (unknown URL, missing record, bad id)
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

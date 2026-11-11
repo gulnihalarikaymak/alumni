@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import type { Response } from 'express';
+import { redirectToNotFound } from '../common/redirect-to-404';
 import { JobPostingsService } from './job-postings.service';
 import { EMPLOYMENT_TYPES, JobPosting, WORK_TYPES } from './job-posting.model';
 
@@ -80,7 +81,7 @@ export class JobPostingController {
   @Get(':id')
   async show(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const jobPosting = await this.find(id);
-    if (!jobPosting) return this.notFound(res, id);
+    if (!jobPosting) return this.notFound(res);
     res.render('job-postings/show', { title: jobPosting.title, jobPosting });
   }
 
@@ -88,7 +89,7 @@ export class JobPostingController {
   @Get(':id/edit')
   async edit(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const jobPosting = await this.find(id);
-    if (!jobPosting) return this.notFound(res, id);
+    if (!jobPosting) return this.notFound(res);
     res.render('job-postings/edit', this.editView(jobPosting, jobPosting));
   }
 
@@ -100,7 +101,7 @@ export class JobPostingController {
     @Res() res: Response,
   ): Promise<void> {
     const jobPosting = await this.find(id);
-    if (!jobPosting) return this.notFound(res, id);
+    if (!jobPosting) return this.notFound(res);
     try {
       await this.jobPostingsService.replace(jobPosting.id, body);
       res.redirect(303, `/job-postings/${jobPosting.id}`);
@@ -114,7 +115,7 @@ export class JobPostingController {
   @Delete(':id')
   async destroy(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const jobPosting = await this.find(id);
-    if (!jobPosting) return this.notFound(res, id);
+    if (!jobPosting) return this.notFound(res);
     await this.jobPostingsService.remove(jobPosting.id);
     res.redirect(303, '/job-postings');
   }
@@ -146,8 +147,8 @@ export class JobPostingController {
     };
   }
 
-  private notFound(res: Response, id: string): void {
-    res.status(404).render('job-postings/not-found', { title: 'Job posting not found', id });
+  private notFound(res: Response): void {
+    redirectToNotFound(res);
   }
 
   // The posting with this id, or undefined if the id is not a number or unknown.

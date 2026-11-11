@@ -16,6 +16,7 @@ import { JobApplicationWebModule } from './job-applications/job-application-web.
 import { JobPostingApplicationWebModule } from './job-applications/job-posting-application-web.module';
 import { ApiJobPostingModule } from './job-postings/api-job-posting.module';
 import { JobPostingWebModule } from './job-postings/job-posting-web.module';
+import { NotFoundModule } from './not-found/not-found.module';
 import { ApiUserModule } from './users/api-user.module';
 import { UserWebModule } from './users/user-web.module';
 
@@ -32,6 +33,7 @@ import { UserWebModule } from './users/user-web.module';
     JobPostingWebModule,
     JobPostingApplicationWebModule,
     JobApplicationWebModule,
+    NotFoundModule,
     ApiJobPostingModule,
     ApiJobApplicationModule,
     ApiJobPostingApplicationModule,

@@ -148,6 +148,7 @@ flowchart LR
 | `http://localhost:3000/announcements` | 📄 Web pages for announcements |
 | `http://localhost:3000/job-postings` | 📄 Web pages for job postings, and each posting's applications |
 | `http://localhost:3000/job-applications` | 📄 Web pages for all job applications |
+| `http://localhost:3000/404` | 📄 The generic "Page not found" page; invalid web requests are redirected here |
 | `http://localhost:3000/api/...` | 🔌 JSON API for the same data (`users`, `announcements`, `job-postings`, `job-applications`) |
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
 | `http://localhost:3000/api/health` | 💚 Health check (JSON for curl, a status page in a browser) |
@@ -297,7 +298,7 @@ All URL prefixes live in one file, `backend/src/app.routes.ts`. Users, announcem
 
 **Errors:** invalid input or non-numeric id → `400` · e-mail already used → `409` · unknown id → `404`. Pages show the form again with the messages; the API returns JSON.
 
-**Every `404` carries a reason**, whether the id or the URL is unknown. One filter, `src/common/not-found.filter.ts` (the "404 Guardian"), answers them: JSON `{statusCode, error, message, path}` for the API and for curl, a "Page not found" page for a browser outside `/api`. For example `GET /api/users/999999` → `"message": "User 999999 not found"`, and `GET /api/nope` → `"message": "No route matches GET /api/nope"`.
+**Every `404` carries a reason**, whether the id or the URL is unknown. One filter, `src/common/not-found.filter.ts` (the "404 Guardian"), answers them: JSON `{statusCode, error, message, path}` for the API and for curl. A browser outside `/api` is **redirected** (`303`) to the one generic 404 page, `/404?from=<path>`, which answers with status `404` and says what was not found. This covers an unknown URL, a missing record (`/users/999999`) and a bad id (`/users/abc`); there are no per-page "not found" templates any more. For example `GET /api/users/999999` → `"message": "User 999999 not found"`, and `GET /api/nope` → `"message": "No route matches GET /api/nope"`.
 
 **Every `5xx` is caught too** (`src/common/server-error.filter.ts`, the "5xx Guardian"). A bug or a database failure is written in full, with its stack, on the terminal (`docker compose logs -f backend`), while the client gets only `{statusCode, error, message, path}` with a fixed message, so no SQL, table name or file path leaks. A browser outside `/api` gets a "Something went wrong" page.
 
@@ -370,13 +371,14 @@ alumni/
 │   └── src/
 │       ├── main.ts             bootstrap: views, method override, Swagger, port
 │       ├── app.routes.ts       route map
-│       ├── common/             shared helpers (views setup, method override, request logger, error log file, 404 and 5xx filters)
+│       ├── common/             shared helpers (views setup, method override, request logger, error log file, 404 and 5xx filters, redirect to /404)
 │       ├── prisma/             PrismaService: the one database connection the models share
 │       ├── database/           startup seed: demo data on first run (empty DB), factories
 │       ├── users/              ┐
 │       ├── announcements/      │ one folder per feature:
 │       ├── job-postings/       │ model, service, controllers, modules
 │       ├── job-applications/   ┘
+│       ├── not-found/          GET /404: the generic 404 page
 │       └── health/             GET /api/health
 ├── frontend/                   React app (week 10)
 └── postman/                    request collection, including error cases

@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import type { Response } from 'express';
+import { redirectToNotFound } from '../common/redirect-to-404';
 import { UsersService } from './users.service';
 import { ROLES, STATUSES, User } from './user.model';
 
@@ -78,7 +79,7 @@ export class UserController {
   @Get(':id')
   async show(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const user = await this.findUser(id);
-    if (!user) return this.notFound(res, id);
+    if (!user) return this.notFound(res);
     res.render('users/show', this.showView(user));
   }
 
@@ -86,7 +87,7 @@ export class UserController {
   @Get(':id/edit')
   async edit(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const user = await this.findUser(id);
-    if (!user) return this.notFound(res, id);
+    if (!user) return this.notFound(res);
     res.render('users/edit', this.editView(user, user));
   }
 
@@ -94,7 +95,7 @@ export class UserController {
   @Put(':id')
   async update(@Param('id') id: string, @Body() body: UserFormValues, @Res() res: Response): Promise<void> {
     const user = await this.findUser(id);
-    if (!user) return this.notFound(res, id);
+    if (!user) return this.notFound(res);
     try {
       await this.usersService.replace(user.id, body);
       res.redirect(303, `/users/${user.id}`);
@@ -108,7 +109,7 @@ export class UserController {
   @Patch(':id')
   async patch(@Param('id') id: string, @Body() body: UserFormValues, @Res() res: Response): Promise<void> {
     const user = await this.findUser(id);
-    if (!user) return this.notFound(res, id);
+    if (!user) return this.notFound(res);
     try {
       await this.usersService.update(user.id, body);
       res.redirect(303, `/users/${user.id}`);
@@ -122,7 +123,7 @@ export class UserController {
   @Delete(':id')
   async destroy(@Param('id') id: string, @Res() res: Response): Promise<void> {
     const user = await this.findUser(id);
-    if (!user) return this.notFound(res, id);
+    if (!user) return this.notFound(res);
     await this.usersService.remove(user.id);
     res.redirect(303, '/users');
   }
@@ -141,8 +142,8 @@ export class UserController {
     return { title: `Edit user #${user.id}`, user, roles: ROLES, statuses: STATUSES, values, errors };
   }
 
-  private notFound(res: Response, id: string): void {
-    res.status(404).render('users/not-found', { title: 'User not found', id });
+  private notFound(res: Response): void {
+    redirectToNotFound(res);
   }
 
   // The user with this id, or undefined if the id is not a number or unknown.
