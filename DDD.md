@@ -138,16 +138,19 @@ The list is shown newest first.
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
 | `id` | integer | PK | |
-| `title` | varchar(120) | NN | trimmed, 1–120 characters |
-| `company` | varchar | NN | |
-| `location` | varchar | | city level; empty = not stated |
+| `title` | varchar(120) | NN | required; trimmed, 1–120 characters |
+| `company` | varchar | NN | required; trimmed, not empty |
+| `location` | varchar | | the city (optional); city level only; empty = not stated |
 | `work_type` | enum `WorkType` | NN | `ONSITE`, `HYBRID`, `REMOTE` |
 | `employment_type` | enum `EmploymentType` | NN | `FULL_TIME`, `PART_TIME`, `INTERNSHIP`, `CONTRACT` |
-| `description` | text | NN | |
+| `description` | text | | optional; empty = not stated |
 | `apply_url` | varchar | | link or `mailto:`; empty = apply in ATS (`job_applications`) |
 | `deadline` | date | | empty = open until removed |
 | `created_at` | timestamptz | NN, default now | |
 | `updated_at` | timestamptz | NN | set on every edit |
+
+Rules: `title` and `company` are required, and `title` is at most 120 characters. The city
+(`location`) and `description` are optional; a missing or empty value is stored as empty (`null`).
 
 The list is shown newest first. A posting belongs to no user: users are linked to postings
 only through their applications (4.9).

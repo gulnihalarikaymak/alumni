@@ -50,6 +50,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 
 ## Week 07 — Relational data
 - [x] Try invalid requests on Postman: error-case requests for announcements, job postings and job applications
+- [x] Update `DDD.md` with the JobPosting rules: title required (max 120 characters), company required, city and description optional
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

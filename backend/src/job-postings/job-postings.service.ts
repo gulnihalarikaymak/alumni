@@ -42,7 +42,7 @@ export class JobPostingsService {
     return posting;
   }
 
-  // POST: title, company, workType, employmentType and description required
+  // POST: title, company, workType and employmentType required
   create(body: unknown): Promise<JobPosting> {
     const f = this.validate(body, 'create');
     return this.jobPostingModel.create({
@@ -92,7 +92,7 @@ export class JobPostingsService {
     const out: JobPostingChanges = {};
 
     // Required text: trimmed, not empty
-    const checkText = (field: 'title' | 'company' | 'description', max?: number) => {
+    const checkText = (field: 'title' | 'company', max?: number) => {
       if (b[field] === undefined) {
         if (required) errors.push(`${field} is required`);
         return;
@@ -104,10 +104,9 @@ export class JobPostingsService {
     };
     checkText('title', TITLE_MAX);
     checkText('company');
-    checkText('description');
 
     // Optional text: null or "" means "not stated"
-    const checkOptional = (field: 'location' | 'applyUrl') => {
+    const checkOptional = (field: 'location' | 'description' | 'applyUrl') => {
       if (b[field] === undefined) {
         if (required) out[field] = null;
         return;
@@ -117,6 +116,7 @@ export class JobPostingsService {
       else out[field] = (b[field] as string).trim() || null;
     };
     checkOptional('location');
+    checkOptional('description');
     checkOptional('applyUrl');
     // DDD 4.8: a link or mailto:. The web page puts it in <a href>, so a
     // "javascript:" value must never be stored.

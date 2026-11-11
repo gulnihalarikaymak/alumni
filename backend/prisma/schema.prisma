@@ -142,8 +142,8 @@ model JobPosting {
   location       String? // city level; empty = not stated
   workType       WorkType         @map("work_type")
   employmentType EmploymentType   @map("employment_type")
-  description    String
-  applyUrl       String?          @map("apply_url") // empty = apply in ATS (job_applications)
+  description    String? // empty = not stated
+  applyUrl      String?          @map("apply_url") // empty = apply in ATS (job_applications)
   deadline       DateTime?        @db.Date // empty = open until removed
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz

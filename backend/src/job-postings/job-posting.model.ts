@@ -19,7 +19,7 @@ export interface JobPosting {
   location: string | null;
   workType: WorkType;
   employmentType: EmploymentType;
-  description: string;
+  description: string | null;
   applyUrl: string | null;
   deadline: string | null; // date only, ISO yyyy-mm-dd
   createdAt: string;

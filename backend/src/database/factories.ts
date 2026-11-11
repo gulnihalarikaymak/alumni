@@ -116,7 +116,7 @@ export function jobPostingFactory(): Prisma.JobPostingCreateInput {
     location: faker.helpers.maybe(() => faker.location.city(), { probability: 0.8 }) ?? null, // city level only
     workType: faker.helpers.enumValue(WorkType),
     employmentType,
-    description: faker.lorem.paragraphs(2),
+    description: faker.helpers.maybe(() => faker.lorem.paragraphs(2), { probability: 0.9 }) ?? null,
     applyUrl:
       faker.helpers.maybe(
         () => faker.helpers.arrayElement([`https://example.com/kariyer/${faker.string.alphanumeric({ length: 6, casing: 'lower' })}`, 'mailto:ik@example.com']),

@@ -419,7 +419,7 @@ erDiagram
         string location "city, optional"
         enum work_type "ONSITE HYBRID REMOTE"
         enum employment_type
-        string description
+        string description "optional"
         string apply_url "optional"
         date deadline "optional"
     }
