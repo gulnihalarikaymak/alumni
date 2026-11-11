@@ -39,6 +39,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-alumni}:${POSTGRES_PASSWORD:-alumni}@db:5432/${POSTGRES_DB:-alumni}
     ports:
       - "${BACKEND_PORT:-3000}:3000"
+    volumes:
+      # The error log (logs/error.logs) appears on your computer in backend/logs/
+      - ./backend/logs:/app/logs
     depends_on:
       db:
         condition: service_healthy

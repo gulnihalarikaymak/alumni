@@ -54,6 +54,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Logger middleware: write one log line per request on the terminal, e.g. `10:20:30 POST /user 201 18 ms` (time, method, route, status, duration)
 - [x] 404 Guardian: return every 404 error with a reason (JSON for the API, a "Page not found" page for browsers)
 - [x] 5xx Guardian: catch every server error, log the details on the terminal and return a safe message (JSON for the API, a "Something went wrong" page for browsers)
+- [x] Logs -> `logs/error.logs`: write every error response (4xx and 5xx) to this file, with the reason and, for a 5xx, the stack
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

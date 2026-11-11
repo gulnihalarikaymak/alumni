@@ -22,6 +22,7 @@ export class NotFoundFilter implements ExceptionFilter {
 
     const path = req.originalUrl.split('?')[0];
     const reason = reasonOf(exception.message, req.method, path);
+    res.locals.errorReason = reason; // for logs/error.logs, see LoggerMiddleware
 
     if (wantsHtml(req)) {
       res.status(404).render('not-found', { title: 'Page not found', reason });

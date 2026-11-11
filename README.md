@@ -301,6 +301,8 @@ All URL prefixes live in one file, `backend/src/app.routes.ts`. Users, announcem
 
 **Every `5xx` is caught too** (`src/common/server-error.filter.ts`, the "5xx Guardian"). A bug or a database failure is written in full, with its stack, on the terminal (`docker compose logs -f backend`), while the client gets only `{statusCode, error, message, path}` with a fixed message, so no SQL, table name or file path leaks. A browser outside `/api` gets a "Something went wrong" page.
 
+**Every failed request is also written to `logs/error.logs`** (status `400` and above), one line each: `2026-11-11T08:10:57.127Z GET /api/users/999999 404 8 ms  User 999999 not found`. A `5xx` adds its stack under the line. Successful requests are only printed on the terminal. In Docker the file appears on your computer as `backend/logs/error.logs` (a bind mount in `docker-compose.yml`); the folder is git-ignored.
+
 ### Job postings and applications
 
 Job postings belong to no user and have **direct** routes only. Users reach postings through job applications, which have two parents and are nested under both:
@@ -364,10 +366,11 @@ alumni/
 │   ├── prisma/                 schema.prisma, migrations/, seed.ts (manual demo-data command)
 │   ├── prisma.config.ts        Prisma settings: schema path and database URL
 │   ├── views/                  Handlebars: layout, partials/, one folder per feature
+│   ├── logs/                   error.logs, written by the app (git-ignored, created on the first error)
 │   └── src/
 │       ├── main.ts             bootstrap: views, method override, Swagger, port
 │       ├── app.routes.ts       route map
-│       ├── common/             shared helpers (views setup, method override, request logger, 404 and 5xx filters)
+│       ├── common/             shared helpers (views setup, method override, request logger, error log file, 404 and 5xx filters)
 │       ├── prisma/             PrismaService: the one database connection the models share
 │       ├── database/           startup seed: demo data on first run (empty DB), factories
 │       ├── users/              ┐

@@ -10,8 +10,9 @@ backend/src/generated/
 build/
 coverage/
 
-# Logs
+# Logs (backend/logs/error.logs is written by the app)
 *.log
+logs/
 npm-debug.log*
 
 # Editors and OS
