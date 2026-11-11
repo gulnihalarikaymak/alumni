@@ -379,7 +379,7 @@ alumni/
 
 - [ ] Validation is hand-written in each service; `class-validator` DTOs will replace it.
 - [ ] Database errors other than "not found" (for example two requests taking the same e-mail at the same moment) still end as `500`; one error format comes with the middleware in week 9.
-- [ ] The Postman collection covers users and health only, not announcements, job postings or applications yet.
+- [ ] The Postman collection has the normal (happy-path) requests for users only; announcements, job postings and applications have only their error cases (`400`, `404`, `409`) so far.
 - [ ] `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) with inline HTML; removed in week 10.
 
 ---

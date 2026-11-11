@@ -1,0 +1,23 @@
+$kind: http-request
+name: Setup - create open job posting -> 201
+url: "{{baseUrl}}/api/job-postings"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Junior Developer",
+      "company": "Example Ltd",
+      "workType": "REMOTE",
+      "employmentType": "FULL_TIME",
+      "description": "Synthetic posting for Postman tests"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 201", () => pm.response.to.have.status(201));
+      pm.collectionVariables.set("appPostingId", pm.response.json().id);
+    language: text/javascript
+order: 1000

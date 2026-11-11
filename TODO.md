@@ -48,6 +48,9 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Seed the job postings table: `jobPostingFactory` and job postings in `npx prisma db seed`
 - [x] Remove the `users` → `job_postings` relation; users reach postings only through `job_applications`
 
+## Week 07 — Relational data
+- [x] Try invalid requests on Postman: error-case requests for announcements, job postings and job applications
+
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model
 - [x] Create 2 controllers (web pages + JSON API)

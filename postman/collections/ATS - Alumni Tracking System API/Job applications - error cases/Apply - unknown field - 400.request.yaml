@@ -1,0 +1,18 @@
+$kind: http-request
+name: Apply - unknown field -> 400
+url: "{{baseUrl}}/api/job-postings/{{appPostingId}}/applications"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "applicantId": {{applicantId}},
+      "status": "ACCEPTED"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("Status is 400", () => pm.response.to.have.status(400));
+    language: text/javascript
+order: 9000

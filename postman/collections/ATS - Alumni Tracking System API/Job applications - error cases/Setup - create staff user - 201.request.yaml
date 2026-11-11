@@ -1,0 +1,20 @@
+$kind: http-request
+name: Setup - create staff user -> 201
+url: "{{baseUrl}}/api/users"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{$randomEmail}}",
+      "role": "STAFF"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 201", () => pm.response.to.have.status(201));
+      pm.collectionVariables.set("staffId", pm.response.json().id);
+    language: text/javascript
+order: 4000
