@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { AnnouncementWebModule } from './announcements/announcement-web.module';
 import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { AppController } from './app.controller';
+import { LoggerMiddleware } from './common/logger.middleware';
 import { DatabaseModule } from './database/database.module';
 import { routes } from './app.routes';
 import { HealthModule } from './health/health.module';
@@ -36,4 +37,9 @@ import { UserWebModule } from './users/user-web.module';
   ],
   controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  // Middleware: runs for every request before the controllers (one log line each)
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

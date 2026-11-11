@@ -363,7 +363,7 @@ alumni/
 │   └── src/
 │       ├── main.ts             bootstrap: views, method override, Swagger, port
 │       ├── app.routes.ts       route map
-│       ├── common/             shared helpers (views setup, method override)
+│       ├── common/             shared helpers (views setup, method override, request logger middleware)
 │       ├── prisma/             PrismaService: the one database connection the models share
 │       ├── database/           startup seed: demo data on first run (empty DB), factories
 │       ├── users/              ┐
