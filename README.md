@@ -299,6 +299,8 @@ All URL prefixes live in one file, `backend/src/app.routes.ts`. Users, announcem
 
 **Every `404` carries a reason**, whether the id or the URL is unknown. One filter, `src/common/not-found.filter.ts` (the "404 Guardian"), answers them: JSON `{statusCode, error, message, path}` for the API and for curl, a "Page not found" page for a browser outside `/api`. For example `GET /api/users/999999` → `"message": "User 999999 not found"`, and `GET /api/nope` → `"message": "No route matches GET /api/nope"`.
 
+**Every `5xx` is caught too** (`src/common/server-error.filter.ts`, the "5xx Guardian"). A bug or a database failure is written in full, with its stack, on the terminal (`docker compose logs -f backend`), while the client gets only `{statusCode, error, message, path}` with a fixed message, so no SQL, table name or file path leaks. A browser outside `/api` gets a "Something went wrong" page.
+
 ### Job postings and applications
 
 Job postings belong to no user and have **direct** routes only. Users reach postings through job applications, which have two parents and are nested under both:
@@ -365,7 +367,7 @@ alumni/
 │   └── src/
 │       ├── main.ts             bootstrap: views, method override, Swagger, port
 │       ├── app.routes.ts       route map
-│       ├── common/             shared helpers (views setup, method override, request logger, 404 filter)
+│       ├── common/             shared helpers (views setup, method override, request logger, 404 and 5xx filters)
 │       ├── prisma/             PrismaService: the one database connection the models share
 │       ├── database/           startup seed: demo data on first run (empty DB), factories
 │       ├── users/              ┐
@@ -380,7 +382,7 @@ alumni/
 ### Known gaps
 
 - [ ] Validation is hand-written in each service; `class-validator` DTOs will replace it.
-- [ ] Database errors other than "not found" (for example two requests taking the same e-mail at the same moment) still end as `500`; one error format comes with the middleware in week 9.
+- [ ] Database errors other than "not found" (for example two requests taking the same e-mail at the same moment) still end as `500` instead of a fitting `409`. The 5xx Guardian now hides the details from the client; one format for the `400`s too comes in week 9.
 - [ ] The Postman collection has the normal (happy-path) requests for users only; announcements, job postings and applications have only their error cases (`400`, `404`, `409`) so far.
 - [ ] `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) with inline HTML; removed in week 10.
 

@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, NotFoundException } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { wantsHtml } from './wants-html';
 
 // The 404 Guardian: every 404 leaves the app through here, with a reason.
 //
@@ -21,9 +22,8 @@ export class NotFoundFilter implements ExceptionFilter {
 
     const path = req.originalUrl.split('?')[0];
     const reason = reasonOf(exception.message, req.method, path);
-    const wantsHtml = !path.startsWith('/api') && (req.headers.accept || '').includes('text/html');
 
-    if (wantsHtml) {
+    if (wantsHtml(req)) {
       res.status(404).render('not-found', { title: 'Page not found', reason });
     } else {
       res.status(404).json({ statusCode: 404, error: 'Not Found', message: reason, path });

@@ -5,6 +5,7 @@ import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { AppController } from './app.controller';
 import { LoggerMiddleware } from './common/logger.middleware';
 import { NotFoundFilter } from './common/not-found.filter';
+import { ServerErrorFilter } from './common/server-error.filter';
 import { DatabaseModule } from './database/database.module';
 import { routes } from './app.routes';
 import { HealthModule } from './health/health.module';
@@ -37,8 +38,12 @@ import { UserWebModule } from './users/user-web.module';
     ApiUserJobApplicationModule,
   ],
   controllers: [AppController],
-  // The 404 Guardian: catches every NotFoundException in the app
-  providers: [{ provide: APP_FILTER, useClass: NotFoundFilter }],
+  // The Guardians. Nest asks the filter registered last first, so the general
+  // one (all errors) comes first here and the specific one (404) after it.
+  providers: [
+    { provide: APP_FILTER, useClass: ServerErrorFilter },
+    { provide: APP_FILTER, useClass: NotFoundFilter },
+  ],
 })
 export class AppModule implements NestModule {
   // Middleware: runs for every request before the controllers (one log line each)
