@@ -63,8 +63,9 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
   (branch `temp/home-design`, pushed for review and never merged; the design comes from Figma "Home · Notion-style")
 - [x] Return to the `main` branch
 - [x] Create `BRAND.md` and link it from the README
-- [ ] Create `DESIGN.md` from a reference on styles.refero.design or github.com/VoltAgent/awesome-design-md
-- [ ] Check that the README links to both `BRAND.md` and `DESIGN.md`
+- [x] Create `DESIGN.md` from a reference on styles.refero.design or github.com/VoltAgent/awesome-design-md
+  (based on the Notion entry of awesome-design-md)
+- [x] Check that the README links to both `BRAND.md` and `DESIGN.md`
 - [ ] Redesign every page of the web app, one page at a time, in `frontend/` (replacing the Handlebars views)
 
 ## Homework 1 — Announcements (no database) ✅
