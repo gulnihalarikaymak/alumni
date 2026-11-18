@@ -3,160 +3,171 @@
 How the Alumni Tracking System looks. Read by people and by the AI assistant before any page is built in
 `frontend/`. The intent behind it (name, voice, colour meaning) is in [BRAND.md](BRAND.md).
 
-- **Reference:** the Notion entry of [awesome-design-md](https://github.com/VoltAgent/awesome-design-md)
-  (MIT, an independent analysis of notion.so's public CSS, read at [getdesign.md/notion](https://getdesign.md/notion/design-md)).
-  We took its structure and principles, not its brand: the colours, the heading font and the radii are ours (see §10).
+**Concept "Gate-A": night → gate → day.** The site opens at night in front of Istanbul University's historic
+main gate in Beyazıt. The gate draws itself, the visitor scrolls through its lit arch, and arrives in the warm
+daylight of the campus, where the actual system lives. The footer returns to night.
+
+- **References** (from [styles.refero.design](https://styles.refero.design), the DESIGN.md collection the course
+  points to, like [awesome-design-md](https://github.com/VoltAgent/awesome-design-md)):
+  - **Apollo** (apolloworkspace.com): warm linen canvas, espresso instead of black, a thin display serif,
+    uppercase labels with wide tracking, hairline rules, one rationed terracotta accent. → the **day**.
+  - **basement.studio**: a pitch-black opening, one accent used as a signal, zero radius, collapsed-border
+    grids, one sans-serif for all UI. → the **night** and the **grids**.
+  - Where ATS differs from both is listed in §11.
+- **Photo:** "İstanbul Üniversitesi (54510564100).jpg" by Jorge Franganillo,
+  [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/), via Wikimedia Commons. Credited on the page.
 - **Figma:** [ATS – Alumni Tracking System](https://www.figma.com/design/PFlMDz2nPbM2YKGVzAFraa), page
-  "Home – style explorations", frame **Home · Notion-style ✓ chosen** (week 8). The variables of the
-  "ATS tokens" collection, mode `Notion-style`, are the source of the values below.
-- **Format:** the nine sections of the Stitch DESIGN.md format used by awesome-design-md.
+  "Home – Gate concept (A)": variables "ATS tokens", mode `Gate-A`, and the components named below.
+  Working prototype: [ATS – Gate concept v2 (Make)](https://www.figma.com/make/47X7D1RMyvkJGkJPwjOHKn).
+- **Code:** the week 8 prototype of the home page is [`frontend/prototype/`](frontend/prototype/).
 
 ## 1. Visual theme and atmosphere
 
-A calm university notice board on warm paper.
+A printed membership brochure for a university, read at golden hour; entered at night.
 
-- Off-white **paper canvas** with white cards on it; surfaces are separated by 1 px hairlines, not shadows.
-- **One structural accent**, academic blue, only for the main action, links and focus.
-- **Serif headings** for an editorial, academic tone; a neutral sans-serif for everything you read or fill in.
-- Generous white space between sections; dense, tidy rows inside lists and tables.
+- **Night (intro only):** absolute black, a real night photo of the gate, cream line drawing on top.
+- **Day (everything else):** linen canvas, espresso text and nav, hairline grey rules, no shadows, square corners.
+- **One accent**, terracotta, rationed to the main action and the active page.
+- **Type contrast** carries the hierarchy: a thin, large serif against small, tracked, uppercase sans labels.
 
 ## 2. Colour palette and roles
 
-Token names are the Figma variable names; in code they become CSS custom properties (`color/page` → `--color-page`).
+Token names are the Figma variable names; in CSS they are custom properties (`color/page` → `--page`).
 
-| Token | Light | Role |
+| Token | Value | Role |
 |---|---|---|
-| `color/page` | `#FBFAF8` | Page background (paper). Pages are never pure white. |
-| `color/surface` | `#FFFFFF` | Cards, lists, form fields, secondary button |
-| `color/text` | `#2F2D29` | Headings and body text |
-| `color/muted` | `#6B675F` | Supporting text, metadata, nav links, footer |
-| `color/line` | `#E6E2DA` | Hairlines: card borders, row dividers, header and footer rules |
-| `color/line-strong` | `#8C877E` | Form field borders (needs 3:1 against white, see §2.1) |
-| `color/accent` | `#2B5C8A` | Primary button fill, logo mark, focus ring |
-| `color/accent-ink` | `#2B5C8A` | Links and accent text |
-| `color/on-accent` | `#FFFFFF` | Text on `color/accent` |
-| `color/accent-soft` | `#E8EEF5` | Tag and badge background |
+| `color/night` | `#000000` | Intro background only |
+| `color/espresso` | `#3C261C` | Nav bar and footer surface |
+| `color/on-night` | `#F9F8F0` | Text and line drawing on night and espresso |
+| `color/on-night-muted` | `#B9AFA6` | Secondary text on night and espresso |
+| `color/page` | `#F9F8F0` | Page background (linen). Never pure white. |
+| `color/text` | `#3C261C` | Headings and body text on linen |
+| `color/muted` | `#6E5A50` | Supporting text, metadata, numbers |
+| `color/line` | `#DDDEDF` | Hairlines: grid borders, row dividers |
+| `color/line-strong` | `#8A7B72` | Borders that must be seen: tags, form fields |
+| `color/accent` | `#E97451` | Primary button fill, active nav item |
+| `color/accent-ink` | `#A8482A` | Accent as text on linen (eyebrows, links) |
+| `color/on-accent` | `#3C261C` | Text on `color/accent` |
+| `--hover` | `#FCEDE8` | Hover surface of grid tiles (blush) |
 | `color/success` | `#2F7A4D` | Status only: health dot, `ACTIVE` |
-
-Status badges (`PENDING`, `ACTIVE`, `REJECTED`, `SUSPENDED` and the application statuses) get their own
-soft-background / dark-text pairs when the Users and Applications pages are designed; they follow the
-`accent-soft` / `accent-ink` pattern and each pair must pass §2.1.
-
-**Dark mode:** not designed yet. It is planned (the Handlebars pages already had one) and gets its own
-`Dark` mode on the same variables, so no component changes when it comes.
 
 ### 2.1 Contrast (WCAG 2.1 AA)
 
 | Pair | Ratio | Needed |
 |---|---|---|
-| `text` on `page` | 13.2 : 1 | 4.5 |
-| `muted` on `page` | 5.4 : 1 | 4.5 |
-| `accent-ink` on `page` | 6.7 : 1 | 4.5 |
-| `on-accent` on `accent` | 7.0 : 1 | 4.5 |
-| `accent-ink` on `accent-soft` | 6.0 : 1 | 4.5 |
-| `line-strong` on `surface` (field border) | 3.6 : 1 | 3 |
-| `success` on `page` (status dot) | 5.0 : 1 | 3 |
+| `text` on `page` | 13.3 : 1 | 4.5 |
+| `muted` on `page` | 6.1 : 1 | 4.5 |
+| `accent-ink` on `page` | 5.4 : 1 | 4.5 |
+| `on-accent` on `accent` (primary button) | 4.8 : 1 | 4.5 |
+| `on-night` on `espresso` | 13.3 : 1 | 4.5 |
+| `on-night-muted` on `espresso` | 6.6 : 1 | 4.5 |
+| `accent` on `espresso` (active nav item) | 4.8 : 1 | 4.5 |
+| `line-strong` on `page` (tag border) | 3.8 : 1 | 3 |
 
-`color/line` is decorative only (about 1.3 : 1); it never marks the edge of something you can type into or click.
+`color/accent` as text on linen is only about 2.6 : 1, so it is **never** used as text on light backgrounds;
+`color/accent-ink` is. White on terracotta is 3 : 1, so the primary button uses espresso text.
 
 ## 3. Typography
 
-Two free Google Fonts: **Source Serif 4** for headings, **Inter** for everything else.
-Fallbacks: `Georgia, serif` and `system-ui, "Segoe UI", sans-serif`.
-
 | Role | Font | Size / line height | Weight | Letter spacing |
 |---|---|---|---|---|
-| Display (hero, one per page) | Source Serif 4 | 58 / 108 % | SemiBold 600 | −1 % |
-| Heading 2 (section) | Source Serif 4 | 30 / 125 % | SemiBold 600 | −0.5 % |
-| Heading 3 (list or card group) | Source Serif 4 | 22 / 130 % | SemiBold 600 | 0 |
-| Card title | Source Serif 4 | 19 / 130 % | SemiBold 600 | 0 |
-| Lead (intro paragraph) | Inter | 18 / 155 % | Regular 400 | 0 |
-| Body | Inter | 15 / 150 % | Regular 400 | 0 |
-| Row title, nav, button | Inter | 15 or 14 / 140 % | Medium 500 | 0 |
-| Small (meta, footer) | Inter | 13 / 140 % | Regular 400 | 0 |
-| Eyebrow | Inter, UPPER CASE | 12 / 150 % | SemiBold 600 | +8 % |
-| Tag | Inter | 12 / 140 % | Medium 500 | 0 |
+| Display (hero, one per page) | Cormorant Garamond | 44–76 px (fluid) / 0.98 | Light 300, *italic* for one phrase | −1 % |
+| Welcome (intro) | Cormorant Garamond | 48–88 px / 1 | Light 300 | 0 |
+| Footer sign-off | Cormorant Garamond | 32–44 px / 1.05 | Light 300 | 0 |
+| Section title | Geist | 30–38 px / 1.05 | SemiBold 600 | −3 % |
+| Tile title | Geist | 24 / 1.2 | SemiBold 600 | −2 % |
+| List heading | Geist | 20 / 1.3 | SemiBold 600 | −2 % |
+| Lead | Geist | 18 / 1.55 | Regular 400 | 0 |
+| Body, row title | Geist | 16 / 1.4–1.55 | Regular 400 / Medium 500 | 0 |
+| Meta, description | Geist | 14–15 / 1.45–1.5 | Regular 400 | 0 |
+| Eyebrow | Geist, UPPER CASE | 12 / 1.4 | SemiBold 600 | +12 % |
+| Nav link, button, link | Geist, UPPER CASE | 12 / 1.4 | Medium 500 | +8–10 % |
+| Tag | Geist, UPPER CASE | 11 / 1.4 | Medium 500 | +8 % |
 
-Rules: body text is never bold; one display headline per page; lines of body text stay under ~70 characters.
+Both are free Google Fonts. Upper case is applied with CSS (`text-transform`), never typed in the source.
 
 ## 4. Component stylings
 
-These are the Figma components. Each becomes one React component with the same name.
-
-| Component | Style |
+| Component (Figma) | Style |
 |---|---|
-| **Button / Primary** | `accent` fill, `on-accent` text, 14 px Medium, padding 8 × 16, `radius/md`. One per view. |
-| **Button / Secondary** | `surface` fill, 1 px `line` border, `text` colour, same size. |
-| **Feature card** | `surface`, 1 px `line`, `radius/lg`, padding 24, gap 8: card title, description (`muted`), link (`accent-ink`, ends with →). |
-| **List row** | Padding 16 × 20, gap 16, 1 px `line` top divider (none on the first row); title (Medium 15) over meta (13 `muted`); a **Tag** on the right. Rows sit in a `surface` list with `line` border and `radius/lg`. |
-| **Tag / badge** | `accent-soft` fill, `accent-ink` 12 px Medium, padding 4 × 8, `radius/full`. |
-| **Header** | Logo mark + name on the left, nav (`muted`, Medium 14, gap 32) in the middle, secondary button on the right; padding 20 vertical; `line` rule below. |
-| **Footer** | Small `muted` text on the left, status dot (`success`) + "All systems running" on the right; `line` rule above; padding 32 vertical. |
-| **Text field** *(to design with the forms)* | `surface`, 1 px `line-strong`, `radius/sm`, padding 10 × 12, label above in Medium 14. Focus: 3 px `accent` outline. |
-
-**States** (all interactive components): hover darkens the fill or underlines the link; focus shows a 3 px
-`accent` outline with 2 px offset (never removed); disabled is 50 % opacity with no hover.
+| **Button / Primary** | `accent` fill and border, `on-accent` text, padding 12 × 24, radius 0. Hover: espresso fill, linen text. One per view. |
+| **Button / Outline** | 1 px `text` border, no fill. Hover: espresso fill, linen text. |
+| **Button / Outline on dark** | 1 px `on-night` border and text, on night or espresso. |
+| **Nav (night)** | Transparent over the intro: wordmark, links in `on-night-muted`, active link in `accent`. Fades out on scroll. |
+| **Nav (day)** | Sticky espresso bar: gate mark + wordmark, links, outline-on-dark button. Active link: `accent` text with a 1 px `accent` underline. |
+| **Area tile** | Cell of a collapsed-border grid (the grid draws top/left lines, each tile right/bottom). Padding 32, min height 248. Number, title, description; link at the bottom. Hover: `--hover` surface. |
+| **List row** | Padding 20 vertical, 1 px `line` divider below; optional lead column (date, 64 px), title over meta, optional **Tag**. The list starts with a 1 px `text` rule. |
+| **Tag** | 1 px `line-strong` border, no fill, 11 px uppercase, padding 4 × 8, radius 0. |
+| **Gate / line drawing v2 (traced)** | The gate, traced in the photo's own 960 × 640 coordinates, single stroke (1.2–1.5 px, non-scaling), no fills. |
+| **Gate / mark** | 32 px simplified gate (central arch and two towers) for the nav. |
+| **Footer** | Espresso: serif sign-off, uppercase links, the gate drawing in cream; a thin rule; course line, photo credit, status dot. |
 
 ## 5. Layout principles
 
-- **Spacing scale** (`space/*`): 4 · 8 · 12 · 16 · 20 · 24 · 32 · 48 · 64 · 96. No other values.
-- **Container:** 1120 px content width, centred (160 px side padding on a 1440 px screen).
-- **Vertical rhythm on the home page:** hero 96 top / 64 bottom; sections 64 apart; the last section 96 above the footer.
-- **Grids:** feature cards 4-up with 16 gap; two lists side by side with 32 gap.
-- Text-heavy blocks (hero, section headings) are left-aligned; nothing body-sized is centred.
+- **Container:** 1200 px max, side gutter `max(24px, (100% − 1200px) / 2)`.
+- **Spacing:** multiples of 4: 4 · 8 · 12 · 16 · 20 · 24 · 28 · 32 · 40 · 48 · 56 · 64 · 80 · 96 · 112.
+- **Rhythm:** hero 112 top and bottom; sections 96 apart; the last section 112 above the footer.
+- **Grids:** area tiles 4-up with collapsed borders; lists side by side with 48 gap.
+- **Radius:** 0 everywhere. **Shadows:** none; separation comes from hairlines and the espresso/linen contrast.
 
 ## 6. Depth and elevation
 
-- **Level 0 (default):** flat, 1 px `color/line` hairline. Cards, lists, header and footer use only this.
-- **Level 1 (floating):** for menus, toasts and dialogs only: `0 4px 18px rgba(47,45,41,.06), 0 1px 3px rgba(47,45,41,.04)`.
-- No heavy shadows, no gradients, no glass effects.
+Flat. Depth exists only in the intro, where it is real: the photo, and the movement through the arch.
 
-**Radii** (`radius/*`): `sm` 4 (logo mark, fields) · `md` 6 (buttons) · `lg` 10 (cards, lists) · `full` 999 (tags).
+## 7. Motion (the intro)
 
-## 7. Do's and don'ts
+| Step | When | What happens |
+|---|---|---|
+| 1. Draw | on load, ~1.5 s | Each stroke of the gate draws itself (stroke-dashoffset), left to right in drawing order. |
+| 2. Light up | from 1.6 s, ~2 s | The night photo fades in under the lines; the lines step back to 38 % opacity. |
+| 3. Enter | scroll 0–78 % of the intro | The photo and lines scale up around the centre of the main arch (ease-in). Nav, place label and hint fade out in the first 14 %. |
+| 4. Daylight | scroll 20–72 % | The arch fills with linen light, then the whole screen does. |
+| 5. Welcome | scroll 66–99 % | "Welcome back." rises 16 px and fades in, then out; the day page follows. |
+
+- The intro is 340 vh tall with a sticky 100 vh stage; nothing else on the site animates beyond hover colours.
+- **Reduced motion:** with `prefers-reduced-motion: reduce` the intro is one still screen (photo and drawing), no zoom.
+- **Keyboard:** a "Skip the intro" link is the first focusable element.
+- Only the home page has the intro; the other pages start in daylight.
+
+## 8. Do's and don'ts
 
 **Do**
-- Use `color/accent` only for the main action, links and focus.
-- Keep the page on `color/page`; put content on white `color/surface` cards.
-- Build every page from the components in §4 and the tokens in §2 to §6.
-- Write every colour, space and radius as a token, never as a raw value.
-- Show the reason and the next step in every error and empty state.
+- Use `accent` only for the main action and the active page; use `accent-ink` for accent-coloured text on linen.
+- Keep pages on linen and structure on espresso; reserve black for the intro.
+- Use the collapsed-border grid and the list row for collections; keep radius 0.
+- Credit every photo next to it (author, licence, link).
 
 **Don't**
-- Add a second accent colour or paint a button green, red or any colour except `accent`.
-- Use `color/line` as a form field border (too light, see §2.1).
-- Centre body text, or put two display headlines on one page.
-- Use shadows on cards, or gradients anywhere.
-- Use the official university logo or seal (see [BRAND.md](BRAND.md#5-logo)).
+- Add a second accent colour, gradients, shadows or rounded corners.
+- Put `accent` text on linen, or white text on `accent`.
+- Animate anything else the way the intro does; it is the one moment of ceremony.
+- Use photos without a licence that allows it.
 
-## 8. Responsive behaviour
+## 9. Responsive behaviour
 
 | Width | Layout |
 |---|---|
-| ≥ 1080 px | As designed: 1120 container, cards 4-up, lists side by side |
-| 768 – 1079 px | 32 px side padding; cards 2-up; lists side by side |
-| ≤ 767 px | 16 px side padding; cards and lists stacked (1 column); nav collapses into a menu button; buttons full width; display headline 36 px |
+| ≥ 1080 px | As designed: hero text and drawing side by side, tiles 4-up, lists side by side |
+| 761 – 1079 px | Hero stacked (drawing below), tiles 2-up |
+| ≤ 760 px | Nav links in a horizontally scrolling row (intro nav hides its links); tiles and lists 1 column; buttons full width |
+| height ≤ 600 px | The place label of the intro is hidden |
 
-Touch targets are at least 44 × 44 px on small screens. No page scrolls sideways at 360 px.
-*The tablet and phone frames are not in Figma yet.*
+## 10. Agent prompt guide
 
-## 9. Agent prompt guide
+1. Use the tokens of §2 through CSS custom properties; never hard-code a colour, size or radius in a page.
+2. Reuse the components of §4; add a new one only when none fits, and add it here and in Figma in the same change.
+3. Cormorant Garamond Light only for display text (§3); Geist for everything else.
+4. Copy follows [BRAND.md](BRAND.md#4-voice-and-copy-rules).
+5. Check §2.1 contrast, §7 reduced motion and §9 at 360 px before calling a page done.
 
-When building or changing a page in `frontend/`:
+## 11. Where ATS differs from the references
 
-1. Use only the tokens of §2 to §6, through the CSS custom properties in one tokens file; never hard-code a colour, size or radius.
-2. Reuse the components of §4 (`Button`, `FeatureCard`, `ListRow`, `Tag`, `Header`, `Footer`); add a new one only when no existing one fits, and add it to this file and to Figma in the same change.
-3. Fonts: Source Serif 4 for headings, Inter for the rest; check the type table in §3.
-4. Copy follows [BRAND.md](BRAND.md#4-voice-and-copy-rules): sentence case, verbs on buttons, dates as `18 Nov 2026`.
-5. Check §2.1 contrast and §8 at 360 px before calling a page done.
-
-## 10. Where we differ from the Notion reference
-
-| Topic | Notion reference | ATS | Why |
+| Topic | Apollo | basement.studio | ATS |
 |---|---|---|---|
-| Accent | Notion blue `#0075de` | Academic blue `#2B5C8A` | Our own brand; calmer and more institutional |
-| Canvas | `#f6f5f4` | `#FBFAF8` | A lighter paper so white cards still stand out |
-| Headings | Inter, bold, tight tracking | Source Serif 4 SemiBold | Academic tone (BRAND.md §7) |
-| Buttons | Pill (`9999px`) | `radius/md` 6 px | Fits forms and tables better than marketing pills |
-| Decorative "sticker" colours | Six illustration colours | None | One accent keeps the admin screens calm |
-| Dark hero band | Indigo band once per page | Not used | The home page is also the start page of a tool |
+| Canvas | Warm linen | Absolute black | Black only for the intro, linen for the system |
+| Accent | Terracotta, borders only | Ember orange, active nav only | Terracotta for the primary action fill and the active page; darker `accent-ink` for text |
+| Display type | paradigm-pro 300 (paid) | Geist 600, 87 px | Cormorant Garamond Light (free) |
+| UI type | MonaSans | Geist | Geist |
+| Radius | 3 px | 0 | 0 |
+| Imagery | Lifestyle photography | Project imagery, logo grid | One real photo of the gate + its line drawing |
+| Spacing | Measured values (17, 23, 45 …) | 4 px base | 4 px base (§5) |
