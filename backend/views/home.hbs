@@ -1,33 +1,43 @@
-{{!-- Home page: GET /. Temporary until the React app arrives in week 10. --}}
+{{!-- Home page: GET /. Week 8 design trial (branch temp/home-design), built from the Figma frame
+     "Home · Notion-style". This branch is not merged; the real redesign is done in frontend/. --}}
 <section class="hero">
+  <p class="eyebrow">Istanbul University · Alumni network</p>
   <h1>Stay connected with Istanbul University alumni</h1>
-  <p>Post news for graduates and manage the people in the system. Everything is stored in PostgreSQL, so it is still here after a restart.</p>
+  <p class="lead">Read news for graduates, find open positions and follow every application. Students, alumni and staff in one place.</p>
   <div class="actions">
-    <a class="btn" href="/announcements">Read announcements</a>
-    <a class="btn quiet" href="/users">Manage users</a>
+    <a class="btn" href="/job-postings">Browse open positions</a>
+    <a class="btn quiet" href="/announcements">Read announcements</a>
   </div>
 </section>
 
-<div class="places">
-  <a class="card" href="/announcements">
-    <h3>Announcements</h3>
-    <p>Read, publish, edit and remove news for graduates.</p>
-  </a>
-  <a class="card" href="/job-postings">
-    <h3>Jobs</h3>
-    <p>Share open positions and let students and alumni apply.</p>
-  </a>
-  <a class="card" href="/users">
-    <h3>Users</h3>
-    <p>Add students, alumni, staff and admins, and change their status.</p>
-  </a>
-  <a class="card" href="/api/swagger">
-    <h3>API docs</h3>
-    <p>Try every JSON endpoint from the browser.</p>
-  </a>
-</div>
+<section class="explore" aria-labelledby="explore-title">
+  <h2 id="explore-title">Everything in one place</h2>
+  <p class="sub">Four areas, one shared JSON API behind them.</p>
+  <div class="places">
+    <a class="card" href="/announcements">
+      <h3>Announcements</h3>
+      <p>News and events for graduates, newest first.</p>
+      <span class="more">Read news →</span>
+    </a>
+    <a class="card" href="/job-postings">
+      <h3>Jobs</h3>
+      <p>Open positions shared by alumni and partner companies.</p>
+      <span class="more">See positions →</span>
+    </a>
+    <a class="card" href="/job-applications">
+      <h3>Applications</h3>
+      <p>Every application to a posting, with its status.</p>
+      <span class="more">View applications →</span>
+    </a>
+    <a class="card" href="/users">
+      <h3>Users</h3>
+      <p>Students, alumni, staff and admins, with their status.</p>
+      <span class="more">Manage users →</span>
+    </a>
+  </div>
+</section>
 
-<footer class="foot">
-  <p>System status: <a href="/api/health">/api/health</a></p>
-  <p>Week 2 routing exercises: <a href="/hello">/hello</a>, <a href="/hello/alumni">/hello/:name</a>, <a href="/sum/2/3">/sum/2/3</a>, <a href="/about">/about</a></p>
+<footer class="foot home">
+  <p>Alumni Tracking System · Web Programming (YBSB3001) course project</p>
+  <p class="status"><span class="dot" aria-hidden="true"></span>System status: <a href="/api/health">/api/health</a></p>
 </footer>
