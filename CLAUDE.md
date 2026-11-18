@@ -5,11 +5,14 @@ The student owns the intent, the architecture and every bug. You write code she 
 
 ## Stack
 
-- `backend/`: NestJS 10, TypeScript, Express, Handlebars (`hbs`) views, Swagger.
+- `backend/`: NestJS 10, TypeScript, Express, Handlebars (`hbs`) views (being replaced by `frontend/`), Swagger.
 - `db`: PostgreSQL 18 in Docker, reached through Prisma 7 since week 5. Models use the shared `PrismaService`.
   Schema in `backend/prisma/schema.prisma`; it and `DDD.md` change in the same commit.
   After a schema change: `npx prisma migrate dev --name <change>`; never edit a committed migration.
-- `frontend/`: empty until week 10. Do not add a front end before then.
+- `frontend/`: the web front end, allowed from week 8 (React, as planned in the README roadmap). It replaces the
+  Handlebars views page by page and talks to the backend only through the JSON API (`/api/...`).
+  When a page moves to `frontend/`, its `.hbs` view and web controller route are removed in the same commit.
+  Its look follows `DESIGN.md` and `BRAND.md`. Tooling and packages are chosen when it is set up: ask first.
 
 ## Commands
 
@@ -34,7 +37,7 @@ There are no automated tests or linter yet. Verify by building and by calling th
   `api-*.controller.ts`, `*.service.ts`, `*.model.ts`, `*.dto.ts`.
 - **Web and API controllers share one service.** A rule is written once.
 - **All URL prefixes live in `src/app.routes.ts`.** No global prefix. Controllers declare only the rest of the path.
-- **Views** (`backend/views/**/*.hbs`) only format. Use `{{ }}` (escaped); never `{{{ }}}` except `body` in the layout.
+- **Views** (`backend/views/**/*.hbs`, until each page moves to `frontend/`) only format. Use `{{ }}` (escaped); never `{{{ }}}` except `body` in the layout.
 - Forms send `PUT/PATCH/DELETE` via `?_method=`; never let a `GET` change data.
 - Status codes: `201` create, `204` delete, `400` invalid, `404` missing, `409` conflict.
 - **Errors are handled in `src/common/`, not per controller.** A service throws an HTTP exception with a clear reason;
@@ -46,7 +49,7 @@ There are no automated tests or linter yet. Verify by building and by calling th
 
 ## How to work
 
-- **Stay inside the week's topic.** Do not pull in later-week tech (auth, class-validator, React …)
+- **Stay inside the week's topic.** Do not pull in later-week tech (auth, class-validator …)
   unless the task asks for it. If a task seems to need it, say so and ask.
 - **Small diffs.** Change only what the task needs. No drive-by refactors, renames or formatting of untouched files.
 - **No new dependency** without saying why and asking first.
