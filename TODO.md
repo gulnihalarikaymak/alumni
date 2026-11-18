@@ -58,15 +58,17 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Define a generic 404 page (`/404`) and redirect invalid web requests to it (unknown URL, missing record, bad id)
 - [x] Update `README.md` and the other `.md` files with today's work
 
-## Week 08 — Web design
+## Week 08 — Web design ✅
 - [x] Create a temporary branch and design the home page on it
   (branch `temp/home-design`, pushed for review and never merged; the design comes from Figma "Home · Notion-style")
 - [x] Return to the `main` branch
 - [x] Create `BRAND.md` and link it from the README
 - [x] Create `DESIGN.md` from a reference on styles.refero.design or github.com/VoltAgent/awesome-design-md
-  (based on the Notion entry of awesome-design-md)
+  (first based on the Notion entry of awesome-design-md; replaced by the "Gate-A" concept: Apollo and basement.studio from styles.refero.design)
 - [x] Check that the README links to both `BRAND.md` and `DESIGN.md`
-- [ ] Redesign every page of the web app, one page at a time, in `frontend/` (replacing the Handlebars views)
+- [x] Redesign every page of the web app, one page at a time, in `frontend/` (replacing the Handlebars views)
+  (week 8 delivers the first page: the home page in the Gate-A design, as a static prototype in `frontend/prototype/`;
+  the other pages follow one at a time)
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

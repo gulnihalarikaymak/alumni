@@ -12,7 +12,7 @@ who they are, where they work, and how they can help the students who come after
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Docker](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-![Progress](https://img.shields.io/badge/progress-week_7_of_14-blue?style=flat-square)
+![Progress](https://img.shields.io/badge/progress-week_8_of_14-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 ![AI](https://img.shields.io/badge/AI_assistant-Claude_Code-D97757?style=flat-square)
 
@@ -153,7 +153,7 @@ flowchart LR
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
 | `http://localhost:3000/api/health` | 💚 Health check (JSON for curl, a status page in a browser) |
 
-Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. A Postman collection is in `postman/`: normal requests for users, and error cases (`400`, `404`, `409`) for users, announcements, job postings and job applications. Each error-case folder creates its own records in a Setup step and deletes them in Cleanup; run it top to bottom.
+Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. The week 8 design prototype of the home page needs no server: open `frontend/prototype/index.html` in a browser. A Postman collection is in `postman/`: normal requests for users, and error cases (`400`, `404`, `409`) for users, announcements, job postings and job applications. Each error-case folder creates its own records in a Setup step and deletes them in Cleanup; run it top to bottom.
 
 <details>
 <summary><b>🛠️ Everyday commands</b> (click to expand)</summary>
@@ -405,7 +405,7 @@ alumni/
 │       ├── job-applications/   ┘
 │       ├── not-found/          GET /404: the generic 404 page
 │       └── health/             GET /api/health
-├── frontend/                   React app (week 10)
+├── frontend/                   React app (week 10); prototype/: the week 8 home page prototype (static HTML)
 └── postman/                    request collection, including error cases
 ```
 
@@ -415,6 +415,7 @@ alumni/
 - [ ] Database errors other than "not found" (for example two requests taking the same e-mail at the same moment) still end as `500` instead of a fitting `409`. The 5xx Guardian now hides the details from the client; one format for the `400`s too comes in week 9.
 - [ ] The Postman collection has the normal (happy-path) requests for users only; announcements, job postings and applications have only their error cases (`400`, `404`, `409`) so far.
 - [ ] `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) with inline HTML; removed in week 10.
+- [ ] The new design (`DESIGN.md`) exists so far only as a static prototype of the home page in `frontend/prototype/`, with demo data. The Handlebars pages keep the week 7 look until each page moves to `frontend/`.
 
 ---
 
@@ -515,7 +516,7 @@ erDiagram
 ```mermaid
 flowchart LR
     W1["01<br/>Inception"]:::done --> W2["02<br/>Routing"]:::done --> W3["03<br/>CRUD"]:::done --> W4["04<br/>MVC"]:::done --> W5["05<br/>ORM"]:::done --> W6["06<br/>DB integration"]:::done --> W7["07<br/>Errors & logs"]:::done
-    W7 --> W8["08<br/>⭐ MIDTERM"]:::exam --> W9["09<br/>Middleware"]:::todo --> W10["10<br/>Front end"]:::todo --> W11["11<br/>Auth"]:::todo --> W12["12<br/>Services"]:::todo --> W13["13<br/>CI/CD"]:::todo --> W14["14<br/>⭐ FINAL"]:::exam
+    W7 --> W8["08<br/>⭐ MIDTERM<br/>Web design"]:::done --> W9["09<br/>Middleware"]:::todo --> W10["10<br/>Front end"]:::todo --> W11["11<br/>Auth"]:::todo --> W12["12<br/>Services"]:::todo --> W13["13<br/>CI/CD"]:::todo --> W14["14<br/>⭐ FINAL"]:::exam
 
     classDef done fill:#2da44e,color:#fff,stroke:#1a7f37
     classDef todo fill:#f6f8fa,color:#57606a,stroke:#d0d7de
@@ -531,7 +532,7 @@ flowchart LR
 | 05 | Database and ORM | `DDD.md`, Prisma schema and first migration, persistent volume, seed data; users and announcements on PostgreSQL | ✅ |
 | 06 | Database integration | Job postings and job applications: migrations, models, direct and nested routes, seed | ✅ |
 | 07 | Errors and logging | Postman error cases for every feature, optional job-posting fields, request logger, 404 and 5xx Guardians, generic `/404` page, `logs/error.logs` | ✅ |
-| 08 | **Midterm** | Core features running on PostgreSQL, documented and tested | 🗓️ |
+| 08 | **Midterm** · Web design | `BRAND.md` and `DESIGN.md` (concept "Gate-A": night → gate → day), Figma designs, the home page as a static prototype in `frontend/prototype/` | ✅ |
 | 09 | Middleware | Request ids, security headers, rate limiting, one error format for the `400`s too (the logger and the 404 and 5xx Guardians are already done) | 🗓️ |
 | 10 | Front end | React app served by nginx; full stack from one command | 🗓️ |
 | 11 | Auth | Sign-up with approval, sessions, role and ownership checks | 🗓️ |
