@@ -16,7 +16,7 @@ who they are, where they work, and how they can help the students who come after
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 ![AI](https://img.shields.io/badge/AI_assistant-Claude_Code-D97757?style=flat-square)
 
-[Quick start](#2-quick-start) · [Architecture](#4-how-the-code-is-organised) · [Data model](#5-data-model) · [Roadmap](#6-roadmap) · [DDD.md](DDD.md) · [TODO.md](TODO.md)
+[Quick start](#2-quick-start) · [Architecture](#4-how-the-code-is-organised) · [Data model](#5-data-model) · [Roadmap](#6-roadmap) · [DDD.md](DDD.md) · [BRAND.md](BRAND.md) · [TODO.md](TODO.md)
 
 </div>
 
@@ -385,6 +385,7 @@ alumni/
 ├── docker-compose.yml          db + backend
 ├── .env.example                optional overrides
 ├── DDD.md                      data design: entities, tables, constraints
+├── BRAND.md                    brand: name, audience, voice, logo, colour meaning
 ├── TODO.md                     tasks given in class, week by week
 ├── backend/
 │   ├── prisma/                 schema.prisma, migrations/, seed.ts (manual demo-data command)
