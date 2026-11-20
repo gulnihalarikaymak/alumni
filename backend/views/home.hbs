@@ -1,33 +1,19 @@
-{{!-- Home page: GET /. Temporary until the React app arrives in week 10. --}}
-<section class="hero">
-  <h1>Stay connected with Istanbul University alumni</h1>
-  <p>Post news for graduates and manage the people in the system. Everything is stored in PostgreSQL, so it is still here after a restart.</p>
-  <div class="actions">
-    <a class="btn" href="/announcements">Read announcements</a>
-    <a class="btn quiet" href="/users">Manage users</a>
+<section class="workspace-intro">
+  <div>
+    <p class="kicker">Alumni Tracking System</p>
+    <h1>The alumni <em>workspace.</em></h1>
+    <p>Read university news, explore career opportunities and manage the records that keep the community connected.</p>
+    <a class="btn" href="/job-postings">Browse opportunities <span aria-hidden="true">→</span></a>
   </div>
+  <img src="/media/beginning.webp" width="1600" height="1000" alt="Students spending time together on campus">
 </section>
-
-<div class="places">
-  <a class="card" href="/announcements">
-    <h3>Announcements</h3>
-    <p>Read, publish, edit and remove news for graduates.</p>
-  </a>
-  <a class="card" href="/job-postings">
-    <h3>Jobs</h3>
-    <p>Share open positions and let students and alumni apply.</p>
-  </a>
-  <a class="card" href="/users">
-    <h3>Users</h3>
-    <p>Add students, alumni, staff and admins, and change their status.</p>
-  </a>
-  <a class="card" href="/api/swagger">
-    <h3>API docs</h3>
-    <p>Try every JSON endpoint from the browser.</p>
-  </a>
-</div>
-
-<footer class="foot">
-  <p>System status: <a href="/api/health">/api/health</a></p>
-  <p>Week 2 routing exercises: <a href="/hello">/hello</a>, <a href="/hello/alumni">/hello/:name</a>, <a href="/sum/2/3">/sum/2/3</a>, <a href="/about">/about</a></p>
-</footer>
+<nav class="places" aria-label="Workspace sections">
+  <a href="/announcements"><h2>Announcements</h2><p>Read and publish news for the alumni community.</p><span aria-hidden="true">↗</span></a>
+  <a href="/job-postings"><h2>Career opportunities</h2><p>Browse openings and share a position.</p><span aria-hidden="true">↗</span></a>
+  <a href="/job-applications"><h2>Applications</h2><p>Review applications and follow their status.</p><span aria-hidden="true">↗</span></a>
+  <a href="/users"><h2>Users</h2><p>Manage user records, roles and account status.</p><span aria-hidden="true">↗</span></a>
+</nav>
+<details class="resources">
+  <summary>Developer resources</summary>
+  <nav aria-label="Developer resources"><a href="/api/swagger">API documentation</a><a href="/api/health">Service health</a><a href="/hello">Hello</a><a href="/hello/alumni">Named greeting</a><a href="/sum/2/3">Sum</a></nav>
+</details>

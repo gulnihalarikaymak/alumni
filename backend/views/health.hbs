@@ -1,0 +1,19 @@
+<section class="narrow">
+  <div class="page-head">
+    <div><p class="kicker">System status</p><h1>Service health</h1></div>
+    <span class="badge ACTIVE" id="service-status" role="status">{{payload.status}}</span>
+  </div>
+  <div class="card">
+    <dl class="record">
+      <dt>Service</dt><dd>{{payload.service}}</dd>
+      <dt>Version</dt><dd>{{payload.version}}</dd>
+      <dt>Uptime</dt><dd id="uptime">{{payload.uptimeSeconds}} s</dd>
+      <dt>Environment</dt><dd>{{payload.environment}}</dd>
+    </dl>
+    <h2>JSON response</h2>
+    <pre class="health-json" id="json">{{json}}</pre>
+    <a href="{{jsonUrl}}" id="raw-json">Raw JSON</a>
+    <p class="meta">Last checked <time id="checked" datetime="{{payload.timestamp}}">{{date payload.timestamp}}</time></p>
+  </div>
+</section>
+<script src="/health-status.js" defer></script>

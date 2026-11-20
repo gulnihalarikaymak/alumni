@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#151914">
+  <meta name="description" content="From student life to the journeys that follow. Explore the İstanbul University alumni community, career opportunities and university announcements.">
+  <title>Beyond the Years — ATS İÜ Alumni Network</title>
+  <link rel="icon" href="emblem.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="landing.css">
+  <link rel="stylesheet" href="chapters.css">
+  <noscript><style>
+    @media (max-width: 950px) {
+      .masthead .menu-toggle { display: none; }
+      .masthead .primary-nav { display: flex; overflow-x: auto; gap: 1rem; padding-block: 0; }
+      .masthead .primary-nav a { font-size: .85rem; min-height: 44px; white-space: nowrap; }
+    }
+  </style></noscript>
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="chapters.js" defer></script>
+  <script src="landing.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="masthead" id="masthead">
+    <div class="masthead-inner">
+      <a class="brand" href="#home" aria-label="ATS İÜ Alumni Network, home"><span class="emblem" aria-hidden="true"></span><span class="wordmark"><span>ATS <span lang="tr">İÜ</span></span><small>Alumni Network</small></span></a>
+      <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+        <a href="#home" aria-current="location">Home</a>
+        <a href="#community">Our Community</a>
+        <a href="/job-postings">Opportunities</a>
+        <a href="/announcements">Announcements</a>
+        <a href="/about">About</a>
+      </nav>
+      <div class="header-actions">
+        <a class="platform-link" href="/platform" aria-label="Enter Platform"><span><span class="enter-word">Enter </span>Platform</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a>
+        <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation"><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="page-progress" aria-hidden="true"></div>
+  </header>
+  <main id="main">
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="hero-photo">
+        <picture>
+          <source media="(max-width: 700px)" srcset="media/hero-small.webp">
+          <img id="hero-cover" src="media/hero.webp" width="1672" height="941" fetchpriority="high" alt="Three friends walking together under sunlit campus trees">
+        </picture>
+        <img id="gallery-cover" alt="" hidden>
+      </div>
+      <div class="light-field" aria-hidden="true"></div>
+      <div class="hero-inner wrap">
+        <div class="hero-copy">
+          <p class="kicker hero-kicker"><span></span>İstanbul Üniversitesi · Alumni Network</p>
+          <h1 id="hero-title" aria-label="The story doesn’t end here."><span class="headline-line" aria-hidden="true"><span class="clip"><span>The</span></span> <span class="clip"><span>story</span></span></span><span class="headline-line" aria-hidden="true"><span class="clip"><span>doesn’t</span></span> <span class="clip"><span>end</span></span> <span class="clip"><em>here.</em></span></span></h1>
+          <p class="hero-description">From the moments that shaped us to the futures we build, our connections continue beyond graduation.</p>
+          <div class="hero-actions">
+            <a class="pill pill-light" href="#community">Explore the Alumni Network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+            <a class="text-link" href="/platform">Enter ATS Platform <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a>
+          </div>
+        </div>
+        <div class="hero-foot">
+          <a class="scroll-cue" href="#journey"><span class="down-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></span><span>Scroll<span class="cue-tail"> to explore</span></span></a>
+          <div class="frame-index" aria-label="Campus photo gallery">
+            <span class="frame-number"><b>01</b><i></i>04</span>
+            <span class="frame-name" aria-live="polite">The Beginning</span>
+            <div class="frame-controls" hidden>
+              <button type="button" data-frame="-1" aria-label="Previous photograph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>
+              <button type="button" data-frame="1" aria-label="Next photograph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="journey" id="journey" aria-labelledby="journey-title">
+  <div class="journey__spread">
+    <header class="journey__header">
+      <div>
+        <p class="journey__eyebrow">The alumni journey</p>
+        <h2 id="journey-title">Beyond the <em>years.</em></h2>
+      </div>
+      <div class="journey__controls" hidden>
+        <span class="journey__counter" aria-hidden="true"><b>01</b> / 04</span>
+        <button type="button" data-chapter-step="-1" aria-label="Previous chapter" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6"/></svg>
+        </button>
+        <button type="button" data-chapter-step="1" aria-label="Next chapter, The Milestone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="journey__stage">
+      <article class="chapter chapter--beginning" id="chapter-beginning" aria-labelledby="chapter-title-1">
+        <div class="chapter__image"><img src="media/beginning.webp" width="832" height="466" loading="lazy" decoding="async" alt="Students walking through a sunlit stone arcade"></div>
+        <div class="chapter__text">
+          <p class="chapter__label">Chapter 01 <span></span> The Beginning</p>
+          <h3 id="chapter-title-1">Every story begins <em>somewhere.</em></h3>
+          <p>For us, it began with shared classrooms, familiar corridors, and the experiences that shaped who we became.</p>
+        </div>
+      </article>
+      <article class="chapter chapter--milestone" id="chapter-milestone" aria-labelledby="chapter-title-2">
+        <div class="chapter__image"><img src="media/milestone.webp" width="832" height="466" loading="lazy" decoding="async" alt="Graduates tossing their caps into the air"></div>
+        <div class="chapter__text">
+          <p class="chapter__label">Chapter 02 <span></span> The Milestone</p>
+          <h3 id="chapter-title-2">Some moments change <em>everything.</em></h3>
+          <p>Graduation marks an achievement, but it also opens the door to everything that comes next.</p>
+        </div>
+      </article>
+      <article class="chapter chapter--forward" id="chapter-forward" aria-labelledby="chapter-title-3">
+        <div class="chapter__image"><img src="media/forward.webp" width="832" height="466" loading="lazy" decoding="async" alt="Two designers leaning over an architectural model in a studio"></div>
+        <div class="chapter__text">
+          <p class="chapter__label">Chapter 03 <span></span> The Journey Forward</p>
+          <h3 id="chapter-title-3">A thousand paths.<br><em>Infinite possibilities.</em></h3>
+          <p>Different careers, different cities, different ambitions — connected by a shared beginning.</p>
+        </div>
+      </article>
+      <article class="chapter chapter--connection" id="chapter-connection" aria-labelledby="chapter-title-4">
+        <div class="chapter__image"><img src="media/connection.webp" width="832" height="466" loading="lazy" decoding="async" alt="Friends talking over tea around an outdoor table"></div>
+        <div class="chapter__inset" aria-hidden="true"><img src="media/beginning.webp" width="832" height="466" alt="" loading="lazy"></div>
+        <div class="chapter__text">
+          <p class="chapter__label">Chapter 04 <span></span> The Connection</p>
+          <h3 id="chapter-title-4">Different journeys.<br><em>One lasting connection.</em></h3>
+          <p>Wherever life takes us, the community we built remains part of who we are.</p>
+        </div>
+      </article>
+    </div>
+    <nav class="journey__chapters" aria-label="Jump to a chapter">
+      <a href="#chapter-beginning"><span>01</span> The Beginning</a>
+      <a href="#chapter-milestone"><span>02</span> The Milestone</a>
+      <a href="#chapter-forward"><span>03</span> The Journey Forward</a>
+      <a href="#chapter-connection"><span>04</span> The Connection</a>
+    </nav>
+  </div>
+</section>
+    <section id="community" class="community section wrap" aria-labelledby="community-title">
+      <div class="community-lead">
+        <p class="kicker"><span></span>Our community</p>
+        <h2 id="community-title">Behind every achievement, <em>there’s a story.</em></h2>
+        <p>Every graduate carries a unique journey. Together, those journeys form a community that continues to inspire, connect, and create opportunities.</p>
+        <a class="ink-link" href="/users">Explore alumni profiles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a>
+      </div>
+      <div class="portrait-spread">
+        <figure class="portrait-main"><img src="media/portrait.webp" width="896" height="1120" loading="lazy" decoding="async" alt="A woman in an indigo work shirt leaning on a sunlit studio worktable"><figcaption>A sense of belonging</figcaption></figure>
+        <div class="portrait-pair">
+          <figure><img src="media/forward.webp" width="480" height="350" loading="lazy" decoding="async" alt="A glimpse of working life after graduation"><figcaption>Finding a path</figcaption></figure>
+          <figure><img src="media/connection.webp" width="480" height="350" loading="lazy" decoding="async" alt="Friends spending time together"><figcaption>Staying connected</figcaption></figure>
+        </div>
+      </div>
+    </section>
+    <section class="platform-section section" id="platform" aria-labelledby="platform-title">
+      <div class="wrap">
+        <p class="kicker"><span></span>A community that moves forward</p>
+        <div class="platform-intro"><h2 id="platform-title">Stay connected to <em>what comes next.</em></h2><p>ATS İÜ connects İstanbul University graduates through professional opportunities, university announcements, and a shared digital community.</p></div>
+        <div class="feature-grid">
+          <a class="feature" href="/users"><span class="feature-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" aria-hidden="true"><circle cx="12" cy="7.5" r="3.2"/><path d="M5.5 20v-2a6.5 6.5 0 0 1 13 0v2"/></svg><span>01</span></span><h3>Alumni profiles</h3><p>Find the people at the heart of the university community.</p><span class="feature-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></span></a>
+          <a class="feature" href="/job-postings"><span class="feature-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" aria-hidden="true"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12c5 3 13 3 18 0m-9 0v4"/></svg><span>02</span></span><h3>Career opportunities</h3><p>Explore open positions and take the next step in your career.</p><span class="feature-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></span></a>
+          <a class="feature" href="/announcements"><span class="feature-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" aria-hidden="true"><path d="M4 11v4h4l11 4V5L8 9H6a2 2 0 0 0-2 2Zm4-2v6l2 6h-3l-2-6"/></svg><span>03</span></span><h3>University announcements</h3><p>Keep up with news and updates from the university.</p><span class="feature-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></span></a>
+          <a class="feature" href="/job-applications"><span class="feature-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" aria-hidden="true"><path d="M6 3h8l4 4v14H6zM14 3v5h4m-9 5 2 2 4-4"/></svg><span>04</span></span><h3>Applications</h3><p>Follow job applications and keep track of their status.</p><span class="feature-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></span></a>
+        </div>
+      </div>
+    </section>
+    <section class="final-cta section wrap" aria-labelledby="final-title">
+      <p class="kicker"><span></span>Your next chapter</p>
+      <h2 id="final-title">Once a student.<br><em>Always connected.</em></h2>
+      <p>Your İstanbul University journey continues through the people, opportunities, and stories that connect us.</p>
+      <div class="final-actions"><a class="pill pill-dark" href="/platform">Enter Alumni Tracking System <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a><a class="ink-link" href="/job-postings">Explore Opportunities <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a></div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap"><a class="brand" href="#home" aria-label="ATS İÜ Alumni Network, home"><span class="emblem" aria-hidden="true"></span><span class="wordmark"><span>ATS <span lang="tr">İÜ</span></span><small>Alumni Network</small></span></a><span>İstanbul Üniversitesi</span><a class="back-top" href="#home">Back to top <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a></div></footer>
+</body>
+</html>

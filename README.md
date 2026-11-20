@@ -153,7 +153,7 @@ flowchart LR
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
 | `http://localhost:3000/api/health` | 💚 Health check (JSON for curl, a status page in a browser) |
 
-Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. The week 8 design prototype of the home page needs no server: open `frontend/prototype/index.html` in a browser. A Postman collection is in `postman/`: normal requests for users, and error cases (`400`, `404`, `409`) for users, announcements, job postings and job applications. Each error-case folder creates its own records in a Setup step and deletes them in Cleanup; run it top to bottom.
+Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. The public home at `/` and ATS workspace at `/platform` run inside NestJS. See [the frontend notes](frontend/README.md) for the visual redesign and standalone preview. A Postman collection is in `postman/`: normal requests for users, and error cases (`400`, `404`, `409`) for users, announcements, job postings and job applications. Each error-case folder creates its own records in a Setup step and deletes them in Cleanup; run it top to bottom.
 
 <details>
 <summary><b>🛠️ Everyday commands</b> (click to expand)</summary>
@@ -415,7 +415,7 @@ alumni/
 - [ ] Database errors other than "not found" (for example two requests taking the same e-mail at the same moment) still end as `500` instead of a fitting `409`. The 5xx Guardian now hides the details from the client; one format for the `400`s too comes in week 9.
 - [ ] The Postman collection has the normal (happy-path) requests for users only; announcements, job postings and applications have only their error cases (`400`, `404`, `409`) so far.
 - [ ] `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) with inline HTML; removed in week 10.
-- [ ] The new design (`DESIGN.md`) exists so far only as a static prototype of the home page in `frontend/prototype/`, with demo data. The Handlebars pages keep the week 7 look until each page moves to `frontend/`.
+- [x] The Beyond the Years landing page and redesigned Handlebars workspace run on the existing backend. The original Gate-A prototype remains available at `frontend/prototype/gate-a.html`.
 
 ---
 

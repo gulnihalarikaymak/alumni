@@ -1,25 +1,15 @@
-# Frontend
+# ATS İÜ frontend
 
-React + TypeScript single-page application (Vite, Tailwind, shadcn/ui).
+The public home at `/` presents *Beyond the Years*, a photographic journey from campus life to the alumni network. The working frontend runs in the existing NestJS application. Its landing page uses plain HTML, CSS and JavaScript. The workspace and data pages use Handlebars and the existing controllers.
 
-The UI is based on a design I made earlier for the Web Design course with Figma Make:
-https://github.com/gulnihalarikaymak/AlumniTrackingSystem
+Start the stack using the [repository instructions](../README.md). Open [the landing page](http://localhost:3000/) or [the ATS workspace](http://localhost:3000/platform). The workspace links to live profiles, career opportunities, announcements and applications. Sign-in and self-registration are planned in the project's roadmap.
 
-It is brought into this repository after cleanup (removing the Figma-specific imports and the
-Supabase backend) and connected to this project's API in week 10.
+## Source
 
-## Week 8: home page prototype (`prototype/`)
+- [Landing page and local assets](../backend/views/landing/index.html)
+- [Workspace layout](../backend/views/layout.hbs) and [shared workspace styles](../backend/views/landing/workspace.css)
+- [Original Gate-A prototype](prototype/gate-a.html), retained for comparison
 
-A static prototype of the home page in the new design, **Gate-A** (see [DESIGN.md](../DESIGN.md)):
-at night the Istanbul University gate draws itself over a photo, the visitor scrolls through its lit arch,
-and arrives at the home page by day.
+[The original prototype entry point](prototype/index.html) opens the new landing page for static preview. Links to data and workspace pages in this preview assume the local NestJS server is running on port 3000. Serving the landing through NestJS uses the application's own origin and port.
 
-- Plain HTML, CSS and JavaScript: no build step, no packages. Open `prototype/index.html` in a browser.
-- The content is synthetic demo data; the prototype does not call the API yet.
-- `app.js` builds the gate drawing as SVG paths in the photo's own coordinates (960 × 640), so the lines
-  lie on the photo, and drives the scroll intro. `styles.css` holds the tokens of DESIGN.md.
-- Photo `gate-night.jpg`: "İstanbul Üniversitesi (54510564100).jpg" by Jorge Franganillo,
-  [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/), via
-  [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:%C4%B0stanbul_%C3%9Cniversitesi_(54510564100).jpg),
-  resized to 2400 × 1600.
-- The same prototype runs in Figma Make: https://www.figma.com/make/47X7D1RMyvkJGkJPwjOHKn
+The WebP scenes are original AI-generated illustrations of university life. They do not identify actual graduates. Instrument Serif and Inter are self-hosted with licenses in the fonts directory. GSAP 3.13.0 and ScrollTrigger are vendored for local playback. The four chapters remain readable when JavaScript is disabled or the visitor requests reduced motion.

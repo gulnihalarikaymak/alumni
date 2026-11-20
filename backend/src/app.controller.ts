@@ -1,14 +1,21 @@
-import { Controller, Get, Param, Header, Render } from '@nestjs/common';
+import { Controller, Get, Param, Render, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import type { Response } from 'express';
+import { landingDir } from './common/views';
 
 @ApiTags('demo')
 @Controller()
 export class AppController {
-  // Home page, rendered from views/home.hbs inside the shared layout.
   @Get()
+  getRoot(@Res() response: Response): void {
+    response.sendFile('index.html', { root: landingDir });
+  }
+
+  // The workspace remains available alongside the public landing page.
+  @Get('platform')
   @Render('home')
-  getRoot() {
-    return { title: 'Home' };
+  getPlatform() {
+    return { title: 'ATS Platform' };
   }
 
   @Get('hello')
@@ -31,35 +38,8 @@ export class AppController {
   }
 
   @Get('about')
-  @Header('Content-Type', 'text/html')
-  getAbout(): string {
-    return `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ATS - About</title>
-        <style>
-          body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f9; }
-          .container { text-align: center; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 500px; }
-          h1 { color: #2c3e50; }
-          p { color: #7f8c8d; line-height: 1.6; }
-          .links { margin-top: 20px; }
-          .links a { margin: 0 10px; color: #3498db; text-decoration: none; }
-          .links a:hover { text-decoration: underline; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>About Alumni Tracking System</h1>
-          <p>This system helps universities stay in touch with their graduates: who they are, where they work, and how they can help current students.</p>
-          <div class="links">
-            <a href="/">Back to Home</a>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+  @Render('about')
+  getAbout() {
+    return { title: 'About' };
   }
 }

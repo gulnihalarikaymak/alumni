@@ -1,7 +1,6 @@
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
-import { renderHealthPage } from './health.page';
 
 const SERVICE_NAME = 'alumni-backend';
 const SERVICE_VERSION = process.env.npm_package_version || '0.1.0';
@@ -36,7 +35,12 @@ function sendHealth(req: Request, res: Response, format?: string): void {
     format !== 'json' && (req.headers.accept || '').includes('text/html');
 
   if (wantsHtml) {
-    res.type('html').send(renderHealthPage(payload, req.path));
+    res.render('health', {
+      title: 'Service health',
+      payload,
+      json: JSON.stringify(payload, null, 2),
+      jsonUrl: `${req.path}?format=json`,
+    });
   } else {
     res.json(payload);
   }

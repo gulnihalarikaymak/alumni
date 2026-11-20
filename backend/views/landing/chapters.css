@@ -1,0 +1,154 @@
+/* Four photographic chapters. Without motion support, each scene is a readable article. */
+.journey {
+  --chapter-paper: var(--color-background, #f4f1eb);
+  --chapter-ink: var(--color-ink, #15191e);
+  --chapter-accent: var(--color-accent, #9d4653);
+  --chapter-gutter: clamp(20px, 5vw, 90px);
+  background: var(--chapter-paper);
+  color: var(--chapter-ink);
+  scroll-margin-top: 76px;
+}
+.journey__spread {
+  box-sizing: border-box;
+  max-width: 1800px;
+  margin-inline: auto;
+  padding: clamp(52px, 6vw, 100px) var(--chapter-gutter);
+}
+.journey__header, .journey__controls, .journey__eyebrow, .chapter__label {
+  display: flex;
+  align-items: center;
+}
+.journey__header { gap: 20px; justify-content: space-between; margin-bottom: clamp(24px, 3vw, 48px); }
+.journey .journey__eyebrow, .journey .chapter__label {
+  font-family: var(--sans, Inter, sans-serif);
+  font-size: .75rem;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin: 0;
+  gap: 12px;
+}
+.journey__eyebrow { color: var(--chapter-accent); }
+.journey__eyebrow::before, .chapter__label span {
+  content: "";
+  display: inline-block;
+  width: 29px;
+  height: 1px;
+  background: currentColor;
+}
+.journey h2, .journey h3 {
+  font-family: var(--display, "Instrument Serif", Georgia, serif);
+  font-weight: 400;
+  line-height: .99;
+  letter-spacing: -.035em;
+}
+.journey h2 { font-size: clamp(3.1rem, 5.4vw, 6rem); margin: 9px 0 0; }
+.journey h2 em { color: var(--chapter-accent); }
+.journey h2 em, .journey h3 em { font-weight: inherit; }
+.journey__controls { align-self: flex-end; gap: 8px; padding-bottom: 4px; }
+.journey__controls[hidden] { display: none; }
+.journey__counter {
+  margin-inline-end: 12px;
+  font: 500 .8125rem var(--sans, Inter, sans-serif);
+  letter-spacing: .09em;
+  color: #585c60;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.journey__counter b { color: var(--chapter-ink); }
+.journey__controls button {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #b8b5af;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--chapter-ink);
+  cursor: pointer;
+  transition: color .2s, background .2s, border-color .2s;
+}
+.journey__controls button svg { width: 18px; height: 18px; }
+.journey__controls button:disabled { opacity: .4; cursor: default; }
+.journey__controls button:enabled:hover { background: var(--chapter-ink); color: var(--chapter-paper); border-color: var(--chapter-ink); }
+.journey :is(a, button):focus-visible { outline: 2px solid var(--chapter-accent); outline-offset: 3px; }
+.journey__stage { display: grid; gap: 16px; }
+.journey .chapter {
+  isolation: isolate;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(400px, 57svh, 690px);
+  padding: clamp(26px, 4.3vw, 76px);
+  box-sizing: border-box;
+  overflow: hidden;
+  color: white;
+  background: #20221e;
+  scroll-margin-top: 90px;
+}
+.chapter__image, .chapter__image img, .chapter::after { position: absolute; inset: 0; height: 100%; width: 100%; }
+.chapter__image { z-index: -3; overflow: hidden; }
+.chapter__image img, .chapter__inset img { object-fit: cover; }
+.chapter::after {
+  content: "";
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(10,14,12,.60), transparent 79%), linear-gradient(0deg, rgba(10,14,12,.70), transparent 80%);
+}
+.chapter__inset {
+  position: absolute;
+  z-index: -2;
+  top: 10%;
+  right: 6%;
+  width: 18%;
+  aspect-ratio: 4/5;
+  max-height: 72%;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.55);
+  box-shadow: 0 12px 36px #1114;
+}
+.chapter__inset img { width: 100%; height: 100%; }
+.chapter__text { max-width: min(100%, 52rem); }
+.journey .chapter__label { color: #f3e6d0; letter-spacing: .13em; }
+.chapter__label span { width: 21px; }
+.journey h3 { font-size: clamp(2.8rem, 5.4vw, 6.25rem); margin: .23em 0 .2em; text-wrap: balance; }
+.chapter__text p:last-child { margin: 0; max-width: 45ch; font: 400 1rem/1.55 var(--sans, Inter, sans-serif); color: #fbfaf5; }
+.journey__chapters { display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 18px; margin-block: 18px 0; }
+.journey__chapters a {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-block: 14px;
+  color: #4d5154;
+  border-top: 1px solid rgba(21,25,30,.24);
+  text-decoration: none;
+  font: 500 .875rem/1.25 var(--sans, Inter, sans-serif);
+}
+.journey__chapters a span { color: var(--chapter-accent); font-size: .75rem; font-variant-numeric: tabular-nums; }
+.journey__chapters a:is(:hover,[aria-current]) { color: var(--chapter-ink); border-color: var(--chapter-accent); }
+.journey--cinematic .journey__spread { padding-block: clamp(20px, 3.5svh, 48px) 12px; }
+.journey--cinematic .journey__header { margin-bottom: clamp(15px, 2.7svh, 34px); }
+.journey--cinematic h2 { font-size: clamp(3rem, min(5.4vw, 8.5svh), 6rem); }
+.journey--cinematic .journey__stage { position: relative; display: block; min-height: 340px; height: min(58svh, 690px); }
+.journey--cinematic .chapter { position: absolute; inset: 0; min-height: 0; }
+@media (max-width: 820px) {
+  .journey__chapters { grid-template-columns: repeat(2, 1fr); }
+  .chapter__inset { top: 7%; right: 5%; }
+}
+@media (max-width: 550px) {
+  .journey__controls { display: none; }
+  .journey__spread { padding-inline: 20px; }
+  .journey .chapter { padding: 25px 20px; min-height: 480px; }
+  .journey h3 { font-size: clamp(2.65rem, 12vw, 4.2rem); }
+  .chapter__text p:last-child { font-size: 1rem; }
+  .journey__chapters { gap: 0 12px; }
+  .journey__chapters a { font-size: .8125rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey *, .journey *::after { transition-duration: 0s !important; }
+}
+.journey--cinematic .chapter--milestone .chapter__image {
+  mask-image: linear-gradient(105deg, black calc(var(--chapter-wipe, 115%) - 7%), transparent calc(var(--chapter-wipe, 115%) + 7%));
+}

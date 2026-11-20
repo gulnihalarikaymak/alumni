@@ -1,234 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}} — ATS İÜ</title>
+  <link rel="icon" href="/emblem.svg" type="image/svg+xml">
   <script>
-    // Apply a saved theme before the page is drawn, so it does not flash.
-    try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+    try {
+      const saved = localStorage.getItem('theme');
+      document.documentElement.dataset.theme = saved === 'dark' || saved === 'light' ? saved :
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch {}
   </script>
-  <title>{{title}} – Alumni Tracking System</title>
-  <style>
-    /* "Ocean Depths" theme (theme-factory): deep navy, teal, seafoam and cream.
-       --teal-ink is a darker teal for text and buttons, because the theme's
-       teal (#2d8b8b) is too light for small text on cream (contrast below 4.5:1). */
-    :root {
-      --navy: #1a2332; --navy-2: #243247; --teal: #2d8b8b; --teal-ink: #1d6b6b; --seafoam: #a8dadc; --cream: #f1faee;
-      --page: #f1faee; --surface: #ffffff; --tint: #e3f2f1; --text: #1a2332; --muted: #4f5d6e; --line: #d3e4e2;
-      --on-navy: #f1faee; --on-navy-muted: #a8dadc; --on-teal: #ffffff;
-      --active: #1d6b6b; --active-bg: #d6efed; --pending: #8a5a00; --pending-bg: #fbefd2;
-      --rejected: #a3283b; --rejected-bg: #fbe3e6; --suspended: #4f5d6e; --suspended-bg: #e6eaef;
-      --shadow: 0 1px 2px rgba(26,35,50,.06), 0 4px 14px rgba(26,35,50,.06);
-      --font: "DejaVu Sans", Verdana, "Segoe UI", system-ui, sans-serif;
-    }
-    /* Dark theme: follows the system unless the theme button chose one (data-theme on <html>) */
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --page: #121a26; --surface: #1a2332; --tint: #203043; --text: #f1faee; --muted: #a8b8c4; --line: #2c3c52;
-        --navy: #0d141e; --navy-2: #1a2332; --teal-ink: #6cc4c4; --on-teal: #0d141e;
-        --active: #7fd3cf; --active-bg: #173a3c; --pending: #f0c56a; --pending-bg: #3b3020;
-        --rejected: #f29aa8; --rejected-bg: #3e2229; --suspended: #b5c1cc; --suspended-bg: #27313e;
-        --shadow: none;
-      }
-    }
-    :root[data-theme="dark"] {
-      --page: #121a26; --surface: #1a2332; --tint: #203043; --text: #f1faee; --muted: #a8b8c4; --line: #2c3c52;
-      --navy: #0d141e; --navy-2: #1a2332; --teal-ink: #6cc4c4; --on-teal: #0d141e;
-      --active: #7fd3cf; --active-bg: #173a3c; --pending: #f0c56a; --pending-bg: #3b3020;
-      --rejected: #f29aa8; --rejected-bg: #3e2229; --suspended: #b5c1cc; --suspended-bg: #27313e;
-      --shadow: none;
-    }
-
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--page); color: var(--text); font: 400 15px/1.6 var(--font); }
-    a { color: var(--teal-ink); text-decoration: none; }
-    a:hover { text-decoration: underline; text-underline-offset: 3px; }
-    :focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
-    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-    /* ---- Header: the navy band ---- */
-    .site { background: var(--navy); color: var(--on-navy); border-bottom: 4px solid var(--teal); }
-    .site .bar { max-width: 1040px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
-    .brand { display: flex; align-items: center; gap: 12px; color: var(--on-navy); margin-right: auto; }
-    .brand:hover { text-decoration: none; }
-    .brand .mark { width: 38px; height: 38px; border-radius: 9px; background: var(--teal); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 18px; }
-    .brand b { display: block; font-size: 17px; line-height: 1.2; }
-    .brand small { display: block; font-size: 12px; color: var(--on-navy-muted); }
-    .nav { display: flex; flex-wrap: wrap; gap: 4px; }
-    .nav a { color: var(--on-navy-muted); padding: 8px 14px; border-radius: 999px; font-weight: 600; font-size: 14px; }
-    .nav a:hover { color: var(--on-navy); background: var(--navy-2); text-decoration: none; }
-    .nav a[aria-current="page"] { color: var(--navy); background: var(--seafoam); }
-    .theme-toggle { width: 36px; height: 36px; display: grid; place-items: center; padding: 0; border: 1px solid rgba(168,218,220,.35); border-radius: 50%; background: transparent; color: var(--on-navy-muted); cursor: pointer; }
-    .theme-toggle:hover { color: var(--on-navy); border-color: var(--seafoam); }
-    .theme-toggle svg { width: 17px; height: 17px; }
-    .theme-toggle .sun { display: none; }
-    :root[data-theme="dark"] .theme-toggle .sun { display: block; }
-    :root[data-theme="dark"] .theme-toggle .moon { display: none; }
-
-    /* ---- Page ---- */
-    main { max-width: 1040px; margin: 0 auto; padding: 32px 24px 56px; }
-    .narrow { max-width: 640px; }
-    h1 { font-size: 28px; line-height: 1.25; font-weight: 700; margin: 0; overflow-wrap: anywhere; }
-    h2 { font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 0 16px; }
-    .sub { color: var(--muted); margin: 6px 0 0; }
-    .page-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; margin-bottom: 24px; }
-    .back { display: inline-block; font-size: 14px; font-weight: 600; margin-bottom: 16px; }
-    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 24px; }
-    .card + .card { margin-top: 20px; }
-    .card.flush { padding: 0; overflow: hidden; }
-    .foot { margin-top: 28px; color: var(--muted); font-size: 13px; }
-    .foot p { margin: 0 0 4px; }
-
-    /* ---- Badges (values from the database) ---- */
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .02em; }
-    .badge.ACTIVE { color: var(--active); background: var(--active-bg); }
-    .badge.PENDING { color: var(--pending); background: var(--pending-bg); }
-    .badge.REJECTED { color: var(--rejected); background: var(--rejected-bg); }
-    .badge.SUSPENDED { color: var(--suspended); background: var(--suspended-bg); }
-    .badge.role { color: var(--text); background: transparent; border: 1px solid var(--line); }
-    /* Application status: reuses the user status colours */
-    .badge.SUBMITTED { color: var(--pending); background: var(--pending-bg); }
-    .badge.REVIEWED { color: var(--suspended); background: var(--suspended-bg); }
-    .badge.ACCEPTED { color: var(--active); background: var(--active-bg); }
-    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-
-    /* ---- Buttons ---- */
-    .btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--teal-ink); background: var(--teal-ink); color: var(--on-teal); font: 700 14px/1 var(--font); cursor: pointer; white-space: nowrap; }
-    .btn:hover { filter: brightness(1.1); text-decoration: none; }
-    .btn.quiet { background: var(--surface); color: var(--text); border-color: var(--line); }
-    .btn.quiet:hover { background: var(--tint); filter: none; }
-    .btn.danger { background: var(--surface); color: var(--rejected); border-color: var(--rejected); }
-    .btn.danger:hover { background: var(--rejected-bg); filter: none; }
-    .link { font: inherit; background: none; border: 0; padding: 0; color: var(--teal-ink); font-weight: 600; cursor: pointer; }
-    .link.danger { color: var(--rejected); }
-    .link:hover { text-decoration: underline; text-underline-offset: 3px; }
-    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-    .actions form { margin: 0; }
-
-    /* ---- Table (users) ---- */
-    .table-wrap { position: relative; overflow-x: auto; } /* relative keeps .sr-only inside the scroll box */
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th { text-align: left; font-size: 12px; font-weight: 700; color: var(--muted); background: var(--tint); padding: 12px 16px; white-space: nowrap; }
-    td { padding: 13px 16px; border-top: 1px solid var(--line); vertical-align: middle; }
-    tbody tr:hover { background: var(--tint); }
-    td.id { color: var(--muted); width: 1%; }
-    td.when { color: var(--muted); white-space: nowrap; }
-    td.acts { text-align: right; white-space: nowrap; }
-    td.acts > * + * { margin-left: 14px; }
-    td.acts form { display: inline; }
-    .person { display: flex; align-items: center; gap: 12px; font-weight: 600; }
-    .person a { color: var(--text); overflow-wrap: anywhere; }
-    /* Avatar with the first letter of the e-mail: the span holds the whole e-mail,
-       font-size 0 hides it and ::first-letter shows only the first character (CSS only). */
-    .initial { flex: none; display: block; width: 32px; height: 32px; border-radius: 50%; background: var(--seafoam); color: var(--navy); text-align: center; line-height: 32px; font-size: 0; overflow: hidden; white-space: nowrap; font-weight: 700; text-transform: uppercase; }
-    .initial::first-letter { font-size: 13px; }
-
-    /* ---- Announcement list ---- */
-    ol.entries { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-    ol.entries li { display: grid; grid-template-columns: 1fr auto; gap: 6px 20px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--teal); border-radius: 10px; box-shadow: var(--shadow); padding: 18px 22px; }
-    ol.entries h3 { font-size: 17px; line-height: 1.4; margin: 0; }
-    ol.entries h3 a { color: var(--text); }
-    ol.entries time { font-size: 13px; color: var(--muted); }
-    ol.entries p { grid-column: 1; margin: 0; color: var(--muted); max-width: 70ch; }
-    ol.entries .actions { grid-column: 2; grid-row: 1 / span 3; align-self: start; font-size: 14px; }
-
-    /* ---- Detail pages ---- */
-    .split { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
-    .split .card + .card, .places .card + .card { margin-top: 0; }
-    dl.record { display: grid; grid-template-columns: 130px 1fr; margin: 0; }
-    dl.record dt, dl.record dd { margin: 0; padding: 12px 0; border-top: 1px solid var(--line); }
-    dl.record dt:first-of-type, dl.record dt:first-of-type + dd { border-top: 0; padding-top: 0; }
-    dl.record dt { color: var(--muted); font-size: 14px; }
-    dl.record dd { overflow-wrap: anywhere; }
-    .profile { display: flex; align-items: center; gap: 16px; }
-    .profile .initial { width: 56px; height: 56px; line-height: 56px; }
-    .profile .initial::first-letter { font-size: 22px; }
-    .content { white-space: pre-wrap; font-size: 16px; line-height: 1.75; margin: 0; max-width: 70ch; }
-    .meta { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
-
-    /* ---- Forms ---- */
-    form.stack { display: grid; gap: 18px; }
-    label { display: grid; gap: 6px; font-weight: 700; font-size: 14px; }
-    input, select, textarea { font: 400 15px/1.5 var(--font); color: var(--text); background: var(--surface); padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; width: 100%; }
-    input:hover, select:hover, textarea:hover { border-color: var(--teal); }
-    input:focus, select:focus, textarea:focus { outline: 3px solid var(--seafoam); outline-offset: 0; border-color: var(--teal); }
-    textarea { resize: vertical; min-height: 160px; }
-    .errors { margin: 0 0 18px; padding: 12px 16px 12px 34px; background: var(--rejected-bg); color: var(--rejected); border-radius: 8px; font-weight: 600; font-size: 14px; }
-    .form-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 4px; }
-
-    /* ---- Home ---- */
-    .hero { background: var(--navy); color: var(--on-navy); border-radius: 16px; padding: 44px 40px; }
-    .hero h1 { font-size: clamp(28px, 4.5vw, 40px); line-height: 1.2; max-width: 20ch; }
-    .hero p { color: var(--on-navy-muted); font-size: 17px; max-width: 56ch; margin: 14px 0 26px; }
-    .hero .btn { background: var(--teal); border-color: var(--teal); color: #fff; }
-    .hero .btn.quiet { background: transparent; color: var(--on-navy); border-color: rgba(168,218,220,.45); }
-    .hero .btn.quiet:hover { background: var(--navy-2); }
-    .places { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-top: 22px; }
-    .places a { display: block; color: var(--text); }
-    .places a:hover { text-decoration: none; border-color: var(--teal); }
-    .places h3 { font-size: 17px; margin: 0 0 6px; color: var(--teal-ink); }
-    .places p { margin: 0; color: var(--muted); font-size: 14px; }
-
-    /* ---- Not found ---- */
-    .missing { text-align: center; padding: 48px 24px; }
-    .missing .code { font-size: 64px; line-height: 1; font-weight: 700; color: var(--seafoam); margin: 0 0 12px; }
-    .missing .sub { margin-bottom: 24px; }
-    .empty { text-align: center; padding: 40px 24px; color: var(--muted); }
-    .empty p { margin: 0 0 16px; }
-
-    @media (max-width: 760px) {
-      .site .bar { padding: 12px 16px; }
-      .nav { order: 3; width: 100%; }
-      main { padding: 24px 16px 40px; }
-      .hero { padding: 30px 22px; border-radius: 12px; }
-      .places, .split { grid-template-columns: 1fr; }
-      .card { padding: 18px; }
-      ol.entries li { grid-template-columns: 1fr; padding: 16px 18px; }
-      ol.entries .actions { grid-column: 1; grid-row: auto; margin-top: 6px; }
-      dl.record { grid-template-columns: 1fr; }
-      dl.record dd { border-top: 0; padding-top: 0; }
-      /* small screens: id, role and date are on the user's own page */
-      th:nth-child(5), td.when, th:nth-child(1), td.id, th:nth-child(3), td:nth-child(3) { display: none; }
-      td .person .initial { display: none; }
-      td:nth-child(2) { min-width: 150px; }
-      th, td { padding: 10px; } table { font-size: 13px; }
-    }
-  </style>
+  <link rel="stylesheet" href="/workspace.css">
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
   <header class="site">
     <div class="bar">
-      <a class="brand" href="/"><span class="mark" aria-hidden="true">A</span><span><b>Alumni Tracking System</b><small>Istanbul University</small></span></a>
-      <nav class="nav" aria-label="Main">
+      <a class="brand" href="/" aria-label="ATS İÜ Alumni Network, home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>ATS <span lang="tr">İÜ</span><small>Alumni Network</small></span>
+      </a>
+      <button class="workspace-menu" type="button" aria-controls="workspace-nav" aria-expanded="false" hidden>Menu</button>
+      <nav class="nav" id="workspace-nav" aria-label="Platform">
+        <a href="/platform" {{navCurrent "/platform"}}>Workspace</a>
+        <a href="/job-postings" {{navCurrent "/job-postings"}}>Opportunities</a>
         <a href="/announcements" {{navCurrent "/announcements"}}>Announcements</a>
-        <a href="/job-postings" {{navCurrent "/job-postings"}}>Jobs</a>
         <a href="/job-applications" {{navCurrent "/job-applications"}}>Applications</a>
         <a href="/users" {{navCurrent "/users"}}>Users</a>
-        <a href="/api/swagger">API docs</a>
       </nav>
-      <button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme">
-        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/>
+        </svg>
       </button>
     </div>
   </header>
-  <main>
-{{{body}}}
+  <main id="main" tabindex="-1">
+    {{{body}}}
   </main>
+  <footer class="site-foot">
+    <a href="/" lang="tr">İstanbul Üniversitesi</a>
+    <nav aria-label="Additional resources"><a href="/about">About</a><a href="/api/swagger">API docs</a><a href="/api/health">System status</a></nav>
+  </footer>
   <script>
-    // Theme button: switches between light and dark and remembers the choice in this browser.
-    (function () {
-      const root = document.documentElement;
-      const button = document.querySelector(".theme-toggle");
-      const current = () => root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-      const show = (t) => { root.dataset.theme = t; button.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme"); };
-      show(current());
-      button.addEventListener("click", () => {
-        const next = current() === "dark" ? "light" : "dark";
-        show(next);
-        try { localStorage.setItem("theme", next); } catch (e) {}
-      });
-    })();
+    const themeButton = document.querySelector('.theme-toggle');
+    const themeRoot = document.documentElement;
+    function setThemeLabel() {
+      themeButton.setAttribute('aria-label', themeRoot.dataset.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+    themeButton.hidden = false;
+    setThemeLabel();
+    themeButton.addEventListener('click', () => {
+      themeRoot.dataset.theme = themeRoot.dataset.theme === 'dark' ? 'light' : 'dark';
+      setThemeLabel();
+      try { localStorage.setItem('theme', themeRoot.dataset.theme); } catch {}
+    });
+    const menuButton = document.querySelector('.workspace-menu');
+    const compact = matchMedia('(max-width: 56rem)');
+    function setMenu(open) {
+      menuButton.hidden = !compact.matches;
+      document.querySelector('#workspace-nav').hidden = compact.matches && !open;
+      menuButton.setAttribute('aria-expanded', String(open));
+    }
+    setMenu(false);
+    compact.addEventListener('change', () => setMenu(false));
+    menuButton.addEventListener('click', () => setMenu(menuButton.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && menuButton.getAttribute('aria-expanded') === 'true') {
+        setMenu(false);
+        menuButton.focus();
+      }
+    });
   </script>
 </body>
 </html>
