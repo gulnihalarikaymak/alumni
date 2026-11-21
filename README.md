@@ -9,7 +9,7 @@ who they are, where they work, and how they can help the students who come after
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_18-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
-![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Handlebars](https://img.shields.io/badge/Handlebars-000000?style=for-the-badge&logo=handlebarsdotjs&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 ![Progress](https://img.shields.io/badge/progress-week_8_of_14-blue?style=flat-square)
@@ -117,7 +117,7 @@ Job postings and applications were added to the core in class (week 6). Error ha
 ```bash
 git clone https://github.com/gulnihalarikaymak/alumni.git
 cd alumni
-docker compose up
+docker compose up --build
 ```
 
 ```mermaid
@@ -144,6 +144,8 @@ flowchart LR
 
 | Address | What it is |
 |---|---|
+| `http://localhost:3000/` | Public Beyond the Years landing |
+| `http://localhost:3000/platform` | ATS workspace |
 | `http://localhost:3000/users` | 📄 Web pages for users |
 | `http://localhost:3000/announcements` | 📄 Web pages for announcements |
 | `http://localhost:3000/job-postings` | 📄 Web pages for job postings, and each posting's applications |
@@ -153,7 +155,7 @@ flowchart LR
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
 | `http://localhost:3000/api/health` | 💚 Health check (JSON for curl, a status page in a browser) |
 
-Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. The public home at `/` and ATS workspace at `/platform` run inside NestJS. See [the frontend notes](frontend/README.md) for the visual redesign and standalone preview. A Postman collection is in `postman/`: normal requests for users, and error cases (`400`, `404`, `409`) for users, announcements, job postings and job applications. Each error-case folder creates its own records in a Setup step and deletes them in Cleanup; run it top to bottom.
+Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. The public home at `/` and ATS workspace at `/platform` run inside NestJS. See [the frontend notes](frontend/README.md) for the active files and archived prototype. A Postman collection is in `postman/`: normal requests for users, and error cases (`400`, `404`, `409`) for users, announcements, job postings and job applications. Each error-case folder creates its own records in a Setup step and deletes them in Cleanup; run it top to bottom.
 
 <details>
 <summary><b>🛠️ Everyday commands</b> (click to expand)</summary>
@@ -171,7 +173,9 @@ Only `db` and `backend` run so far; the React front end joins in week 10 on port
 
 Migrations in `backend/prisma/migrations/` are applied automatically when the backend container starts. An **empty** database is then filled with synthetic demo data automatically on first start, so `docker compose up` on a fresh volume already has something to show. It is idempotent (once there is at least one user it does nothing), and `AUTO_SEED=false` turns it off.
 
-Settings (database name, user, password, ports) have defaults in `docker-compose.yml`. To change one, copy `.env.example` to `.env`. If a port is taken, set `DB_PORT` or `BACKEND_PORT` there.
+Settings (database name, user, password, ports) have defaults in `docker-compose.yml`. To change one, copy `.env.example` to `.env`. If a port is taken, set `DB_PORT` or `BACKEND_PORT` there. For this checkout's review address, use `BACKEND_PORT=3111`, run `docker compose up --build`, and open `http://localhost:3111/`. Every page and asset uses that same address. NestJS always listens on port 3000 inside Docker. A static file server only previews HTML and cannot run the workspace or API.
+
+For independent checkouts, give each a distinct `COMPOSE_PROJECT_NAME`, host ports and `DB_VOLUME` in its local `.env`. Keep the volume name stable to reopen the same data. The default volume is `alumni-db-data`.
 
 </details>
 
@@ -179,6 +183,24 @@ Settings (database name, user, password, ports) have defaults in `docker-compose
 > `docker compose down -v` deletes the database volume. Use `docker compose down` to keep your data.
 
 ---
+
+### Verify a delivery
+
+Use the configured application address throughout these checks. With the default
+settings it is `http://localhost:3000`. With `BACKEND_PORT=3111` it is
+`http://localhost:3111`. A fresh database contains synthetic seed records.
+
+1. Run `docker compose up --build -d`, then `docker compose ps`. Check that the database is healthy and the backend is running.
+2. Open the home page. Follow its links to the workspace, announcements, opportunities, applications and users. Check that images, fonts and styles load.
+3. In Announcements, create a uniquely named synthetic record, edit it and confirm the saved result.
+4. Run `docker compose down` and `docker compose up -d`. Confirm that the same record remains, then delete only the record created for this check.
+5. Send an invalid announcement body through Swagger or Postman and check for `400`. Request a missing API record and check for `404`. Exercise the existing `409` scenarios in `postman/`.
+6. Open `/api/health?format=json`. Check for `status: "ok"`. This reports process liveness; a successful database-backed page checks database access.
+7. For visual changes, check a narrow screen, keyboard navigation, chapter and gallery controls, and reduced motion.
+
+Read failure details with `docker compose logs backend` and
+`backend/logs/error.logs`. Keep verification records synthetic and report any
+step that could not be completed.
 
 ## 3. Stack and why
 
@@ -197,7 +219,8 @@ flowchart TB
 | Back end | TypeScript, Node.js, NestJS | One language with the front end. NestJS gives each weekly topic its own building block: controllers, services, middleware, guards, pipes | CPU-heavy work blocks the single thread unless moved to a worker |
 | Database | PostgreSQL 18 | The data is relational: people, degrees, careers, events, applications. Foreign keys, constraints and transactions do real work | Scaling writes across servers is hard; needs routine backups and maintenance |
 | Data access | Prisma | Readable schema, migrations as files in git, type-safe queries | Weak support for geospatial types |
-| Front end | React, TypeScript, Vite *(week 10)* | A UI was already designed in the Web Design course (Figma → React) | A single-page app is worse for search engines; irrelevant for a signed-in app |
+| Current front end | HTML, CSS, JavaScript and Handlebars served by NestJS | Reuses the MVC pages and API services covered in class | Shared changes must account for both the landing and workspace |
+| Planned front end | React, TypeScript, Vite *(week 10)* | Builds on the earlier Figma → React course work | Introduces a separate client build |
 | Packaging | Docker Compose | Required by the course; same environment for everyone | Slow first build, memory-hungry on Windows/macOS |
 
 <details>
@@ -386,11 +409,12 @@ alumni/
 ├── .env.example                optional overrides
 ├── DDD.md                      data design: entities, tables, constraints
 ├── BRAND.md                    brand: name, audience, voice, logo, colour meaning
-├── DESIGN.md                   design system: tokens, type, components, layout (Figma link inside)
+├── DESIGN.md                   design system: tokens, type, components, layout and historical references
 ├── TODO.md                     tasks given in class, week by week
 ├── backend/
 │   ├── prisma/                 schema.prisma, migrations/, seed.ts (manual demo-data command)
 │   ├── prisma.config.ts        Prisma settings: schema path and database URL
+│   ├── public/                 landing HTML, shared CSS/JS, media, fonts, animation libraries
 │   ├── views/                  Handlebars: layout, partials/, one folder per feature
 │   ├── logs/                   error.logs, written by the app (git-ignored, created on the first error)
 │   └── src/
@@ -405,7 +429,7 @@ alumni/
 │       ├── job-applications/   ┘
 │       ├── not-found/          GET /404: the generic 404 page
 │       └── health/             GET /api/health
-├── frontend/                   React app (week 10); prototype/: the week 8 home page prototype (static HTML)
+├── frontend/                   source guide and archive/gate-a/ historical prototype
 └── postman/                    request collection, including error cases
 ```
 
@@ -414,8 +438,8 @@ alumni/
 - [ ] Validation is hand-written in each service; `class-validator` DTOs will replace it.
 - [ ] Database errors other than "not found" (for example two requests taking the same e-mail at the same moment) still end as `500` instead of a fitting `409`. The 5xx Guardian now hides the details from the client; one format for the `400`s too comes in week 9.
 - [ ] The Postman collection has the normal (happy-path) requests for users only; announcements, job postings and applications have only their error cases (`400`, `404`, `409`) so far.
-- [ ] `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) with inline HTML; removed in week 10.
-- [x] The Beyond the Years landing page and redesigned Handlebars workspace run on the existing backend. The original Gate-A prototype remains available at `frontend/prototype/gate-a.html`.
+- [ ] `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) as course examples.
+- [x] The Beyond the Years landing page and redesigned Handlebars workspace run on the existing backend. The original Gate-A prototype remains available at `frontend/archive/gate-a/index.html`.
 
 ---
 
@@ -532,7 +556,7 @@ flowchart LR
 | 05 | Database and ORM | `DDD.md`, Prisma schema and first migration, persistent volume, seed data; users and announcements on PostgreSQL | ✅ |
 | 06 | Database integration | Job postings and job applications: migrations, models, direct and nested routes, seed | ✅ |
 | 07 | Errors and logging | Postman error cases for every feature, optional job-posting fields, request logger, 404 and 5xx Guardians, generic `/404` page, `logs/error.logs` | ✅ |
-| 08 | **Midterm** · Web design | `BRAND.md` and `DESIGN.md` (concept "Gate-A": night → gate → day), Figma designs, the home page as a static prototype in `frontend/prototype/` | ✅ |
+| 08 | **Midterm** · Web design | Brand and design documents, archived Gate-A prototype, Beyond the Years landing and refreshed Handlebars pages | ✅ |
 | 09 | Middleware | Request ids, security headers, rate limiting, one error format for the `400`s too (the logger and the 404 and 5xx Guardians are already done) | 🗓️ |
 | 10 | Front end | React app served by nginx; full stack from one command | 🗓️ |
 | 11 | Auth | Sign-up with approval, sessions, role and ownership checks | 🗓️ |
@@ -546,11 +570,11 @@ flowchart LR
 
 ## 7. Working with an AI assistant
 
-I use **Claude Code**. The assistant writes syntax; the intent, the architecture and every bug are mine. Its working rules are in [`CLAUDE.md`](CLAUDE.md).
+I use **Claude Code and Codex**. The student owns the intent, architecture and explanation of the code. Their working rules are in [`CLAUDE.md`](CLAUDE.md) and [`AGENTS.md`](AGENTS.md). Both follow the implemented architecture in this README.
 
 ```mermaid
 flowchart LR
-    A["1️⃣ Decide what<br/>the change does"] --> B["2️⃣ Prompt<br/>Claude Code"] --> C{"3️⃣ Can I explain<br/>every line of the diff?"}
+    A["1️⃣ Decide what<br/>the change does"] --> B["2️⃣ Prompt<br/>coding assistant"] --> C{"3️⃣ Can I explain<br/>every line of the diff?"}
     C -- "no" --> B
     C -- "yes" --> D["4️⃣ Test the route<br/>Postman / curl"] --> E["5️⃣ Small commit"]
 ```
@@ -610,7 +634,8 @@ flowchart LR
 
 ## 11. Credits and license
 
-- **UI design:** made earlier in the Web Design course with Figma Make: [AlumniTrackingSystem](https://github.com/gulnihalarikaymak/AlumniTrackingSystem), prototype at [ats.figma.site](https://ats.figma.site/).
+- **Current UI:** Beyond the Years, with original AI-generated illustrative WebP scenes, Instrument Serif, Inter and locally bundled GSAP. See [DESIGN.md](DESIGN.md).
+- **Earlier UI references:** made in the Web Design course with Figma Make: [AlumniTrackingSystem](https://github.com/gulnihalarikaymak/AlumniTrackingSystem), prototype at [ats.figma.site](https://ats.figma.site/).
 - **Open source:** NestJS, Prisma, PostgreSQL, React, Vite, each under its own license.
 - **License:** [MIT](LICENSE).
 

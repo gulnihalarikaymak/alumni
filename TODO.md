@@ -66,9 +66,10 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Create `DESIGN.md` from a reference on styles.refero.design or github.com/VoltAgent/awesome-design-md
   (first based on the Notion entry of awesome-design-md; replaced by the "Gate-A" concept: Apollo and basement.studio from styles.refero.design)
 - [x] Check that the README links to both `BRAND.md` and `DESIGN.md`
-- [x] Redesign every page of the web app, one page at a time, in `frontend/` (replacing the Handlebars views)
-  (week 8 delivers the first page: the home page in the Gate-A design, as a static prototype in `frontend/prototype/`;
-  the other pages follow one at a time)
+- [x] Deliver the week 8 home-page design prototype (Gate-A, now in `frontend/archive/gate-a/`).
+  Original task wording: “Redesign every page of the web app, one page at a time, in `frontend/` (replacing the Handlebars views).”
+  Week 8 delivered the home-page prototype. The later Beyond the Years redesign refreshes the landing and existing Handlebars pages.
+  Replacement with React remains in the week 10 roadmap.
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model
@@ -78,3 +79,21 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 
 ## Homework 2 — Job postings and applications UI ✅
 - [x] Prepare a basic UI for job postings and applications, in the style of the existing pages
+
+## Repository maintenance after week 08
+
+These owner-requested improvements maintain the topics already implemented in weeks 2–8.
+
+- [x] Fix host-port configuration and document one full-stack startup workflow.
+- [x] Align current design, architecture and task documentation while preserving the original design archive.
+- [x] Place public assets in `backend/public/` and historical prototypes in `frontend/archive/`.
+- [x] Install Docker dependencies from the lockfile with `npm ci`.
+- [x] Document and verify basic navigation, CRUD, errors and persistence.
+
+Verification on 21 November 2026 passed the NestJS build, Docker image build,
+custom host port 3111, application routes and public assets, synthetic
+announcement create/update/delete, 400 and 404 responses, persistence across
+Compose down/up, and desktop/mobile browser navigation with reduced motion.
+
+Dependency follow-up for separate review
+- [ ] Review the existing dependency advisories reported by npm during Docker installation (18 in the production install, including 2 critical), and the Node engine warning from `@prisma/streams-local`.

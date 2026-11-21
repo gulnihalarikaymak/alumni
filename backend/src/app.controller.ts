@@ -1,14 +1,14 @@
 import { Controller, Get, Param, Render, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
-import { landingDir } from './common/views';
+import { publicDir } from './common/views';
 
 @ApiTags('demo')
 @Controller()
 export class AppController {
   @Get()
   getRoot(@Res() response: Response): void {
-    response.sendFile('index.html', { root: landingDir });
+    response.sendFile('index.html', { root: publicDir });
   }
 
   // The workspace remains available alongside the public landing page.

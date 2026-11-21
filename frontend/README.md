@@ -1,15 +1,20 @@
-# ATS İÜ frontend
+# Frontend
 
-The public home at `/` presents *Beyond the Years*, a photographic journey from campus life to the alumni network. The working frontend runs in the existing NestJS application. Its landing page uses plain HTML, CSS and JavaScript. The workspace and data pages use Handlebars and the existing controllers.
+The active interface runs in the NestJS application. Start the complete stack
+using the [root README](../README.md#2-quick-start) and open the configured
+application address. The default is http://localhost:3000. With
+`BACKEND_PORT=3111` in the root `.env`, it is http://localhost:3111.
 
-Start the stack using the [repository instructions](../README.md). Open [the landing page](http://localhost:3000/) or [the ATS workspace](http://localhost:3000/platform). The workspace links to live profiles, career opportunities, announcements and applications. Sign-in and self-registration are planned in the project's roadmap.
+| Location | Purpose |
+|---|---|
+| [backend/public](../backend/public/) | Landing HTML, CSS, JavaScript, photographs, fonts and GSAP |
+| [backend/views](../backend/views/) | Handlebars workspace, resource pages and shared layout |
+| [archive/gate-a](archive/gate-a/) | Historical static prototype and original design documents |
 
-## Source
+The landing is served at `/`, and the workspace at `/platform`. Announcements,
+users, jobs and applications require the running backend and PostgreSQL.
+Opening an HTML file alone previews only its static content.
 
-- [Landing page and local assets](../backend/views/landing/index.html)
-- [Workspace layout](../backend/views/layout.hbs) and [shared workspace styles](../backend/views/landing/workspace.css)
-- [Original Gate-A prototype](prototype/gate-a.html), retained for comparison
-
-[The original prototype entry point](prototype/index.html) opens the new landing page for static preview. Links to data and workspace pages in this preview assume the local NestJS server is running on port 3000. Serving the landing through NestJS uses the application's own origin and port.
-
-The WebP scenes are original AI-generated illustrations of university life. They do not identify actual graduates. Instrument Serif and Inter are self-hosted with licenses in the fonts directory. GSAP 3.13.0 and ScrollTrigger are vendored for local playback. The four chapters remain readable when JavaScript is disabled or the visitor requests reduced motion.
+Current visual guidance is in [DESIGN.md](../DESIGN.md) and [BRAND.md](../BRAND.md).
+React remains a week 10 roadmap item. The archived prototype preserves the
+earlier coursework and its image attribution.

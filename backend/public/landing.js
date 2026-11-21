@@ -6,7 +6,7 @@
   const progress = document.querySelector(".page-progress");
   const community = document.querySelector("#community");
   // The historical double-click preview can still open the real local ATS pages.
-  if (location.protocol === "file:" || location.pathname.endsWith("/backend/views/landing/index.html")) {
+  if (location.protocol === "file:" || location.pathname.endsWith("/backend/public/index.html")) {
     for (const link of document.querySelectorAll('a[href^="/"]')) {
       link.href = new URL(link.getAttribute("href"), "http://localhost:3000").href;
     }

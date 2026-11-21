@@ -5,14 +5,17 @@ The student owns the intent, the architecture and every bug. You write code she 
 
 ## Stack
 
-- `backend/`: NestJS 10, TypeScript, Express, Handlebars (`hbs`) views (being replaced by `frontend/`), Swagger.
+- `backend/`: NestJS 10, TypeScript, Express, Handlebars (`hbs`) views, Swagger.
 - `db`: PostgreSQL 18 in Docker, reached through Prisma 7 since week 5. Models use the shared `PrismaService`.
   Schema in `backend/prisma/schema.prisma`; it and `DDD.md` change in the same commit.
   After a schema change: `npx prisma migrate dev --name <change>`; never edit a committed migration.
-- `frontend/`: the web front end, allowed from week 8 (React, as planned in the README roadmap). It replaces the
-  Handlebars views page by page and talks to the backend only through the JSON API (`/api/...`).
-  When a page moves to `frontend/`, its `.hbs` view and web controller route are removed in the same commit.
-  Its look follows `DESIGN.md` and `BRAND.md`. Tooling and packages are chosen when it is set up: ask first.
+- The current frontend is served by NestJS. The public home and static assets are in
+  `backend/public/`. Workspace templates are in `backend/views/` and share `layout.hbs`.
+  `frontend/archive/gate-a/` preserves the earlier prototype.
+- React is planned for week 10. Follow the current assignment when that migration starts.
+  Current visual guidance is in DESIGN.md and BRAND.md.
+- Architecture, routes and startup instructions are shared with Codex through README.md.
+  CLAUDE.md and AGENTS.md must agree with that implemented architecture.
 
 ## Commands
 
@@ -21,7 +24,7 @@ docker compose up --build                 # whole system; must always work on ma
 docker compose logs -f backend            # one line per request: time method route status duration
 # failed requests (400 and above) with their reasons: backend/logs/error.logs
 cd backend && npm run build               # type check + compile; run after every change
-curl http://localhost:3000/api/health     # smoke test
+curl http://localhost:3000/api/health     # use BACKEND_PORT from .env if changed
 ```
 
 There are no automated tests or linter yet. Verify by building and by calling the changed routes
@@ -29,15 +32,15 @@ There are no automated tests or linter yet. Verify by building and by calling th
 
 ## Architecture rules (do not break)
 
-- **Controller → service → model.** Never the other way.
+- **Controller â†’ service â†’ model.** Never the other way.
   - Controller: route, verb, status code only. One service call per method. No validation, no storage.
   - Service: all business rules and HTTP errors (`BadRequestException`, `NotFoundException`, `ConflictException`).
   - Model (`*.model.ts`): data shape + CRUD only. No HTTP, no validation. Returns `undefined`/`false` for "not found".
-- **One folder per feature** (`src/users/`, later `src/events/` …) with `*.module.ts`, `*.controller.ts`,
+- **One folder per feature** (`src/users/`, later `src/events/` â€¦) with `*.module.ts`, `*.controller.ts`,
   `api-*.controller.ts`, `*.service.ts`, `*.model.ts`, `*.dto.ts`.
 - **Web and API controllers share one service.** A rule is written once.
 - **All URL prefixes live in `src/app.routes.ts`.** No global prefix. Controllers declare only the rest of the path.
-- **Views** (`backend/views/**/*.hbs`, until each page moves to `frontend/`) only format. Use `{{ }}` (escaped); never `{{{ }}}` except `body` in the layout.
+- **Views** (`backend/views/**/*.hbs`) only format. Use `{{ }}` (escaped); never `{{{ }}}` except `body` in the layout.
 - Forms send `PUT/PATCH/DELETE` via `?_method=`; never let a `GET` change data.
 - Status codes: `201` create, `204` delete, `400` invalid, `404` missing, `409` conflict.
 - **Errors are handled in `src/common/`, not per controller.** A service throws an HTTP exception with a clear reason;
@@ -49,27 +52,27 @@ There are no automated tests or linter yet. Verify by building and by calling th
 
 ## How to work
 
-- **Stay inside the week's topic.** Do not pull in later-week tech (auth, class-validator …)
+- **Stay inside the week's topic.** Do not pull in later-week tech (auth, class-validator â€¦)
   unless the task asks for it. If a task seems to need it, say so and ask.
 - **Small diffs.** Change only what the task needs. No drive-by refactors, renames or formatting of untouched files.
 - **No new dependency** without saying why and asking first.
-- **Explain non-obvious code** in 2–3 sentences after the change, so it can be defended in class.
+- **Explain non-obvious code** in 2â€“3 sentences after the change, so it can be defended in class.
 - If a request is ambiguous, ask one short question instead of guessing.
 - Never commit `.env`, real personal data, or secrets. Demo data is synthetic.
 
 ## Task tracking (TODO.md)
 
-Tasks are given live in class, e.g. "5. haftadayız, task 1: ...".
+Tasks are given live in class, e.g. "5. haftadayÄ±z, task 1: ...".
 
-1. Add each task to `TODO.md` under `## Week NN — <topic>` as `- [ ] <short task, in English>`.
+1. Add each task to `TODO.md` under `## Week NN â€” <topic>` as `- [ ] <short task, in English>`.
    Create the heading if missing (topics are in the README roadmap). Keep the given order.
 2. Do the task, build, verify (see Commands).
 3. Tick it (`- [x]`) **in the same commit** as the code. Never tick a task whose code is not in that commit.
-4. When every task of a week is ticked: add ✅ to the week heading in `TODO.md` and set the week to ✅
+4. When every task of a week is ticked: add âœ… to the week heading in `TODO.md` and set the week to âœ…
    in the README roadmap, in the same commit as the week's last task. Never a separate commit just for
    the tick. If it is unclear whether more tasks will come that week, ask before committing.
 
-Homework is tracked the same way under its own heading, `## Homework N — <topic>`, separate from the weeks.
+Homework is tracked the same way under its own heading, `## Homework N â€” <topic>`, separate from the weeks.
 
 ## Commits
 

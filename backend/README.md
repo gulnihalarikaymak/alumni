@@ -13,6 +13,7 @@ Scaffolded in week 02 (routing). Structure follows Module → Controller → Ser
 | `src/common/` | Shared helpers: views setup, method override, the request logger, the 404 and 5xx filters, the error log file, the redirect to `/404` |
 | `src/not-found/` | `GET /404`, the generic "Page not found" page |
 | `src/prisma/`, `src/database/` | The one database connection, and the demo data loaded into an empty database |
+| `public/` | Landing HTML, shared CSS and JavaScript, fonts, photographs and vendored animation libraries |
 | `views/` | Handlebars templates (layout, partials, one folder per feature, `not-found.hbs`, `server-error.hbs`) |
 | `prisma/` | `schema.prisma`, migrations, seed |
 | `logs/` | `error.logs`, written by the app (git-ignored) |

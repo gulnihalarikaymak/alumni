@@ -4,7 +4,7 @@ import { basename, join } from 'path';
 import * as hbs from 'hbs';
 
 const viewsDir = join(__dirname, '..', '..', 'views');
-export const landingDir = join(viewsDir, 'landing');
+export const publicDir = join(__dirname, '..', '..', 'public');
 
 // The view layer: Handlebars templates in backend/views/.
 // A controller route names a template (@Render('users/index') or
@@ -15,7 +15,7 @@ export function setupViews(app: NestExpressApplication): void {
   app.setBaseViewsDir(viewsDir);
   app.setViewEngine('hbs');
   // Serve only the public assets. GET / remains a logged controller route.
-  app.useStaticAssets(landingDir, { index: false, redirect: false });
+  app.useStaticAssets(publicDir, { index: false, redirect: false });
 
   // views/partials/errors.hbs -> {{> errors}}. Read synchronously so every
   // partial exists before the first request.

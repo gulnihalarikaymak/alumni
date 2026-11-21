@@ -1,7 +1,7 @@
 # The whole system comes up with a single command:
 #   docker compose up
 #
-# db and backend run since week 02. The frontend joins in week 10.
+# NestJS serves the landing page, workspace and JSON API.
 #
 # Persistence: PostgreSQL writes its files to the named volume "alumni-db-data",
 # which lives outside the container. `docker compose down` removes the containers
@@ -33,7 +33,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      BACKEND_PORT: ${BACKEND_PORT:-3000}
+      PORT: 3000
       # Used by Prisma from week 5. "db" is the service name above: inside the
       # compose network the backend reaches PostgreSQL by that name, not localhost.
       DATABASE_URL: postgresql://${POSTGRES_USER:-alumni}:${POSTGRES_PASSWORD:-alumni}@db:5432/${POSTGRES_DB:-alumni}
@@ -46,10 +46,8 @@ services:
       db:
         condition: service_healthy
 
-  # frontend:  React SPA (nginx) -- from week 10
-
 volumes:
   db-data:
     # A fixed name, so the volume does not depend on the project folder name
     # and is easy to find with `docker volume ls`.
-    name: alumni-db-data
+    name: ${DB_VOLUME:-alumni-db-data}
