@@ -2,6 +2,7 @@ import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import type { Request, Response } from 'express';
 import { STATUS_CODES } from 'http';
+import { publicDir } from './public-dir';
 import { wantsHtml } from './wants-html';
 
 const MESSAGE = 'Something went wrong on our side. Please try again later.';
@@ -41,7 +42,7 @@ export class ServerErrorFilter extends BaseExceptionFilter {
 
     if (res.headersSent) return; // too late to change the answer
     if (wantsHtml(req)) {
-      res.status(status).render('server-error', { title: 'Something went wrong', status, message: MESSAGE });
+      res.status(status).sendFile('server-error.html', { root: publicDir });
     } else {
       res.status(status).json({ statusCode: status, error: STATUS_CODES[status], message: MESSAGE, path });
     }

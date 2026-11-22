@@ -66,10 +66,11 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Create `DESIGN.md` from a reference on styles.refero.design or github.com/VoltAgent/awesome-design-md
   (first based on the Notion entry of awesome-design-md; replaced by the "Gate-A" concept: Apollo and basement.studio from styles.refero.design)
 - [x] Check that the README links to both `BRAND.md` and `DESIGN.md`
-- [x] Deliver the week 8 home-page design prototype (Gate-A, now in `frontend/archive/gate-a/`).
-  Original task wording: “Redesign every page of the web app, one page at a time, in `frontend/` (replacing the Handlebars views).”
-  Week 8 delivered the home-page prototype. The later Beyond the Years redesign refreshes the landing and existing Handlebars pages.
-  Replacement with React remains in the week 10 roadmap.
+- [x] Deliver the week 8 home-page design prototype (Gate-A).
+  The assignment called for redesigning the web pages one at a time. The
+  midterm deliverable was the home-page study. Later work introduced the
+  Beyond the Years landing and a JavaScript workspace using the JSON API.
+  The React assignment remains on the week 10 roadmap.
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model
@@ -85,8 +86,8 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 These owner-requested improvements maintain the topics already implemented in weeks 2–8.
 
 - [x] Fix host-port configuration and document one full-stack startup workflow.
-- [x] Align current design, architecture and task documentation while preserving the original design archive.
-- [x] Place public assets in `backend/public/` and historical prototypes in `frontend/archive/`.
+- [x] Align the design, architecture and task documentation for the Beyond the Years delivery.
+- [x] Place active public assets in `backend/public/`.
 - [x] Install Docker dependencies from the lockfile with `npm ci`.
 - [x] Document and verify basic navigation, CRUD, errors and persistence.
 

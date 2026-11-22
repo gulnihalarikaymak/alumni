@@ -5,9 +5,9 @@ ATS is a Web Programming course project. Keep each change small enough for the s
 ## Where to work
 
 - NestJS serves the Beyond the Years home at `/` from `backend/public/`. Its images, fonts, GSAP and ScrollTrigger are local assets. Preserve keyboard navigation and the readable reduced-motion layout.
-- The working ATS starts at `/platform`. Lists, detail pages and forms use Handlebars in `backend/views/`, with the common layout in `layout.hbs`. Use existing web routes for links. A static file server can preview the landing but cannot serve these routes.
-- `frontend/archive/gate-a/index.html` preserves the earlier design. React and authentication are roadmap items. Check the controllers before adding a link or describing a feature as available.
-- Feature route prefixes are in `backend/src/app.routes.ts`. Web and JSON controllers call the same service. Keep business rules in services and Prisma storage in models. Use the shared error handlers in `backend/src/common/` and escape user content in templates.
+- The working ATS starts at `/platform`. NestJS serves `backend/public/workspace.html` for workspace pages. Its JavaScript reads and changes records through the same-origin JSON API. Keep public links and deep links on the existing web routes.
+- Check the implemented page routes and JSON controllers before linking or describing a feature. React and authentication are separate roadmap items. A standalone static server can preview the landing. Use the running NestJS application for the workspace.
+- API feature prefixes are in `backend/src/app.routes.ts`. Keep business rules in services, Prisma storage in models and shared HTTP error handling in `backend/src/common/`. Insert record values into the browser DOM as text.
 - Keep committed migrations intact. When changing the data model, update the Prisma schema and DDD together and generate a new migration.
 
 ## Build and verify

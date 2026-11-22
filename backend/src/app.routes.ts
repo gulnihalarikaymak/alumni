@@ -1,54 +1,14 @@
 import { Routes } from '@nestjs/core';
-import { AnnouncementWebModule } from './announcements/announcement-web.module';
 import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { HealthModule } from './health/health.module';
 import { ApiJobApplicationModule } from './job-applications/api-job-application.module';
 import { ApiJobPostingApplicationModule } from './job-applications/api-job-posting-application.module';
 import { ApiUserJobApplicationModule } from './job-applications/api-user-job-application.module';
-import { JobApplicationWebModule } from './job-applications/job-application-web.module';
-import { JobPostingApplicationWebModule } from './job-applications/job-posting-application-web.module';
 import { ApiJobPostingModule } from './job-postings/api-job-posting.module';
-import { JobPostingWebModule } from './job-postings/job-posting-web.module';
-import { NotFoundModule } from './not-found/not-found.module';
 import { ApiUserModule } from './users/api-user.module';
-import { UserWebModule } from './users/user-web.module';
 
-// The route map: which URL goes to which controller. Controllers declare only
-// the part after these paths (':id', 'create', ...), so a URL changes here only.
-//
-//   /users               -> UserWebModule          -> UserController             HTML pages
-//   /announcements       -> AnnouncementWebModule  -> AnnouncementController     HTML pages
-//   /job-postings        -> JobPostingWebModule    -> JobPostingController       HTML pages
-//   /job-postings/:jobPostingId/applications
-//                        -> JobPostingApplicationWebModule -> JobPostingApplicationController HTML, nested
-//   /job-applications    -> JobApplicationWebModule -> JobApplicationController  HTML pages
-//   /404                 -> NotFoundModule         -> NotFoundController         HTML, the generic 404 page
-//   /api/users           -> ApiUserModule          -> ApiUserController          JSON
-//   /api/announcements   -> ApiAnnouncementModule  -> ApiAnnouncementController  JSON
-//   /api/job-postings    -> ApiJobPostingModule    -> ApiJobPostingController    JSON, direct
-//   /api/job-applications -> ApiJobApplicationModule -> ApiJobApplicationController JSON, direct
-//   /api/job-postings/:jobPostingId/applications
-//                        -> ApiJobPostingApplicationModule -> ApiJobPostingApplicationController JSON, nested
-//   /api/users/:userId/job-applications
-//                        -> ApiUserJobApplicationModule -> ApiUserJobApplicationController JSON, nested
-//   /api/health         -> HealthModule           -> HealthController           JSON or status page
-//
-// Direct route: a resource by its own id (/api/job-postings/7).
-// Nested route: a resource inside its parent (/api/users/3/job-applications), declared
-// as a child of 'users', so the full path is built from both levels.
+// The JSON feature modules use these prefixes. Browser pages are served by AppController.
 export const routes: Routes = [
-  // Web: pages for people in a browser
-  { path: 'users', module: UserWebModule },
-  { path: 'announcements', module: AnnouncementWebModule },
-  {
-    path: 'job-postings',
-    module: JobPostingWebModule,
-    children: [{ path: ':jobPostingId/applications', module: JobPostingApplicationWebModule }],
-  },
-  { path: 'job-applications', module: JobApplicationWebModule },
-  { path: '404', module: NotFoundModule },
-
-  // API: JSON for programs (Postman, later the React app)
   {
     path: 'api',
     children: [

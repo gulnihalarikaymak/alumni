@@ -1,36 +1,41 @@
 # Backend
 
-NestJS (TypeScript) REST API with Prisma and PostgreSQL. The whole project is described in the
-[main README](../README.md); the database design is in [DDD.md](../DDD.md).
+NestJS serves the public landing, workspace pages and JSON API. Services apply the business rules and models access PostgreSQL through Prisma. The browser and Postman use the same API.
 
-Scaffolded in week 02 (routing). Structure follows Module → Controller → Service → Model.
+## Structure
 
-## What is where
-
-| Folder | Content |
+| Folder | Contents |
 |---|---|
-| `src/<feature>/` | One folder per feature (`users`, `announcements`, `job-postings`, `job-applications`): module, web and API controllers, service, model, DTOs |
-| `src/common/` | Shared helpers: views setup, method override, the request logger, the 404 and 5xx filters, the error log file, the redirect to `/404` |
-| `src/not-found/` | `GET /404`, the generic "Page not found" page |
-| `src/prisma/`, `src/database/` | The one database connection, and the demo data loaded into an empty database |
-| `public/` | Landing HTML, shared CSS and JavaScript, fonts, photographs and vendored animation libraries |
-| `views/` | Handlebars templates (layout, partials, one folder per feature, `not-found.hbs`, `server-error.hbs`) |
-| `prisma/` | `schema.prisma`, migrations, seed |
-| `logs/` | `error.logs`, written by the app (git-ignored) |
+| `public/` | Landing and workspace HTML, CSS, JavaScript, local fonts, photographs and GSAP |
+| `src/<feature>/` | JSON controllers, services and models for users, announcements, job postings and job applications |
+| `src/common/` | Shared HTTP helpers, request logging and the 404 and 5xx exception filters |
+| `src/app.controller.ts` | Landing, workspace page routes, generic `/404` page and week 2 demos |
+| `src/prisma/`, `src/database/` | Shared database connection and synthetic seed data |
+| `prisma/` | Schema, committed migrations and seed entry point |
+| `logs/` | Runtime error log, excluded from Git |
 
-## Errors and logging (week 7)
+The landing starts at `/`. The workspace starts at `/platform`. API feature prefixes are in `src/app.routes.ts`. Swagger is at `/api/swagger`. Request `/api/health?format=json` for process liveness and an API collection such as `/api/announcements` to check data access.
 
-- Every request gets one terminal line: `10:20:30 POST /api/users 201 18 ms`.
-- Every `404` has a reason; a browser is redirected to `/404`, the API gets JSON.
-- A `5xx` is logged in full and answered with a fixed message.
-- Every failed request (status `400` and above) is added to `logs/error.logs`.
+## Browser entry points
 
-Details and examples: [main README, "Errors and logging"](../README.md#errors-and-logging).
+| Source in [public](public/) | Purpose |
+|---|---|
+| [index.html](public/index.html), landing and chapter CSS/JS | Public landing with local photographs, fonts and animations |
+| [workspace.html](public/workspace.html), `workspace.css` | Shared workspace navigation and layout |
+| `workspace.js` | Selects the workspace page for the current browser URL |
+| `workspace-records.js`, `workspace-applications.js` | Resource lists, detail pages, forms and application actions |
+| `workspace-ui.js` | Shared request, form and DOM helpers |
 
-## Build
+Open `/users`, `/announcements`, `/job-postings` or `/job-applications` directly or through the workspace. A static preview can display the landing. Use the running NestJS application for workspace deep links and PostgreSQL-backed CRUD.
+
+## Build and run
+
+From this directory on a fresh host checkout:
 
 ```bash
-npm run build     # type check + compile; run after every change
+npm ci
+npx prisma generate
+npm run build
 ```
 
-Prisma client is generated code (git-ignored): after a fresh `npm ci` run `npx prisma generate` before building.
+For the complete system, run `docker compose up --build` from the repository root. The default host port is 3000. The root `.env` can override it with `BACKEND_PORT`. Follow the [quick start](../README.md#2-quick-start) and [delivery checks](../README.md#verify-a-delivery). See [DDD.md](../DDD.md) for the database design and [Errors and logging](../README.md#errors-and-logging) for error formats and log locations.

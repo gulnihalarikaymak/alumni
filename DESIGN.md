@@ -2,8 +2,9 @@
 
 The current ATS interface is served by NestJS. The public home at `/` uses
 `backend/public/index.html`, `landing.css`, `landing.js`, `chapters.css` and
-`chapters.js`. The workspace at `/platform` and resource pages use Handlebars
-in `backend/views/` and `backend/public/workspace.css`.
+`chapters.js`. The workspace at `/platform` and resource pages share
+`backend/public/workspace.html` and `workspace.css`. Browser JavaScript loads
+records and submits changes through the JSON API.
 
 ## Visual direction
 
@@ -38,7 +39,8 @@ variables in `workspace.css`, including darker burgundy for readable links.
 - Community photography uses an asymmetrical layout. Feature links lead to
   existing user, job, announcement and application routes.
 - The workspace shares its masthead, navigation, form controls, tables, badges
-  and error presentation through `layout.hbs` and `workspace.css`.
+  and error presentation. Preserve the user's input when validation fails and
+  keep the submitted action and its outcome clear to keyboard users.
 
 Keep visible focus, meaningful alternative text and readable contrast.
 Verify narrow screens, keyboard navigation and reduced motion after changes.
@@ -51,7 +53,5 @@ university life without identifying actual graduates or achievements.
 The mark in `emblem.svg` is a project illustration. See [BRAND.md](BRAND.md)
 for naming and copy.
 
-The original course references, Figma links, gate photograph attribution and
-earlier design rules are preserved in the
-[Gate-A archive](frontend/archive/gate-a/DESIGN.md). The archived prototype
-opens at [its index](frontend/archive/gate-a/index.html).
+The week 8 home-page study explored the Beyazıt gate. The coursework record
+in [TODO.md](TODO.md) describes that earlier design.

@@ -1,85 +1,25 @@
 # CLAUDE.md
 
-Alumni Tracking System (ATS): a course project for Web Programming (YBSB3001), built one topic per week.
-The student owns the intent, the architecture and every bug. You write code she must be able to explain in class.
+ATS is a Web Programming course project (YBSB3001). Keep each change small enough for the student to explain in class. Follow the shared project guide in [AGENTS.md](AGENTS.md), the [setup and API documentation](README.md), and the weekly assignments in [TODO.md](TODO.md).
 
-## Stack
+## Architecture
 
-- `backend/`: NestJS 10, TypeScript, Express, Handlebars (`hbs`) views, Swagger.
-- `db`: PostgreSQL 18 in Docker, reached through Prisma 7 since week 5. Models use the shared `PrismaService`.
-  Schema in `backend/prisma/schema.prisma`; it and `DDD.md` change in the same commit.
-  After a schema change: `npx prisma migrate dev --name <change>`; never edit a committed migration.
-- The current frontend is served by NestJS. The public home and static assets are in
-  `backend/public/`. Workspace templates are in `backend/views/` and share `layout.hbs`.
-  `frontend/archive/gate-a/` preserves the earlier prototype.
-- React is planned for week 10. Follow the current assignment when that migration starts.
-  Current visual guidance is in DESIGN.md and BRAND.md.
-- Architecture, routes and startup instructions are shared with Codex through README.md.
-  CLAUDE.md and AGENTS.md must agree with that implemented architecture.
+- NestJS 10, TypeScript and Express serve the pages and JSON API. The frontend uses HTML, CSS and JavaScript in `backend/public/`. The landing is at `/`, and `/platform` and the resource pages share `workspace.html`.
+- Browser forms send JSON to the same API used by Postman. Render user-provided values as text and preserve error feedback and keyboard navigation. See [DESIGN.md](DESIGN.md) and [BRAND.md](BRAND.md) for interface guidance.
+- Keep NestJS JSON controllers focused on HTTP, services on validation and business rules, and models on Prisma storage. Each feature lives in its own folder under `backend/src/`. API prefixes are in `backend/src/app.routes.ts`.
+- Prisma 7 models use the shared `PrismaService` to reach PostgreSQL 18. For a data model change, update the schema and [DDD.md](DDD.md) together and generate a new migration. Keep committed migrations intact.
+- The API returns `201` on creation, `204` on deletion, `400` on invalid input, `404` for missing records and `409` for conflicts. Keep error handling and request logging in `backend/src/common/`. Return safe messages for server failures and keep error stacks in server logs.
+- React and authentication are future coursework. Implement features within the assigned week's scope.
 
-## Commands
+## Build and verification
 
-```bash
-docker compose up --build                 # whole system; must always work on main
-docker compose logs -f backend            # one line per request: time method route status duration
-# failed requests (400 and above) with their reasons: backend/logs/error.logs
-cd backend && npm run build               # type check + compile; run after every change
-curl http://localhost:3000/api/health     # use BACKEND_PORT from .env if changed
-```
+Start the full stack with `docker compose up --build` from the repository root. Use the configured host port (3000 by default). For a local compile, run `npm ci`, `npx prisma generate` and `npm run build` from `backend/` on a fresh checkout.
 
-There are no automated tests or linter yet. Verify by building and by calling the changed routes
-(curl, or the Postman collection in `postman/`). Report what you ran and what came back.
+Check the changed pages against PostgreSQL, including direct links, record reads, forms and API error responses. Use [postman](postman/) for API scenarios. Keep test records synthetic. Report what was verified. Logs are available with `docker compose logs -f backend` and in the ignored `backend/logs/error.logs` file.
 
-## Architecture rules (do not break)
+## Coursework and delivery
 
-- **Controller â†’ service â†’ model.** Never the other way.
-  - Controller: route, verb, status code only. One service call per method. No validation, no storage.
-  - Service: all business rules and HTTP errors (`BadRequestException`, `NotFoundException`, `ConflictException`).
-  - Model (`*.model.ts`): data shape + CRUD only. No HTTP, no validation. Returns `undefined`/`false` for "not found".
-- **One folder per feature** (`src/users/`, later `src/events/` â€¦) with `*.module.ts`, `*.controller.ts`,
-  `api-*.controller.ts`, `*.service.ts`, `*.model.ts`, `*.dto.ts`.
-- **Web and API controllers share one service.** A rule is written once.
-- **All URL prefixes live in `src/app.routes.ts`.** No global prefix. Controllers declare only the rest of the path.
-- **Views** (`backend/views/**/*.hbs`) only format. Use `{{ }}` (escaped); never `{{{ }}}` except `body` in the layout.
-- Forms send `PUT/PATCH/DELETE` via `?_method=`; never let a `GET` change data.
-- Status codes: `201` create, `204` delete, `400` invalid, `404` missing, `409` conflict.
-- **Errors are handled in `src/common/`, not per controller.** A service throws an HTTP exception with a clear reason;
-  the 404 filter and the 5xx filter answer (JSON for the API, a page for browsers). Never put a raw error message of a
-  `5xx` in a response, and never add a per-feature "not found" template: a web page that cannot find its record calls
-  `redirectToNotFound(res)` (303 to the generic `/404` page).
-- **The request logger and `logs/error.logs`** are in `src/common/` too. Do not add other `console.log` request logging;
-  `logs/` is git-ignored and may hold e-mail addresses, so it is never committed.
-
-## How to work
-
-- **Stay inside the week's topic.** Do not pull in later-week tech (auth, class-validator â€¦)
-  unless the task asks for it. If a task seems to need it, say so and ask.
-- **Small diffs.** Change only what the task needs. No drive-by refactors, renames or formatting of untouched files.
-- **No new dependency** without saying why and asking first.
-- **Explain non-obvious code** in 2â€“3 sentences after the change, so it can be defended in class.
-- If a request is ambiguous, ask one short question instead of guessing.
-- Never commit `.env`, real personal data, or secrets. Demo data is synthetic.
-
-## Task tracking (TODO.md)
-
-Tasks are given live in class, e.g. "5. haftadayÄ±z, task 1: ...".
-
-1. Add each task to `TODO.md` under `## Week NN â€” <topic>` as `- [ ] <short task, in English>`.
-   Create the heading if missing (topics are in the README roadmap). Keep the given order.
-2. Do the task, build, verify (see Commands).
-3. Tick it (`- [x]`) **in the same commit** as the code. Never tick a task whose code is not in that commit.
-4. When every task of a week is ticked: add âœ… to the week heading in `TODO.md` and set the week to âœ…
-   in the README roadmap, in the same commit as the week's last task. Never a separate commit just for
-   the tick. If it is unclear whether more tasks will come that week, ask before committing.
-
-Homework is tracked the same way under its own heading, `## Homework N â€” <topic>`, separate from the weeks.
-
-## Commits
-
-- One task = one commit, Conventional Commits with the module as scope:
-  `feat(users): add PATCH /api/users/:id`, `fix(users): return 409 on duplicate e-mail`, `docs(readme): ...`.
-- Only commit after `npm run build` passes and the changed routes were exercised.
-- If behaviour described in README.md changes (routes, run steps, status), update README in the same commit.
-  Keep the README's Mermaid diagrams: when a change makes one wrong (routes, rules, tables, roadmap),
-  update that diagram in the same commit. Add a new diagram only when asked.
-- Do not push unless asked.
+- Track assignments in English under their week or homework heading in [TODO.md](TODO.md).
+- Tick a task in the commit that completes it. When the week's assigned work closes, update the corresponding README roadmap entry.
+- Keep changes scoped. Discuss new dependencies with the owner and update affected README diagrams and instructions when behavior changes.
+- Use scoped Conventional Commits. Review the diff, exclude local configuration, personal data and credentials, and ask before pushing.

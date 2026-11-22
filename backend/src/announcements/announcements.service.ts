@@ -7,7 +7,7 @@ const CONTENT_MAX = 2000;
 type Mode = 'create' | 'replace' | 'update';
 
 // Business rules for announcements. Storage is the AnnouncementModel's job.
-// Both controllers (web pages and JSON API) call this one service.
+// The JSON controller calls this service for both the workspace and API clients.
 // The model talks to the database, so every method here is async and awaits it.
 @Injectable()
 export class AnnouncementsService {

@@ -1,6 +1,7 @@
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
+import { publicDir } from '../common/public-dir';
 
 const SERVICE_NAME = 'alumni-backend';
 const SERVICE_VERSION = process.env.npm_package_version || '0.1.0';
@@ -30,19 +31,14 @@ export function buildHealthPayload(): HealthPayload {
  * monitors get JSON. `?format=json` forces JSON in the browser too.
  */
 function sendHealth(req: Request, res: Response, format?: string): void {
-  const payload = buildHealthPayload();
+  res.vary('Accept');
   const wantsHtml =
     format !== 'json' && (req.headers.accept || '').includes('text/html');
 
   if (wantsHtml) {
-    res.render('health', {
-      title: 'Service health',
-      payload,
-      json: JSON.stringify(payload, null, 2),
-      jsonUrl: `${req.path}?format=json`,
-    });
+    res.sendFile('workspace.html', { root: publicDir });
   } else {
-    res.json(payload);
+    res.json(buildHealthPayload());
   }
 }
 

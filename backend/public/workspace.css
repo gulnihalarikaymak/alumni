@@ -193,3 +193,9 @@ textarea { resize: vertical; }
   .profile .initial { display: none; }
   .record { grid-template-columns: minmax(5.6rem, 28%) minmax(0,1fr); }
 }
+
+.form-error { overflow-wrap: anywhere; padding: .85rem 1rem; border-left: 3px solid var(--danger-ink); color: var(--danger-ink); background: var(--danger-bg); }
+#action-error { margin-bottom: 1rem; }
+button:disabled { cursor: wait; opacity: .65; }
+.missing .sub { overflow-wrap: anywhere; }
+td .actions { flex-wrap: nowrap; }

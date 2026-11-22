@@ -9,7 +9,7 @@ who they are, where they work, and how they can help the students who come after
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_18-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
-![Handlebars](https://img.shields.io/badge/Handlebars-000000?style=for-the-badge&logo=handlebarsdotjs&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
 ![Docker](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 ![Progress](https://img.shields.io/badge/progress-week_8_of_14-blue?style=flat-square)
@@ -72,20 +72,20 @@ flowchart LR
 | 🛡️ **Admin** | Approve sign-ups, manage accounts and roles |
 
 > [!IMPORTANT]
-> Visitors who are not signed in see only aggregate figures, never an individual's profile.
+> This describes the planned access model. The current coursework workspace has public CRUD routes backed by synthetic records. Sign-in and role-based access are scheduled for week 11.
 
 ### Scope
 
 ```mermaid
 flowchart LR
-    subgraph CORE["🟢 Core · weeks 3–8"]
+    subgraph CORE["🟢 Implemented features"]
         c1[Users & announcements]
         c2[Job postings & applications]
+    end
+    subgraph LATER["🔵 After midterm"]
         c3[Career & education history]
         c4[Searchable directory]
         c5[Events]
-    end
-    subgraph LATER["🔵 After midterm"]
         l1[Accounts & roles]
         l2[Access rules]
         l3[Mentorship & connections]
@@ -128,18 +128,12 @@ flowchart LR
         direction LR
         BE["⚙️ backend<br/>NestJS · :3000"]
         DB[("🐘 db<br/>PostgreSQL 18<br/>127.0.0.1:5432")]
-        FE["🖼️ frontend<br/>React + nginx · :8080<br/><i>week 10</i>"]
         VOL[("💾 volume<br/>alumni-db-data")]
     end
 
     U -->|"HTTP"| BE
     BE -->|"Prisma · waits for db healthcheck"| DB
     DB --- VOL
-    U -.-> FE
-    FE -.->|"/api"| BE
-
-    classDef planned stroke-dasharray: 5 5
-    class FE planned
 ```
 
 | Address | What it is |
@@ -155,7 +149,9 @@ flowchart LR
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
 | `http://localhost:3000/api/health` | 💚 Health check (JSON for curl, a status page in a browser) |
 
-Only `db` and `backend` run so far; the React front end joins in week 10 on port `8080`. The public home at `/` and ATS workspace at `/platform` run inside NestJS. See [the frontend notes](frontend/README.md) for the active files and archived prototype. A Postman collection is in `postman/`: normal requests for users, and error cases (`400`, `404`, `409`) for users, announcements, job postings and job applications. Each error-case folder creates its own records in a Setup step and deletes them in Cleanup; run it top to bottom.
+Compose runs two services, `db` and `backend`. NestJS serves the public home at `/`, the ATS workspace at `/platform` and the JSON API on the same origin. The workspace reads and writes data through that API. The [backend guide](backend/README.md#browser-entry-points) maps the browser entry points to their source files.
+
+The [Postman collection](postman/) covers normal user requests and error cases (`400`, `404`, `409`) for all four resources. Each error-case folder creates its test records in Setup and deletes them in Cleanup. Run it from top to bottom.
 
 <details>
 <summary><b>🛠️ Everyday commands</b> (click to expand)</summary>
@@ -206,20 +202,20 @@ step that could not be completed.
 
 ```mermaid
 flowchart TB
-    FE["🖼️ React + TypeScript + Vite<br/><i>week 10</i>"]
-    BE["⚙️ NestJS · TypeScript · Node.js<br/><i>Handlebars pages + JSON API</i>"]
+    FE["🖼️ Browser workspace<br/><i>HTML · CSS · JavaScript</i>"]
+    BE["⚙️ NestJS · TypeScript · Node.js<br/><i>public files + JSON API</i>"]
     ORM["🔷 Prisma<br/><i>schema · migrations · typed queries</i>"]
     DB[("🐘 PostgreSQL 18")]
 
-    FE -.->|"JSON over HTTP"| BE --> ORM --> DB
+    FE -->|"JSON over HTTP"| BE --> ORM --> DB
 ```
 
 | Layer | Choice | ✅ Why | ⚠️ Weakness |
 |---|---|---|---|
-| Back end | TypeScript, Node.js, NestJS | One language with the front end. NestJS gives each weekly topic its own building block: controllers, services, middleware, guards, pipes | CPU-heavy work blocks the single thread unless moved to a worker |
+| Back end | TypeScript, Node.js, NestJS | NestJS separates controllers, services, middleware, guards and pipes for the weekly coursework | CPU-heavy work blocks the single thread unless moved to a worker |
 | Database | PostgreSQL 18 | The data is relational: people, degrees, careers, events, applications. Foreign keys, constraints and transactions do real work | Scaling writes across servers is hard; needs routine backups and maintenance |
 | Data access | Prisma | Readable schema, migrations as files in git, type-safe queries | Weak support for geospatial types |
-| Current front end | HTML, CSS, JavaScript and Handlebars served by NestJS | Reuses the MVC pages and API services covered in class | Shared changes must account for both the landing and workspace |
+| Current front end | HTML, CSS and JavaScript served by NestJS | Workspace forms use the same JSON API as Postman. The frontend has no build step | Database-backed pages require JavaScript and the running API |
 | Planned front end | React, TypeScript, Vite *(week 10)* | Builds on the earlier Figma → React course work | Introduces a separate client build |
 | Packaging | Docker Compose | Required by the course; same environment for everyone | Slow first build, memory-hungry on Windows/macOS |
 
@@ -240,41 +236,25 @@ flowchart TB
 
 ## 4. How the code is organised
 
-### MVC in NestJS
+### From a page to a record
 
-The rule: **controller → service → model**, never the other way. Every feature folder (`users/`, `announcements/`, `job-postings/`, `job-applications/`) follows it; `users/` is shown here.
+On `GET /users`, NestJS serves the shared workspace document. The browser then fetches `GET /api/users` to populate the list. Opening a direct link or reloading a detail page follows the same sequence.
 
 ```mermaid
 flowchart LR
-    REQ(["📨 HTTP request"])
-
-    subgraph C["🎮 Controllers: HTTP only"]
-        WC["user.controller.ts<br/><i>web pages</i>"]
-        AC["api-user.controller.ts<br/><i>JSON</i>"]
-    end
-
-    SV["🧠 users.service.ts<br/><i>validation · unique e-mail ·<br/>PENDING on create · 404</i>"]
-    MD["📦 user.model.ts<br/><i>CRUD via Prisma</i>"]
-    PR["🔌 PrismaService"]
-    DB[("🐘 PostgreSQL")]
-
-    VW["🖼️ views/users/*.hbs"]
-    DTO["🧾 user.dto.ts"]
-
-    REQ --> WC & AC
-    WC & AC --> SV --> MD --> PR --> DB
-    WC -. renders .-> VW
-    AC -. returns .-> DTO
+    P["/users · workspace.html"] -->|"JavaScript fetches /api/users"| AC["ApiUserController"]
+    AC --> SV["UsersService"] --> MD["UserModel"] --> PR["PrismaService"] --> DB[("PostgreSQL")]
+    AC -. "JSON records" .-> P
 ```
 
-| Layer | Job | File in `backend/src/users/` |
+| Part | Responsibility | Source |
 |---|---|---|
-| **Model** | The `User` type and CRUD on the `users` table through Prisma: `create`, `findAll`, `findById`, `findByEmail`, `update`, `delete` | `user.model.ts` |
-| **Service** | Business rules: validation, unique e-mail, new users start as `PENDING`, missing record → `404` | `users.service.ts` |
-| **Controller** | HTTP only: route, verb, status code. One line per method, calling the service | `user.controller.ts` (pages), `api-user.controller.ts` (JSON) |
-| **View** | Handlebars templates for the pages, DTO shapes for the JSON | `backend/views/users/*.hbs`, `user.dto.ts` |
+| Browser view | Render records and forms, send JSON, show the result or error | `backend/public/workspace.html` and its JavaScript |
+| Controller | Route HTTP requests to the service and return the documented status and data | `backend/src/users/api-user.controller.ts` |
+| Service | Validate input, check e-mail uniqueness, start users as `PENDING` and handle missing records | `backend/src/users/users.service.ts` |
+| Model | Query and update the users table through Prisma | `backend/src/users/user.model.ts` |
 
-Both controllers share one `UsersService`, so a user created through the API shows up on the web pages immediately, and the rules are written once. When the in-memory array was replaced by PostgreSQL (week 5), the models changed and the service and controllers only learned to wait (`async`/`await`) for them.
+The other three resources follow the same controller, service and model pattern. A record created through Postman is available on the next workspace read.
 
 ### A request, step by step
 
@@ -309,18 +289,18 @@ sequenceDiagram
 
 ### Routes
 
-All URL prefixes live in one file, `backend/src/app.routes.ts`. Users, announcements and job postings share the same CRUD shape:
+The API feature prefixes are in `backend/src/app.routes.ts`. Users, announcements and job postings share the CRUD shape illustrated below. Browser page URLs load the workspace. All reads and changes to stored records use `/api`.
 
-| CRUD | 📄 Web page (`/users`) | 🔌 JSON API (`/api/users`) |
+| Action | Browser page or control | JSON request |
 |---|---|---|
-| List | `GET /users` | `GET /api/users` → `200` |
-| Create | `GET /users/create` (form), `POST /users` | `POST /api/users` → `201` |
-| Read one | `GET /users/:id` | `GET /api/users/:id` → `200` |
-| Replace | `GET /users/:id/edit` (form), `PUT /users/:id` | `PUT /api/users/:id` → `200` |
-| Update some fields | `PATCH /users/:id` | `PATCH /api/users/:id` → `200` |
-| Delete | `DELETE /users/:id` | `DELETE /api/users/:id` → `204` |
+| List | `/users` | `GET /api/users` → `200` |
+| Create | `/users/create` form | `POST /api/users` → `201` |
+| Read one | `/users/:id` | `GET /api/users/:id` → `200` |
+| Replace | `/users/:id/edit` form | `PUT /api/users/:id` → `200` |
+| Update some fields | User status control | `PATCH /api/users/:id` → `200` |
+| Delete | Delete action on the record | `DELETE /api/users/:id` → `204` |
 
-**Errors:** invalid input or non-numeric id → `400` · e-mail already used → `409` · unknown id → `404`. Pages show the form again with the messages; the API returns JSON.
+The API returns `400` for invalid input or non-numeric IDs, `409` for duplicate e-mail addresses and `404` for missing records. Forms show the validation feedback returned by the service.
 
 Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
 
@@ -383,22 +363,21 @@ GET /api/users (db down) → 500  {"message": "Something went wrong on our side.
 
 **Why filters and not middleware?** A middleware runs *before* the router, so it cannot see a `404` or an error that comes later. Nest catches those with an exception filter. The two Guardians are registered in `app.module.ts`; the general one (all errors) first, the specific one (404) after it, because Nest asks the filter registered last first.
 
-**The generic 404 page.** A browser (header `Accept: text/html`) outside `/api` that makes an invalid request is **redirected** (`303`) to `/404?from=<path>`: an unknown URL, a missing record (`/users/999999`) or a bad id (`/users/abc`), also from a form delete. The page answers with status `404` and says what was not found. `from` is typed in the URL, so only a plain path of this site is shown, escaped; any other text gets a general sentence. The API never redirects: `/api/...` stays JSON.
+**The generic 404 page.** A browser request for an unknown web URL receives a `303` redirect to `/404?from=<path>`, which responds with HTTP `404`. A recognized detail URL such as `/users/999999` first loads the workspace shell with `200`. If the subsequent record request returns JSON `404`, the workspace opens the same error page. API clients receive the JSON error and its original status.
 
 **The error log.** One line per failed request, with the reason: `2026-11-11T08:10:57.127Z GET /api/users/999999 404 8 ms  User 999999 not found`. A `5xx` adds its stack under the line; a redirect to `/404` shows as a `303` line. Successful requests are only printed on the terminal. In Docker the file appears on your computer as `backend/logs/error.logs` (a bind mount in `docker-compose.yml`); the folder is git-ignored.
 
 > [!NOTE]
 > The `/health` alias is added straight to Express in `main.ts`, so the logger does not see it. Log times are UTC, because the container has no `TZ` set.
 
-### Method override for HTML forms
-
-HTML forms can only send `GET` and `POST`, so they post with `?_method=PUT|PATCH|DELETE`, and `src/common/method-override.ts` rewrites the method before routing:
+### Saving a workspace form
 
 ```mermaid
 flowchart LR
-    F["📝 HTML form<br/>POST /users/7?_method=DELETE"] --> MO{"POST with<br/>_method?"}
-    MO -- "yes" --> R["🔁 DELETE /users/7"] --> RT["🎮 router"]
-    MO -- "no (a GET is never rewritten)" --> RT
+    F["User submits an edit"] --> J["Workspace JavaScript reads the form"]
+    J -->|"JSON request to /api/users/:id"| API["NestJS API"]
+    API -->|"Successful response"| OK["View the saved record"]
+    API -->|"Validation or conflict"| ERR["Show the error on the form"]
 ```
 
 ### Folders
@@ -414,22 +393,20 @@ alumni/
 ├── backend/
 │   ├── prisma/                 schema.prisma, migrations/, seed.ts (manual demo-data command)
 │   ├── prisma.config.ts        Prisma settings: schema path and database URL
-│   ├── public/                 landing HTML, shared CSS/JS, media, fonts, animation libraries
-│   ├── views/                  Handlebars: layout, partials/, one folder per feature
+│   ├── public/                 landing and workspace HTML, browser CSS/JS, media, fonts, GSAP
 │   ├── logs/                   error.logs, written by the app (git-ignored, created on the first error)
 │   └── src/
-│       ├── main.ts             bootstrap: views, method override, Swagger, port
-│       ├── app.routes.ts       route map
-│       ├── common/             shared helpers (views setup, method override, request logger, error log file, 404 and 5xx filters, redirect to /404)
+│       ├── main.ts             bootstrap: static assets, Swagger, port
+│       ├── app.controller.ts   landing, workspace page routes, /404 and week 2 demos
+│       ├── app.routes.ts       JSON API feature prefixes
+│       ├── common/             shared HTTP helpers, request logger, error log and exception filters
 │       ├── prisma/             PrismaService: the one database connection the models share
 │       ├── database/           startup seed: demo data on first run (empty DB), factories
 │       ├── users/              ┐
 │       ├── announcements/      │ one folder per feature:
 │       ├── job-postings/       │ model, service, controllers, modules
 │       ├── job-applications/   ┘
-│       ├── not-found/          GET /404: the generic 404 page
 │       └── health/             GET /api/health
-├── frontend/                   source guide and archive/gate-a/ historical prototype
 └── postman/                    request collection, including error cases
 ```
 
@@ -439,7 +416,6 @@ alumni/
 - [ ] Database errors other than "not found" (for example two requests taking the same e-mail at the same moment) still end as `500` instead of a fitting `409`. The 5xx Guardian now hides the details from the client; one format for the `400`s too comes in week 9.
 - [ ] The Postman collection has the normal (happy-path) requests for users only; announcements, job postings and applications have only their error cases (`400`, `404`, `409`) so far.
 - [ ] `AppController` still holds the week 2 demo routes (`/hello`, `/sum/...`) as course examples.
-- [x] The Beyond the Years landing page and redesigned Handlebars workspace run on the existing backend. The original Gate-A prototype remains available at `frontend/archive/gate-a/index.html`.
 
 ---
 
@@ -556,7 +532,7 @@ flowchart LR
 | 05 | Database and ORM | `DDD.md`, Prisma schema and first migration, persistent volume, seed data; users and announcements on PostgreSQL | ✅ |
 | 06 | Database integration | Job postings and job applications: migrations, models, direct and nested routes, seed | ✅ |
 | 07 | Errors and logging | Postman error cases for every feature, optional job-posting fields, request logger, 404 and 5xx Guardians, generic `/404` page, `logs/error.logs` | ✅ |
-| 08 | **Midterm** · Web design | Brand and design documents, archived Gate-A prototype, Beyond the Years landing and refreshed Handlebars pages | ✅ |
+| 08 | **Midterm** · Web design | Brand and design documents and the Gate-A home-page study | ✅ |
 | 09 | Middleware | Request ids, security headers, rate limiting, one error format for the `400`s too (the logger and the 404 and 5xx Guardians are already done) | 🗓️ |
 | 10 | Front end | React app served by nginx; full stack from one command | 🗓️ |
 | 11 | Auth | Sign-up with approval, sessions, role and ownership checks | 🗓️ |
@@ -564,7 +540,7 @@ flowchart LR
 | 13 | Deployment and CI/CD | GitHub Actions, production compose file, backups | 🗓️ |
 | 14 | **Final** | A stranger can run and understand the system from this README | 🗓️ |
 
-✅ done · 🚧 in progress · 🗓️ planned. Homework 1 (announcements) and homework 2 (job postings and applications UI) are done too. Career and education history, event registrations and the directory search (the original week 7 plan) were not part of the week 7 tasks given in class; they stay in the scope, in a week still to be set. The tasks given in class each week are tracked in [`TODO.md`](TODO.md).
+✅ done · 🚧 in progress · 🗓️ planned. After the midterm, the Beyond the Years landing and API-backed JavaScript workspace replaced the earlier interface. Week 10 remains a separate React assignment. Homework 1 (announcements) and homework 2 (job postings and applications UI) are done too. Career and education history, event registrations and the directory search (the original week 7 plan) were not part of the week 7 tasks given in class; they stay in the scope, in a week still to be set. The tasks given in class each week are tracked in [`TODO.md`](TODO.md).
 
 ---
 
@@ -636,7 +612,7 @@ flowchart LR
 
 - **Current UI:** Beyond the Years, with original AI-generated illustrative WebP scenes, Instrument Serif, Inter and locally bundled GSAP. See [DESIGN.md](DESIGN.md).
 - **Earlier UI references:** made in the Web Design course with Figma Make: [AlumniTrackingSystem](https://github.com/gulnihalarikaymak/AlumniTrackingSystem), prototype at [ats.figma.site](https://ats.figma.site/).
-- **Open source:** NestJS, Prisma, PostgreSQL, React, Vite, each under its own license.
+- **Open source:** NestJS, Prisma and PostgreSQL, each under its own license.
 - **License:** [MIT](LICENSE).
 
 <div align="center">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{title}} — ATS İÜ</title>
+  <title>Workspace — ATS İÜ</title>
   <link rel="icon" href="/emblem.svg" type="image/svg+xml">
   <script>
     try {
@@ -24,11 +24,11 @@
       </a>
       <button class="workspace-menu" type="button" aria-controls="workspace-nav" aria-expanded="false" hidden>Menu</button>
       <nav class="nav" id="workspace-nav" aria-label="Platform">
-        <a href="/platform" {{navCurrent "/platform"}}>Workspace</a>
-        <a href="/job-postings" {{navCurrent "/job-postings"}}>Opportunities</a>
-        <a href="/announcements" {{navCurrent "/announcements"}}>Announcements</a>
-        <a href="/job-applications" {{navCurrent "/job-applications"}}>Applications</a>
-        <a href="/users" {{navCurrent "/users"}}>Users</a>
+        <a href="/platform">Workspace</a>
+        <a href="/job-postings">Opportunities</a>
+        <a href="/announcements">Announcements</a>
+        <a href="/job-applications">Applications</a>
+        <a href="/users">Users</a>
       </nav>
       <button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -38,7 +38,8 @@
     </div>
   </header>
   <main id="main" tabindex="-1">
-    {{{body}}}
+    <p class="meta" id="loading" role="status">Loading workspace…</p>
+    <noscript><p>Enable JavaScript to open the workspace. <a href="/">Return to the alumni home page</a>.</p></noscript>
   </main>
   <footer class="site-foot">
     <a href="/" lang="tr">İstanbul Üniversitesi</a>
@@ -74,5 +75,34 @@
       }
     });
   </script>
+  <template id="platform-page"><section class="workspace-intro">
+  <div>
+    <p class="kicker">Alumni Tracking System</p>
+    <h1>The alumni <em>workspace.</em></h1>
+    <p>Read university news, explore career opportunities and manage the records that keep the community connected.</p>
+    <a class="btn" href="/job-postings">Browse opportunities <span aria-hidden="true">→</span></a>
+  </div>
+  <img src="/media/beginning.webp" width="1600" height="1000" alt="Students spending time together on campus">
+</section>
+<nav class="places" aria-label="Workspace sections">
+  <a href="/announcements"><h2>Announcements</h2><p>Read and publish news for the alumni community.</p><span aria-hidden="true">↗</span></a>
+  <a href="/job-postings"><h2>Career opportunities</h2><p>Browse openings and share a position.</p><span aria-hidden="true">↗</span></a>
+  <a href="/job-applications"><h2>Applications</h2><p>Review applications and follow their status.</p><span aria-hidden="true">↗</span></a>
+  <a href="/users"><h2>Users</h2><p>Manage user records, roles and account status.</p><span aria-hidden="true">↗</span></a>
+</nav>
+<details class="resources">
+  <summary>Developer resources</summary>
+  <nav aria-label="Developer resources"><a href="/api/swagger">API documentation</a><a href="/api/health">Service health</a><a href="/hello">Hello</a><a href="/hello/alumni">Named greeting</a><a href="/sum/2/3">Sum</a></nav>
+</details></template>
+<template id="about-page"><section class="workspace-intro">
+  <div>
+    <p class="kicker">About ATS İÜ</p>
+    <h1>A shared <em>beginning.</em></h1>
+    <p>The Alumni Tracking System connects İstanbul University’s graduates with university announcements, job postings and the people who share their history.</p>
+    <a class="btn" href="/platform">Enter the workspace <span aria-hidden="true">→</span></a>
+  </div>
+  <img src="/media/connection.webp" width="1600" height="1000" alt="People spending time together outdoors">
+</section></template>
+  <script type="module" src="/workspace.js"></script>
 </body>
 </html>

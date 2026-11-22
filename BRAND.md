@@ -34,5 +34,5 @@ Warm ivory, midnight navy, burgundy and champagne are defined in
 [DESIGN.md](DESIGN.md). The project emblem and generated photographs are
 illustrative assets.
 
-The previous gate identity and its photography attribution remain in the
-[Gate-A brand archive](frontend/archive/gate-a/BRAND.md).
+The week 8 visual study used the Beyazıt gate. The current identity follows
+the people and connections in each chapter.

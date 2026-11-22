@@ -2,21 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { methodOverride } from './common/method-override';
-import { setupViews } from './common/views';
+import { publicDir } from './common/public-dir';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // View layer: Handlebars templates in backend/views/
-  setupViews(app);
-
-  // Lets HTML forms send PUT, PATCH and DELETE with "?_method=..."
-  app.use(methodOverride);
-
-  // No global prefix: every URL path is defined in app.routes.ts
-  // (/users for pages, /api/users and /api/health for JSON). A global 'api'
-  // prefix with an exclude list cannot tell /users and /api/users apart.
+  // GET / goes through the controller so that the landing request is logged.
+  app.useStaticAssets(publicDir, { index: false, redirect: false });
 
   app.enableCors();
 

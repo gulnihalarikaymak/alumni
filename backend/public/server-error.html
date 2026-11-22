@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Something went wrong — ATS İÜ</title>
+  <link rel="icon" href="/emblem.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/workspace.css">
+  <script>
+    try {
+      const saved = localStorage.getItem('theme');
+      document.documentElement.dataset.theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch {}
+  </script>
+</head>
+<body>
+  <header class="site"><div class="bar"><a class="brand" href="/" aria-label="ATS İÜ Alumni Network, home">
+    <span class="brand-mark" aria-hidden="true"></span><span>ATS İÜ<small>Alumni Network</small></span>
+  </a></div></header>
+  <main><section class="card missing narrow">
+    <p class="code">Service error</p>
+    <h1>Something went wrong</h1><p class="sub" id="reason">Something went wrong on our side. Please try again later.</p>
+    <a class="btn" href="/">Back to the home page</a>
+    <a class="btn quiet" href="/platform">Open workspace</a>
+  </section></main>
+</body>
+</html>

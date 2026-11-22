@@ -1,47 +1,48 @@
-(() => {
-  const raw = document.querySelector('#raw-json');
-  const status = document.querySelector('#service-status');
-  const checked = document.querySelector('#checked');
-  const json = document.querySelector('#json');
-  let timeout;
+import { api, card, date, details, el, link } from './workspace-ui.js';
 
-  function show(payload) {
-    const seconds = payload.uptimeSeconds;
-    const units = [
-      [Math.floor(seconds / 86400), 'd'],
-      [Math.floor(seconds % 86400 / 3600), 'h'],
-      [Math.floor(seconds % 3600 / 60), 'm'],
-      [seconds % 60, 's'],
-    ];
-    const first = units.findIndex(([value]) => value > 0);
-    document.querySelector('#uptime').textContent = units.slice(first).map(([value, unit]) => value + unit).join(' ');
+const endpoint = '/health?format=json';
+
+export async function healthPage() {
+  const payload = await api(endpoint);
+  const status = el('span', { class: 'badge ACTIVE', id: 'service-status', role: 'status' }, payload.status);
+  const checked = el('span', {});
+  const json = el('pre', { class: 'health-json', id: 'json' });
+  const fields = details([]);
+  function update(data) {
+    fields.replaceChildren(...details([
+      ['Service', data.service], ['Version', data.version], ['Uptime', data.uptimeSeconds + ' s'], ['Environment', data.environment]
+    ]).childNodes);
     status.className = 'badge ACTIVE';
-    status.textContent = payload.status;
-    json.textContent = JSON.stringify(payload, null, 2);
-    checked.dateTime = payload.timestamp;
-    checked.textContent = new Date(payload.timestamp).toLocaleTimeString();
+    if (status.textContent !== data.status) status.textContent = data.status;
+    checked.replaceChildren(date(data.timestamp));
+    json.textContent = JSON.stringify(data, null, 2);
   }
-
+  update(payload);
+  // Schedule the next check after the previous request settles so slow responses cannot overlap.
+  let timer;
+  let stopped = false;
+  let pending = false;
   async function refresh() {
+    if (pending || stopped) return;
+    pending = true;
     if (!document.hidden) {
       try {
-        const response = await fetch(raw.href, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-        if (!response.ok) throw new Error(String(response.status));
-        show(await response.json());
+        update(await api(endpoint));
       } catch {
         status.className = 'badge REJECTED';
-        status.textContent = 'down';
-        checked.dateTime = new Date().toISOString();
-        checked.textContent = new Date(checked.dateTime).toLocaleTimeString();
+        status.textContent = 'Unavailable';
       }
     }
-    timeout = setTimeout(refresh, 5000);
+    pending = false;
+    if (!stopped) timer = setTimeout(refresh, 5000);
   }
-
-  show(JSON.parse(json.textContent));
-  timeout = setTimeout(refresh, 5000);
-  addEventListener('pagehide', () => clearTimeout(timeout));
-  addEventListener('pageshow', (event) => {
-    if (event.persisted) refresh();
+  timer = setTimeout(refresh, 5000);
+  window.addEventListener('pagehide', () => { stopped = true; clearTimeout(timer); });
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) { stopped = false; refresh(); }
   });
-})();
+  return el('section', { class: 'narrow' },
+    el('header', { class: 'page-head' }, el('div', {}, el('p', { class: 'kicker' }, 'System status'),
+      el('h1', {}, 'Service health')), status),
+    card(fields, el('h2', {}, 'JSON response'), json, link('/api' + endpoint, 'Raw JSON'), el('p', { class: 'meta' }, 'Last response ', checked)));
+}
