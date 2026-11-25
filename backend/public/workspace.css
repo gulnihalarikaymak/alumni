@@ -194,6 +194,30 @@ textarea { resize: vertical; }
   .record { grid-template-columns: minmax(5.6rem, 28%) minmax(0,1fr); }
 }
 
+/* Register page (/register) */
+.register { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+.register-intro { display: grid; gap: 1rem; }
+.register-intro h1 em { color: var(--accent); }
+.register-intro > p:not(.kicker) { color: var(--muted); max-width: 42ch; }
+.register-intro .kicker { margin-bottom: 0; }
+.register-intro img { width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; margin-top: 1rem; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+legend { padding: 0; margin-bottom: .6rem; font-size: .93rem; font-weight: 600; }
+fieldset.stack > legend { margin-bottom: 1rem; font: 400 clamp(1.5rem, 2.2vw, 2rem)/1.1 var(--serif); }
+.hint { color: var(--muted); font-size: .85rem; font-weight: 400; }
+.choices { display: grid; gap: .5rem; }
+.choice { grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: .75rem; padding: .8rem 1rem; border: 1px solid var(--line); cursor: pointer; }
+.choice strong { display: block; font: 400 1.45rem/1.1 var(--serif); margin-bottom: .15rem; }
+.choice input { margin-top: .35rem; }
+.choice:hover { border-color: var(--muted); }
+.choice:has(:checked) { border-color: var(--accent); background: var(--tint); }
+.check { grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: .75rem; font-weight: 400; color: var(--muted); }
+input[type="radio"], input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; margin: .2rem 0 0; padding: 0; accent-color: var(--accent); }
+@media (max-width: 56rem) {
+  .register { grid-template-columns: minmax(0, 1fr); }
+  .register-intro img { max-height: 18rem; aspect-ratio: 3/2; }
+}
+
 .form-error { overflow-wrap: anywhere; padding: .85rem 1rem; border-left: 3px solid var(--danger-ink); color: var(--danger-ink); background: var(--danger-bg); }
 #action-error { margin-bottom: 1rem; }
 button:disabled { cursor: wait; opacity: .65; }

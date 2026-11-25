@@ -12,6 +12,7 @@ import { ApiJobApplicationModule } from './job-applications/api-job-application.
 import { ApiJobPostingApplicationModule } from './job-applications/api-job-posting-application.module';
 import { ApiUserJobApplicationModule } from './job-applications/api-user-job-application.module';
 import { ApiJobPostingModule } from './job-postings/api-job-posting.module';
+import { ApiRegistrationModule } from './registration/api-registration.module';
 import { ApiUserModule } from './users/api-user.module';
 
 @Module({
@@ -26,6 +27,7 @@ import { ApiUserModule } from './users/api-user.module';
     ApiJobApplicationModule,
     ApiJobPostingApplicationModule,
     ApiUserJobApplicationModule,
+    ApiRegistrationModule,
   ],
   controllers: [AppController],
   // The Guardians. Nest asks the filter registered last first, so the general

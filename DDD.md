@@ -9,7 +9,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | **Storage** | Docker volume `alumni-db-data`: kept by `docker compose down`, deleted by `docker compose down -v` |
 | **Access** | Prisma 7: schema in `backend/prisma/schema.prisma`, migrations in `backend/prisma/migrations/`. The models in `backend/src/*/*.model.ts` read and write through `PrismaService` |
 | **Demo data** | `backend/prisma/seed.ts` builds records with the factories in `backend/prisma/factories.ts`: synthetic Turkish names (fakerTR), e-mails at `example.com` |
-| **Status** | All tables below exist in the database (first migration). Four are used by the code (`users`, `announcements`, `job_postings`, `job_applications`); the rest are not used yet (week still to be set) and may still change |
+| **Status** | All tables below exist in the database (first migration). Five are used by the code (`users`, `announcements`, `job_postings`, `job_applications`, and `alumni_profiles` at registration); the rest are not used yet (week still to be set) and may still change |
 
 ## 1. Conventions
 
@@ -29,7 +29,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 |---|---|---|---|
 | User | `users` | An account: who can sign in, with which role | in code (PostgreSQL) |
 | Announcement | `announcements` | News posted for everyone | in code (PostgreSQL) |
-| Alumni profile | `alumni_profiles` | Name, graduation year and city of a graduate | planned, week to be set |
+| Alumni profile | `alumni_profiles` | Name, graduation year and city of a graduate | created at registration (PostgreSQL); reading and editing planned |
 | Career entry | `career_entries` | One job a graduate has held | planned, week to be set |
 | Education entry | `education_entries` | One degree a graduate has earned | planned, week to be set |
 | Event | `events` | A meetup or talk organised by staff | planned, week to be set |
@@ -99,7 +99,8 @@ Role rules:
 | Rule | Where |
 |---|---|
 | Only `ALUMNI` and `STUDENT` may apply to a job posting; other roles → `400` | `JobApplicationsService` (4.9) |
-| Only an `ALUMNI` user has an alumni profile (at most one) | planned, with `alumni_profiles` (4.3) |
+| Only `STUDENT`, `ALUMNI` and `STAFF` may self-register; `ADMIN` → `400` | `RegistrationService` (4.10) |
+| Only an `ALUMNI` user has an alumni profile (at most one) | `RegistrationService` (4.10) and the `UQ` on `user_id` (4.3) |
 | Only `ADMIN` may change a user's `role` or `status` | planned, week 11; today any client can |
 | Only `STAFF` and `ADMIN` may create announcements, job postings and events | planned, week 11; today any client can |
 
@@ -109,7 +110,7 @@ Role rules:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> PENDING : sign-up (POST)
+    [*] --> PENDING : sign-up (POST /api/register or /api/users)
     PENDING --> ACTIVE : admin approves
     PENDING --> REJECTED : admin rejects
     ACTIVE --> SUSPENDED : admin suspends
@@ -139,15 +140,18 @@ The transitions and the "only `ACTIVE` users act" rule arrive with sign-in in we
 
 The list is shown newest first.
 
-### 4.3 `alumni_profiles` *(planned)*
+### 4.3 `alumni_profiles` *(created at registration)*
 
 | Column | Type | Constraints | Notes |
 |---|---|---|---|
 | `id` | integer | PK | |
 | `user_id` | integer | FK → `users.id`, UQ, NN | one profile per user; delete the user → delete the profile |
-| `full_name` | varchar | NN | |
-| `graduation_year` | integer | NN | |
-| `city` | varchar | | city level only, no street address |
+| `full_name` | varchar | NN | trimmed, inner spaces collapsed, 2–100 characters |
+| `graduation_year` | integer | NN | whole number from 1950 to the current year |
+| `city` | varchar | | optional, at most 60 characters; city level only, no street address |
+
+Registration (4.10) creates the profile together with an `ALUMNI` user, in one transaction.
+Reading and editing profiles is planned, week to be set.
 
 ### 4.4 `career_entries` *(planned)*
 
@@ -228,6 +232,22 @@ only through their applications (4.9).
 
 The list is shown newest first. Only `ALUMNI` and `STUDENT` may apply, and not after the
 posting's `deadline`.
+
+### 4.10 Registration *(in code, no table of its own)*
+
+`POST /api/register` is the route of the sign-up page (`/register`). It writes to `users` and,
+for a graduate, to `alumni_profiles`. Rules (`RegistrationService`):
+
+| Field | Rule |
+|---|---|
+| `email` | required; same rules as 4.1; already used → `409` |
+| `role` | required; `STUDENT`, `ALUMNI` or `STAFF`. `ADMIN` cannot self-register → `400` |
+| `acceptPrivacy` | must be `true` (the privacy notice is accepted); not stored |
+| `fullName`, `graduationYear`, `city` | for `ALUMNI` only, see 4.3 (`city` optional); sent with another role → `400` |
+
+The new account is always `PENDING`. Any other field is a `400`. If two requests send the same
+e-mail at the same moment, the `UNIQUE` constraint stops the second one, which gets `409`.
+No password yet: sign-in arrives in week 11.
 
 ## 5. Enums
 

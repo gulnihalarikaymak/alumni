@@ -74,6 +74,8 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 
 ## Week 09 — Middleware
 - [x] Update `DDD.md` for users and their roles in the system
+- [x] Register page and functionality: `/register` page in the Beyond the Years style and
+  `POST /api/register` (role, e-mail, privacy notice; a graduate also gives name, graduation year and city)
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

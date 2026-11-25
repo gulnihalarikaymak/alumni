@@ -6,6 +6,7 @@ import { publicDir } from './common/public-dir';
 const workspacePaths = [
   'platform',
   'about',
+  'register',
   ...['users', 'announcements', 'job-postings'].flatMap((resource) => [
     resource,
     `${resource}/create`,

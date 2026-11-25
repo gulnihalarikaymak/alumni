@@ -144,6 +144,7 @@ flowchart LR
 | `http://localhost:3000/announcements` | 📄 Web pages for announcements |
 | `http://localhost:3000/job-postings` | 📄 Web pages for job postings, and each posting's applications |
 | `http://localhost:3000/job-applications` | 📄 Web pages for all job applications |
+| `http://localhost:3000/register` | 📄 Sign-up page for students, graduates and staff (`POST /api/register`) |
 | `http://localhost:3000/404` | 📄 The generic "Page not found" page; invalid web requests are redirected here |
 | `http://localhost:3000/api/...` | 🔌 JSON API for the same data (`users`, `announcements`, `job-postings`, `job-applications`) |
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
@@ -302,6 +303,8 @@ The API feature prefixes are in `backend/src/app.routes.ts`. Users, announcement
 
 The API returns `400` for invalid input or non-numeric IDs, `409` for duplicate e-mail addresses and `404` for missing records. Forms show the validation feedback returned by the service.
 
+**Registration.** The `/register` page sends `POST /api/register` → `201` with `{ user, alumniProfile }`. A visitor joins as `STUDENT`, `ALUMNI` or `STAFF` (never `ADMIN`) and must accept the privacy notice; a graduate also gives a full name, graduation year and an optional city, saved in `alumni_profiles` in the same transaction. The account starts as `PENDING`; approval and sign-in come in week 11. Rules are in [DDD.md §4.10](DDD.md).
+
 Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
 
 ### Job postings and applications
@@ -406,6 +409,7 @@ alumni/
 │       ├── announcements/      │ one folder per feature:
 │       ├── job-postings/       │ model, service, controllers, modules
 │       ├── job-applications/   ┘
+│       ├── registration/       POST /api/register: user and alumni profile in one step
 │       └── health/             GET /api/health
 └── postman/                    request collection, including error cases
 ```
@@ -421,7 +425,7 @@ alumni/
 
 ## 5. Data model
 
-All nine tables exist in the database (created by the migrations). Four are used by the code; the rest are not used yet (week still to be set, see the [roadmap](#6-roadmap)). Columns, enums and delete rules are in **[DDD.md](DDD.md)**.
+All nine tables exist in the database (created by the migrations). Five are used by the code (`alumni_profiles` only at registration); the rest are not used yet (week still to be set, see the [roadmap](#6-roadmap)). Columns, enums and delete rules are in **[DDD.md](DDD.md)**.
 
 ```mermaid
 erDiagram
@@ -504,7 +508,7 @@ erDiagram
 
 | | In code | Not used yet |
 |---|---|---|
-| Tables | `users`, `announcements`, `job_postings`, `job_applications` | `alumni_profiles`, `career_entries`, `education_entries`, `events`, `event_registrations` |
+| Tables | `users`, `announcements`, `job_postings`, `job_applications`, `alumni_profiles` (created at registration) | `career_entries`, `education_entries`, `events`, `event_registrations` |
 
 > [!NOTE]
 > Unique pairs: a user applies **once per posting** (`job_posting_id`, `applicant_id`) and registers **once per event** (`event_id`, `user_id`). Deleting a parent row deletes its children (`ON DELETE CASCADE`).

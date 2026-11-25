@@ -9,3 +9,9 @@ export const MAX_ID = 2_147_483_647;
 export function isRecordNotFound(err: unknown): boolean {
   return err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025';
 }
+
+// Prisma error P2002: a UNIQUE constraint refused the row (for example, two
+// requests registering the same e-mail at the same moment). The service answers 409.
+export function isUniqueViolation(err: unknown): boolean {
+  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002';
+}

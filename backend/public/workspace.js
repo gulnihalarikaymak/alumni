@@ -2,6 +2,7 @@ import { el } from './workspace-ui.js';
 import { editRecord, listRecords, showRecord } from './workspace-records.js';
 import { listApplications, postingApplications, showApplication } from './workspace-applications.js';
 import { healthPage } from './health-status.js';
+import { registerPage } from './workspace-register.js';
 
 const main = document.querySelector('#main');
 const path = location.pathname.replace(/\/+$/, '');
@@ -16,6 +17,7 @@ function notFound() {
 async function pageContent() {
   if (path === '/platform' || path === '/about') return document.getElementById(section + '-page').content.cloneNode(true);
   if (path === '/api/health') return healthPage();
+  if (path === '/register') return registerPage();
   if (section === 'job-applications') return id ? showApplication(id) : listApplications();
   if (!['users', 'announcements', 'job-postings'].includes(section)) return notFound();
   if (!id) return listRecords(section);
