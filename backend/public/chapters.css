@@ -122,7 +122,7 @@
   gap: 10px;
   padding-block: 14px;
   color: #4d5154;
-  border-top: 1px solid rgba(21,25,30,.24);
+  border-top: 1px solid var(--color-border-strong, rgba(21,25,30,.24));
   text-decoration: none;
   font: 500 .875rem/1.25 var(--sans, Inter, sans-serif);
 }

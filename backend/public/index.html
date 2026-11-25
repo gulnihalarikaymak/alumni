@@ -17,6 +17,14 @@
       .masthead .primary-nav a { font-size: .85rem; min-height: 44px; white-space: nowrap; }
     }
   </style></noscript>
+  <script>
+    // Same saved choice as the workspace pages, applied before the first paint.
+    try {
+      const saved = localStorage.getItem('theme');
+      document.documentElement.dataset.theme = saved === 'dark' || saved === 'light' ? saved :
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch {}
+  </script>
   <script src="vendor/gsap.min.js" defer></script>
   <script src="vendor/ScrollTrigger.min.js" defer></script>
   <script src="chapters.js" defer></script>
@@ -38,6 +46,7 @@
       </nav>
       <div class="header-actions">
         <a class="platform-link" href="/register">Register <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a>
+        <button type="button" class="theme-toggle" aria-label="Switch to dark theme" title="Switch theme" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/></svg></button>
         <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation"><span></span><span></span></button>
       </div>
     </div>

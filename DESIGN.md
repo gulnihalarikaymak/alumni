@@ -25,14 +25,17 @@ editorial headings lead visitors into the working ATS pages.
 
 Instrument Serif, including italic, is the display font. Inter is used for
 navigation, body copy, forms and tables. Fonts and licenses are in
-`backend/public/fonts/`. Workspace colors use their own light and dark theme
-variables in `workspace.css`, including darker burgundy for readable links.
+`backend/public/fonts/`. The landing (`landing.css`) and the workspace
+(`workspace.css`) each define light and dark theme variables. The dark theme uses
+midnight navy surfaces, ivory text and a light rose accent for readable links.
 
 ## Components and motion
 
 - The landing and the workspace share one menu, with the same links in the same order:
   Home, Workspace, Opportunities, Announcements, Applications, Users, About, and a
-  Register button on the right. Each header keeps its own look. Below 1080px both
+  Register button and a light/dark theme button on the right. The theme choice is
+  saved once (`localStorage` key `theme`) and applies to every page; without a saved
+  choice the page follows the system setting. Each header keeps its own look. Below 1080px both
   move the links behind a keyboard-operable menu button.
 - The fixed landing navigation changes from light text over the photograph to
   dark text on an ivory surface.

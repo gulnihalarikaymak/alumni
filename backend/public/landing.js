@@ -38,6 +38,20 @@
     if (returnFocus) menu.focus();
   }
 
+  // Light / dark theme, shared with the workspace pages through localStorage "theme".
+  const themeButton = document.querySelector(".theme-toggle");
+  const root = document.documentElement;
+  function setThemeLabel() {
+    themeButton.setAttribute("aria-label", root.dataset.theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+  }
+  themeButton.hidden = false;
+  setThemeLabel();
+  themeButton.addEventListener("click", () => {
+    root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+    setThemeLabel();
+    try { localStorage.setItem("theme", root.dataset.theme); } catch {}
+  });
+
   menu.addEventListener("click", () => setMenu(menu.getAttribute("aria-expanded") !== "true"));
   nav.addEventListener("click", () => setMenu(false));
   document.addEventListener("keydown", event => {
