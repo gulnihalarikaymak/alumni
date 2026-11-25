@@ -72,6 +72,9 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
   Beyond the Years landing and a JavaScript workspace using the JSON API.
   The React assignment remains on the week 10 roadmap.
 
+## Week 09 — Middleware
+- [x] Update `DDD.md` for users and their roles in the system
+
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model
 - [x] Create 2 controllers (web pages + JSON API)

@@ -69,6 +69,64 @@ erDiagram
 
 No password column yet: authentication arrives in week 11.
 
+Rules in code today (`UsersService`):
+
+- `POST` needs `email` and `role`; `status` is not accepted and is always set to `PENDING`.
+- `PUT` needs `email`, `role` and `status`; `PATCH` needs at least one of them.
+- `id` and `created_at` are read-only; any other field is a `400`.
+- `email` is trimmed, lower-cased and must look like an e-mail address; `role` and `status`
+  are accepted in any case (`alumni` → `ALUMNI`) and must be a value from section 5.
+- Deleting a user deletes their job applications (4.9), alumni profile (4.3) and event
+  registrations (4.7): the foreign keys cascade.
+
+#### Roles
+
+Every user has exactly one role. The role says what kind of person the account belongs to and,
+from week 11, what the account may do.
+
+| Role | Who | In code today | Planned (week 11 and later) |
+|---|---|---|---|
+| `ADMIN` | IT or alumni-office administrator | stored only | approves or rejects sign-ups, suspends accounts, manages roles |
+| `STAFF` | university staff (career centre, alumni office) | stored; cannot apply to job postings | posts announcements, job postings and events; reads aggregate reports |
+| `ALUMNI` | a graduate | may apply to job postings | keeps an alumni profile with career and education history (4.3–4.5), chooses who sees what, offers mentorship, registers for events |
+| `STUDENT` | a current student | may apply to job postings | searches the alumni directory, requests mentorship, registers for events |
+
+A visitor without an account is not a role and has no row in `users`; they will see only
+aggregate figures.
+
+Role rules:
+
+| Rule | Where |
+|---|---|
+| Only `ALUMNI` and `STUDENT` may apply to a job posting; other roles → `400` | `JobApplicationsService` (4.9) |
+| Only an `ALUMNI` user has an alumni profile (at most one) | planned, with `alumni_profiles` (4.3) |
+| Only `ADMIN` may change a user's `role` or `status` | planned, week 11; today any client can |
+| Only `STAFF` and `ADMIN` may create announcements, job postings and events | planned, week 11; today any client can |
+
+#### Account status
+
+`status` says whether the account may be used. A new account always starts as `PENDING`.
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING : sign-up (POST)
+    PENDING --> ACTIVE : admin approves
+    PENDING --> REJECTED : admin rejects
+    ACTIVE --> SUSPENDED : admin suspends
+    SUSPENDED --> ACTIVE : admin restores
+```
+
+| Status | Meaning |
+|---|---|
+| `PENDING` | signed up, waiting for an admin |
+| `ACTIVE` | approved; can sign in and use the features of their role |
+| `REJECTED` | the sign-up was refused |
+| `SUSPENDED` | an approved account that is blocked for now |
+
+Today the diagram is not enforced: `PUT` and `PATCH` accept any status value, and the status
+does not yet limit what a user can do (a `PENDING` student can still apply to a job posting).
+The transitions and the "only `ACTIVE` users act" rule arrive with sign-in in week 11.
+
 ### 4.2 `announcements` *(in code)*
 
 | Column | Type | Constraints | Notes |
@@ -197,5 +255,5 @@ Location is city level. Demo and seed data are synthetic.
 
 ## 8. Open points
 
-- Whether an alumnus can hold more than one profile or a user can hold two roles (now: one role, one profile).
+- Whether an alumnus can hold more than one profile or a user can hold two roles (now: one role, one profile). Proposed: a student who graduates keeps the same account and changes role from `STUDENT` to `ALUMNI`.
 - Which profile fields get per-field visibility (README section 7) and how that is stored: planned for week 11, not designed yet.
