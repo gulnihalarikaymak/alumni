@@ -3,6 +3,8 @@ import { APP_FILTER, RouterModule } from '@nestjs/core';
 import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { AppController } from './app.controller';
 import { ApiAuthModule } from './auth/api-auth.module';
+import { AuthMiddleware } from './auth/auth.middleware';
+import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/logger.middleware';
 import { NotFoundFilter } from './common/not-found.filter';
 import { ServerErrorFilter } from './common/server-error.filter';
@@ -21,6 +23,7 @@ import { ApiUserModule } from './users/api-user.module';
     // URL paths for the modules below are defined in app.routes.ts
     RouterModule.register(routes),
     DatabaseModule,
+    AuthModule, // gives AuthMiddleware the AuthService
     HealthModule,
     ApiUserModule,
     ApiAnnouncementModule,
@@ -40,8 +43,9 @@ import { ApiUserModule } from './users/api-user.module';
   ],
 })
 export class AppModule implements NestModule {
-  // Middleware: runs for every request before the controllers (one log line each)
+  // Middleware: runs for every request before the controllers, in this order:
+  //   LoggerMiddleware (one log line each), then AuthMiddleware (who is logged in, may stop the request)
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*');
   }
 }

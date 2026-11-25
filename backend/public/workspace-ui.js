@@ -26,6 +26,13 @@ export async function api(path, method = 'GET', data) {
   } catch {
     throw new Error(t('The service could not be reached. Check your connection and try again.'));
   }
+  // 401: the auth middleware wants a login (the session is missing or expired).
+  // Go to the login page, which brings the visitor back here afterwards.
+  // A wrong password on the login form is also a 401; that form shows it itself.
+  if (response.status === 401 && path !== '/auth/login') {
+    location.assign('/login?next=' + encodeURIComponent(location.pathname));
+    return new Promise(() => {}); // the page is leaving; nothing more to do here
+  }
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
     const parts = Array.isArray(body.message) ? body.message : [body.message];

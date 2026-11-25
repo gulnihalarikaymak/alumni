@@ -37,6 +37,9 @@ services:
       # Used by Prisma from week 5. "db" is the service name above: inside the
       # compose network the backend reaches PostgreSQL by that name, not localhost.
       DATABASE_URL: postgresql://${POSTGRES_USER:-alumni}:${POSTGRES_PASSWORD:-alumni}@db:5432/${POSTGRES_DB:-alumni}
+      # The first admin account, created on startup when both are set (week 9, login).
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
     ports:
       - "${BACKEND_PORT:-3000}:3000"
     volumes:

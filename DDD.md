@@ -273,6 +273,25 @@ Rules (`AuthService`, routes under `/api/auth`):
 | `POST /api/auth/logout` | deletes the session of the cookie (if any) and clears the cookie → `204` |
 | `GET /api/auth/me` | `200` with `{ user }`, or `{ user: null }` when nobody is logged in, the session expired or the account is no longer `ACTIVE` |
 
+### 4.12 Who may use which route *(auth middleware, week 9)*
+
+`AuthMiddleware` runs on every request. It reads the `ats_session` cookie and puts the
+logged-in user on the request (`req.user`, `null` for a visitor). The table below is
+`backend/src/auth/access-rules.ts`. Without a login, a protected API route answers `401`
+and a protected page redirects to `/login?next=<page>`.
+
+| | Without login | Login required |
+|---|---|---|
+| JSON API | `GET` announcements and job postings (list and one), `GET /api/health`, Swagger, `POST /api/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | everything else: every `POST`/`PUT`/`PATCH`/`DELETE`, users, job applications (also under a posting or a user) |
+| Pages | `/`, `/platform`, `/about`, announcements and job postings (list and one), `/register`, `/login`, `/404` | `/users…`, `/job-applications…`, every `…/create` and `…/edit` page, `/job-postings/:id/applications` |
+
+Any logged-in user passes; the role is not checked yet (week 11). An unknown `/api` path
+answers `401` to a visitor and `404` after login.
+
+The first `ACTIVE` account is the admin from `.env` (`ADMIN_EMAIL`, `ADMIN_PASSWORD`),
+created on startup if that e-mail has no account yet. It approves new accounts by setting
+their status to `ACTIVE`.
+
 ## 5. Enums
 
 | Enum | Values |

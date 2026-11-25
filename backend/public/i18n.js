@@ -314,6 +314,7 @@
     'No account yet?': 'Henüz hesabınız yok mu?',
     'E-mail or password is incorrect.': 'E-posta veya şifre hatalı.',
     'You are logged in': 'Giriş yaptınız',
+    'Log in to open this page.': 'Bu sayfayı açmak için giriş yapın.',
     'Joining as': 'Katılım türü',
     'Account': 'Hesap',
     'Name': 'Ad',

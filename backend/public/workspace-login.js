@@ -5,6 +5,13 @@ import { api, badge, buttonLink, details, el, link } from './workspace-ui.js';
 // script never sees the token). Only ACTIVE accounts can log in (DDD 4.11).
 const { t } = window.i18n; // interface language, see i18n.js
 
+// The page to open after login: "?next=/users" when the auth middleware sent the
+// visitor here. Only a path on this site is accepted ("//evil.example" is not).
+function nextPage() {
+  const next = new URLSearchParams(location.search).get('next');
+  return next && next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/login') ? next : '/platform';
+}
+
 function loggedIn(user) {
   const logout = el('button', { class: 'btn quiet', type: 'button' }, t('Log out'));
   logout.addEventListener('click', async () => {
@@ -35,7 +42,7 @@ function loginForm() {
     const values = new FormData(formNode);
     try {
       await api('/auth/login', 'POST', { email: values.get('email'), password: values.get('password') });
-      location.assign('/platform');
+      location.assign(nextPage());
     } catch (error) {
       // 401: one message for a wrong e-mail or password; 403: the API says which status the account has
       errorBox.textContent = error.status === 401 ? t('E-mail or password is incorrect.') : error.message;
@@ -52,7 +59,9 @@ function loginForm() {
 export async function loginPage() {
   const { user } = await api('/auth/me');
   const card = el('section', { class: 'card', 'aria-labelledby': 'login-form-title' },
-    user ? loggedIn(user) : [el('h2', { id: 'login-form-title' }, t('Log in to your account')), loginForm()]);
+    user ? loggedIn(user) : [el('h2', { id: 'login-form-title' }, t('Log in to your account')),
+      new URLSearchParams(location.search).has('next') ? el('p', { class: 'notice', role: 'status' }, t('Log in to open this page.')) : null,
+      loginForm()]);
   return el('div', { class: 'register' },
     el('div', { class: 'register-intro' },
       el('p', { class: 'kicker' }, t('Welcome back')),

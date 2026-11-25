@@ -112,7 +112,7 @@ Job postings and applications were added to the core in class (week 6). Error ha
 ## 2. Quick start
 
 > [!TIP]
-> **Requirements:** Git and Docker with Compose v2. Nothing else: no local Node.js, PostgreSQL or `.env` file needed.
+> **Requirements:** Git and Docker with Compose v2. Nothing else: no local Node.js or PostgreSQL. A `.env` file is only needed for the first admin account (see [Auth middleware](#routes)).
 
 ```bash
 git clone https://github.com/gulnihalarikaymak/alumni.git
@@ -306,7 +306,9 @@ The API returns `400` for invalid input or non-numeric IDs, `409` for duplicate 
 
 **Registration.** The `/register` page sends `POST /api/register` → `201` with `{ user, alumniProfile }`. A visitor joins as `STUDENT`, `ALUMNI` or `STAFF` (never `ADMIN`), chooses a password (8–128 characters, stored only as a scrypt hash) and must accept the privacy notice; a graduate also gives a full name, graduation year and an optional city, saved in `alumni_profiles` in the same transaction. The account starts as `PENDING`. Rules are in [DDD.md §4.10](DDD.md).
 
-**Login and logout.** `POST /api/auth/login` checks the e-mail and password and sets the `ats_session` cookie (HttpOnly, SameSite=Lax, 7 days) → `200`; a wrong e-mail or password → `401`, an account that is not `ACTIVE` → `403`. `POST /api/auth/logout` → `204` ends the session. `GET /api/auth/me` → `200` with `{ user }` or `{ user: null }`. The `sessions` table keeps only a hash of the cookie token. No new package: hashing uses Node's built-in `crypto`. Until the admin screens of week 11, approve an account by setting its status to `ACTIVE` on its user page. Rules are in [DDD.md §4.11](DDD.md).
+**Login and logout.** `POST /api/auth/login` checks the e-mail and password and sets the `ats_session` cookie (HttpOnly, SameSite=Lax, 7 days) → `200`; a wrong e-mail or password → `401`, an account that is not `ACTIVE` → `403`. `POST /api/auth/logout` → `204` ends the session. `GET /api/auth/me` → `200` with `{ user }` or `{ user: null }`. The `sessions` table keeps only a hash of the cookie token. No new package: hashing uses Node's built-in `crypto`. Rules are in [DDD.md §4.11](DDD.md).
+
+**Auth middleware.** `AuthMiddleware` runs on every request after the logger: it puts the logged-in user on `req.user` and stops requests that need a login (`backend/src/auth/access-rules.ts`). Reading announcements and job postings stays public; every change, and every read of users and job applications (personal data), needs a login: `401` from the API, or a redirect to `/login?next=…` for a page, which returns there after login. The first admin comes from `.env`: copy `.env.example` to `.env` and set `ADMIN_EMAIL` and `ADMIN_PASSWORD`; on startup that ACTIVE admin is created if the e-mail has no account yet. Log in as the admin and approve new accounts by setting their status to `ACTIVE` on their user page. Postman: run `0 - Log in as admin` first; its `adminEmail` / `adminPassword` must match `.env`. Details in [DDD.md §4.12](DDD.md).
 
 Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
 
@@ -357,6 +359,7 @@ Four small pieces in `backend/src/common/` (plus the `/404` page) make every req
 | Piece | File | What it does |
 |---|---|---|
 | 📝 **Request logger** (middleware) | `logger.middleware.ts` | One terminal line per request, written when the response ends: `10:20:30 POST /api/users 201 18 ms` (time, method, route, status, duration). Read it with `docker compose logs -f backend` |
+| 🔐 **Auth middleware** | `auth/auth.middleware.ts` | Reads the login cookie on every request, sets `req.user`, answers `401` (API) or redirects to `/login` (pages) when a route needs a login. The rules are in `auth/access-rules.ts` |
 | 🔎 **404 Guardian** (filter) | `not-found.filter.ts` | Every `404` has a reason. The API and curl get JSON `{statusCode, error, message, path}`; a browser is redirected, see below |
 | 🛡️ **5xx Guardian** (filter) | `server-error.filter.ts` | A bug or a database failure is written in full on the terminal, while the client gets only a fixed message, so no SQL, table name or file path leaks. A browser gets a "Something went wrong" page |
 | 🗂️ **Error log file** | `error-log.ts` | Every failed request (status `400` and above) is added to `logs/error.logs` |
@@ -591,7 +594,7 @@ flowchart LR
 | 🔑 **Passwords** | Hashed with argon2id; sessions in an `HttpOnly` cookie, revocable on the server |
 | 📉 **Minimum data (KVKK)** | No national ID, birth date, grades or home address. Location is city level only. Reports hide groups smaller than five |
 | 🧯 **Errors and logs** | A `5xx` never shows SQL, table names or file paths to the client; the details go only to the terminal and `logs/error.logs`. That file can hold e-mail addresses (from messages like "a user with this e-mail already exists"), so it is git-ignored and, until week 11, holds synthetic data only |
-| 🧪 **No real data until week 11** | The API is open until authentication lands, so demo data is synthetic and `.env` is never committed. The database port is bound to `127.0.0.1` only |
+| 🧪 **No real data until week 11** | Since week 9 changes and personal data need a login, but roles are not checked yet, so demo data stays synthetic and `.env` is never committed. The database port is bound to `127.0.0.1` only |
 
 ---
 

@@ -78,6 +78,8 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
   `POST /api/register` (role, e-mail, privacy notice; a graduate also gives name, graduation year and city)
 - [x] Login and logout: `/login` page, `POST /api/auth/login` and `/logout`, `GET /api/auth/me`; passwords
   (scrypt hash) and a `sessions` table; the header button switches between Log in and Log out
+- [x] Auth middleware: reads the login cookie on every request (`req.user`); changes and personal data
+  (users, applications) need a login (`401` or redirect to `/login`); first admin account from `.env`
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AdminAccountService } from './admin-account.service';
 import { seedDatabase } from './seed';
 
 // Fills an EMPTY database with synthetic demo data the first time the app starts,
@@ -10,9 +11,17 @@ import { seedDatabase } from './seed';
 export class SeedService implements OnApplicationBootstrap {
   private readonly logger = new Logger('Seed');
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly adminAccount: AdminAccountService,
+  ) {}
 
   async onApplicationBootstrap(): Promise<void> {
+    await this.seedIfEmpty();
+    await this.adminAccount.ensureAdmin(); // after the seed: see admin-account.service.ts
+  }
+
+  private async seedIfEmpty(): Promise<void> {
     if (process.env.AUTO_SEED === 'false') {
       this.logger.log('AUTO_SEED=false: skipping automatic seed');
       return;

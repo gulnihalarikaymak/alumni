@@ -1,7 +1,9 @@
 $kind: collection
-description: "All backend routes. Data is stored in PostgreSQL and kept between restarts. Run 'Users' top to bottom: Create saves {{userId}} for the rest. Change {{baseUrl}} if the backend runs on another port."
+description: "All backend routes. Run '0 - Log in as admin' first: most routes need a login (the cookie is kept for the next requests). adminEmail / adminPassword must match ADMIN_EMAIL / ADMIN_PASSWORD in .env. Data is stored in PostgreSQL and kept between restarts. Run 'Users' top to bottom: Create saves {{userId}} for the rest. Change {{baseUrl}} if the backend runs on another port."
 variables:
   baseUrl: http://localhost:3000
+  adminEmail: admin@example.com
+  adminPassword: local-admin-password
   userId: "1"
   userEmail: ""
   dupEmail: ""
