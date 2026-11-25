@@ -72,7 +72,7 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
   Beyond the Years landing and a JavaScript workspace using the JSON API.
   The React assignment remains on the week 10 roadmap.
 
-## Week 09 — Middleware
+## Week 09 — Middleware ✅
 - [x] Update `DDD.md` for users and their roles in the system
 - [x] Register page and functionality: `/register` page in the Beyond the Years style and
   `POST /api/register` (role, e-mail, privacy notice; a graduate also gives name, graduation year and city)
@@ -90,6 +90,8 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] User-specific pages: `/account` ("My account") and `GET /api/account` show the logged-in user's own data
   by role (account details; alumni profile for `ALUMNI`; own applications for `ALUMNI` and `STUDENT`;
   shortcuts for `STAFF` and `ADMIN`)
+- [x] Add an auth section to `README.md`: request flow through the auth middleware, who can do what by role,
+  auth routes, how to try it, where the code is and what comes in week 11
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

@@ -32,7 +32,7 @@ who they are, where they work, and how they can help the students who come after
 1. [What the system is](#1-what-the-system-is)
 2. [Quick start](#2-quick-start)
 3. [Stack and why](#3-stack-and-why)
-4. [How the code is organised](#4-how-the-code-is-organised)
+4. [How the code is organised](#4-how-the-code-is-organised) · [Auth](#auth)
 5. [Data model](#5-data-model)
 6. [Roadmap](#6-roadmap)
 7. [Working with an AI assistant](#7-working-with-an-ai-assistant)
@@ -72,7 +72,7 @@ flowchart LR
 | 🛡️ **Admin** | Approve sign-ups, manage accounts and roles |
 
 > [!IMPORTANT]
-> This describes the planned access model. The current coursework workspace has public CRUD routes backed by synthetic records. Registration, login and logout exist since week 9 (only `ACTIVE` accounts can log in); role-based access to the other routes is scheduled for week 11.
+> This describes the planned access model. Since week 9 people sign up, an admin approves them, and changes and personal data need a login; only the admin panel and user changes check the role. What each role may do today is in [Auth](#auth); the other role and ownership checks come in week 11. All records are synthetic.
 
 ### Scope
 
@@ -112,7 +112,7 @@ Job postings and applications were added to the core in class (week 6). Error ha
 ## 2. Quick start
 
 > [!TIP]
-> **Requirements:** Git and Docker with Compose v2. Nothing else: no local Node.js or PostgreSQL. A `.env` file is only needed for the first admin account (see [Auth middleware](#routes)).
+> **Requirements:** Git and Docker with Compose v2. Nothing else: no local Node.js or PostgreSQL. A `.env` file is only needed for the first admin account (see [Auth](#auth)).
 
 ```bash
 git clone https://github.com/gulnihalarikaymak/alumni.git
@@ -306,19 +306,92 @@ The API feature prefixes are in `backend/src/app.routes.ts`. Users, announcement
 
 The API returns `400` for invalid input or non-numeric IDs, `409` for duplicate e-mail addresses and `404` for missing records. Forms show the validation feedback returned by the service.
 
-**Registration.** The `/register` page sends `POST /api/register` → `201` with `{ user, alumniProfile }`. A visitor joins as `STUDENT`, `ALUMNI` or `STAFF` (never `ADMIN`), chooses a password (8–128 characters, stored only as a scrypt hash) and must accept the privacy notice; a graduate also gives a full name, graduation year and an optional city, saved in `alumni_profiles` in the same transaction. The account starts as `PENDING`. Rules are in [DDD.md §4.10](DDD.md).
-
-**Login and logout.** `POST /api/auth/login` checks the e-mail and password and sets the `ats_session` cookie (HttpOnly, SameSite=Lax, 7 days) → `200`; a wrong e-mail or password → `401`, an account that is not `ACTIVE` → `403`. `POST /api/auth/logout` → `204` ends the session. `GET /api/auth/me` → `200` with `{ user, menu }` (`user` is `null` for a visitor). The `sessions` table keeps only a hash of the cookie token. No new package: hashing uses Node's built-in `crypto`. Rules are in [DDD.md §4.11](DDD.md).
-
-**Auth middleware.** `AuthMiddleware` runs on every request after the logger: it puts the logged-in user on `req.user` and stops requests that need a login (`backend/src/auth/access-rules.ts`). Reading announcements and job postings stays public; every change, and every read of users and job applications (personal data), needs a login: `401` from the API, or a redirect to `/login?next=…` for a page, which returns there after login. The first admin comes from `.env`: copy `.env.example` to `.env` and set `ADMIN_EMAIL` and `ADMIN_PASSWORD`; on startup that ACTIVE admin is created if the e-mail has no account yet. Log in as the admin and approve new accounts by setting their status to `ACTIVE` on their user page. Postman: run `0 - Log in as admin` first; its `adminEmail` / `adminPassword` must match `.env`. Details in [DDD.md §4.12](DDD.md).
-
-**Admin panel.** `/admin` shows counts (`GET /api/admin/summary`), the accounts waiting for approval (Approve / Reject) and every user with a role and a status control (Save / Delete), plus links to create and manage announcements, job postings and applications. Only an `ADMIN` may read `/api/admin` or create, change or delete a user; any other role gets `403` from the auth middleware and sees "Only admins can open this page". An admin cannot change their own role, deactivate or delete their own account (`400`), so the panel never locks its last admin out. To make an account an admin: log in as an admin, open `/admin` and set its role to `ADMIN`. Details in [DDD.md §4.1 and §4.12](DDD.md).
-
-**Menu by role.** `GET /api/auth/me` also returns `menu`, the header links for the role (`backend/src/auth/navigation.ts`), and `account.js` draws the header menu from it on the landing and the workspace. A visitor sees Home, Workspace, Opportunities, Announcements and About; every logged-in user also gets Applications and My account; an `ADMIN` also gets Users and Admin. The HTML holds the visitor's menu, so it works without JavaScript. Hiding a link does not protect a page: the auth middleware still decides access. Details in [DDD.md §4.13](DDD.md).
-
-**My account.** `/account` is each user's own page (menu: My account). `GET /api/account` has no id in the URL and always reads the logged-in user, so it never shows someone else's data; without a login → `401`. Every role sees its account details; an `ALUMNI` user also sees their alumni profile; `ALUMNI` and `STUDENT` see their own job applications with the posting's title and company; `STAFF` get shortcuts to publish announcements and job postings; an `ADMIN` gets a shortcut to the admin panel. Details in [DDD.md §4.14](DDD.md).
-
 Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
+
+### Auth
+
+Since week 9, ATS knows who is using it. People sign up, an admin approves them, and then they log in. Every request then passes through one middleware that decides whether it may continue. What each role may do in detail (role checks on other routes and ownership) comes in week 11; see [Not yet](#not-yet-week-11).
+
+**One request through the auth middleware.** `AuthMiddleware` runs on every request, right after the request logger. The rules it asks are in `backend/src/auth/access-rules.ts`.
+
+```mermaid
+flowchart LR
+    R(["📨 Request"]) --> C["🍪 Read the ats_session cookie<br/>req.user = the user, or null"]
+    C --> Q1{"Logged in?"}
+    Q1 -- no --> P{"Public route?"}
+    P -- yes --> OK["✅ Controller"]
+    P -- "no, API" --> X1["🚫 401"]
+    P -- "no, page" --> L["↪️ 303 to /login?next=…"]
+    Q1 -- yes --> Q2{"ADMIN-only route?"}
+    Q2 -- no --> OK
+    Q2 -- "yes, and role is ADMIN" --> OK
+    Q2 -- "yes, other role" --> X2["🚫 403"]
+```
+
+**Who can do what today.**
+
+| | 👀 Visitor | 🧑‍🎓 Student | 👔 Alumni | 🏛️ Staff | 🛡️ Admin |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Read announcements and job postings | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Sign up at `/register` | ✓ | | | | |
+| Open users and job applications (personal data) | | ✓ | ✓ | ✓ | ✓ |
+| Create, change or delete announcements and job postings | | ✓ | ✓ | ✓ | ✓ |
+| Apply to a job posting | | ✓ | ✓ | | |
+| My account at `/account` | | ✓ | ✓ | ✓ | ✓ |
+| Create, change or delete users; approve accounts; `/admin` | | | | | ✓ |
+
+Only `ACTIVE` accounts can log in. A new account starts as `PENDING` until an admin approves it.
+
+**Routes.**
+
+| Request | Login | Answer |
+|---|---|---|
+| `POST /api/register` | no | `201` with `{ user, alumniProfile }`; `400` invalid input, `409` e-mail taken |
+| `POST /api/auth/login` | no | `200` and the `ats_session` cookie; `401` wrong e-mail or password, `403` account not `ACTIVE` |
+| `POST /api/auth/logout` | no | `204`; ends the session and clears the cookie |
+| `GET /api/auth/me` | no | `200` with `{ user, menu }`; `user` is `null` for a visitor |
+| `GET /api/account` | yes | `200` with `{ user, alumniProfile, applications }` of the logged-in user |
+| `GET /api/admin/summary` | `ADMIN` | `200` with counts; `403` for other roles |
+
+**Try it.**
+
+1. Copy `.env.example` to `.env` and set `ADMIN_EMAIL` and `ADMIN_PASSWORD`. On startup the backend creates that `ACTIVE` admin if the e-mail has no account yet.
+2. Run `docker compose up --build` and sign up at `/register`. The new account is `PENDING`.
+3. Log in at `/login` as the admin, open `/admin` and approve the account (or give it the `ADMIN` role).
+4. Log out, log in with the new account and open `/account`. The menu now shows the links for its role.
+
+In Postman, run `0 - Log in as admin` first; its `adminEmail` and `adminPassword` must match `.env`. The folder `Auth (login and logout)` covers registration, login, the menu, My account, `401` and `403`.
+
+**Registration.** The `/register` page sends `POST /api/register`. A visitor joins as `STUDENT`, `ALUMNI` or `STAFF` (never `ADMIN`), chooses a password (8–128 characters, stored only as a scrypt hash) and must accept the privacy notice. A graduate also gives a full name, graduation year and an optional city, saved in `alumni_profiles` in the same transaction. Rules are in [DDD.md §4.10](DDD.md).
+
+**Login and logout.** `POST /api/auth/login` checks the e-mail and password and sets the `ats_session` cookie (HttpOnly, SameSite=Lax, 7 days). The `sessions` table keeps only a SHA-256 hash of the cookie token, so a copy of the database cannot be used to log in. Logout deletes the session on the server. No new package: hashing uses Node's built-in `crypto`. The header button switches between Log in and Log out. Rules are in [DDD.md §4.11](DDD.md).
+
+**Auth middleware.** It puts the logged-in user on `req.user` for the controllers. Reading announcements and job postings stays public; every change, and every read of users and job applications, needs a login. After logging in, `/login?next=…` sends the user back to the page they asked for. Details in [DDD.md §4.12](DDD.md).
+
+**Admin panel.** `/admin` shows counts (`GET /api/admin/summary`), the accounts waiting for approval (Approve / Reject) and every user with a role and a status control (Save / Delete), plus links to manage announcements, job postings and applications. Any other role sees "Only admins can open this page". An admin cannot change their own role, deactivate or delete their own account (`400`), so the panel never locks its last admin out. Details in [DDD.md §4.1 and §4.12](DDD.md).
+
+**Menu by role.** `GET /api/auth/me` also returns `menu`, the header links for the role (`backend/src/auth/navigation.ts`). `backend/public/account.js` draws the header menu from it on the landing and the workspace. A visitor sees Home, Workspace, Opportunities, Announcements and About; every logged-in user also gets Applications and My account; an `ADMIN` also gets Users and Admin. The HTML holds the visitor's menu, so it works without JavaScript. Hiding a link does not protect a page: the middleware still decides. Details in [DDD.md §4.13](DDD.md).
+
+**My account.** `/account` is each user's own page. `GET /api/account` has no id in the URL and always reads the logged-in user, so it never shows someone else's data. Every role sees its account details; an `ALUMNI` user also sees their alumni profile; `ALUMNI` and `STUDENT` see their own job applications; `STAFF` get shortcuts to publish announcements and job postings; an `ADMIN` gets a shortcut to the admin panel. Details in [DDD.md §4.14](DDD.md).
+
+**Where the code is.**
+
+| Folder or file | What it does |
+|---|---|
+| `backend/src/registration/` | `POST /api/register`: the account and the alumni profile |
+| `backend/src/auth/` | login, logout, `/me`, password hashing (`password.ts`), the cookie (`session-cookie.ts`), the middleware and its rules (`auth.middleware.ts`, `access-rules.ts`), the menu (`navigation.ts`) |
+| `backend/src/account/` | `GET /api/account`: the logged-in user's own page |
+| `backend/src/admin/` | `GET /api/admin/summary`: counts for the admin panel |
+| `backend/src/database/admin-account.service.ts` | creates the first admin from `.env` on startup |
+| `backend/public/account.js` | the header: menu by role and the Log in / Log out button |
+| `backend/public/workspace-login.js`, `workspace-register.js`, `workspace-admin.js`, `workspace-account.js` | the login, sign-up, admin and My account pages |
+
+#### Not yet (week 11)
+
+- [ ] Role checks on the other routes: today any logged-in user can create, change or delete announcements and job postings; only `STAFF` and `ADMIN` should.
+- [ ] Ownership: a logged-in user can open every job application, and an application names its applicant in the body (`applicantId`) instead of taking `req.user`.
+- [ ] The cookie gets `secure: true` once the site is served over HTTPS (week 13).
+- [ ] No limit on login attempts yet (rate limiting is not scheduled yet).
 
 ### Job postings and applications
 
@@ -537,7 +610,7 @@ erDiagram
 ```mermaid
 flowchart LR
     W1["01<br/>Inception"]:::done --> W2["02<br/>Routing"]:::done --> W3["03<br/>CRUD"]:::done --> W4["04<br/>MVC"]:::done --> W5["05<br/>ORM"]:::done --> W6["06<br/>DB integration"]:::done --> W7["07<br/>Errors & logs"]:::done
-    W7 --> W8["08<br/>⭐ MIDTERM<br/>Web design"]:::done --> W9["09<br/>Middleware"]:::todo --> W10["10<br/>Front end"]:::todo --> W11["11<br/>Auth"]:::todo --> W12["12<br/>Services"]:::todo --> W13["13<br/>CI/CD"]:::todo --> W14["14<br/>⭐ FINAL"]:::exam
+    W7 --> W8["08<br/>⭐ MIDTERM<br/>Web design"]:::done --> W9["09<br/>Middleware"]:::done --> W10["10<br/>Front end"]:::todo --> W11["11<br/>Auth"]:::todo --> W12["12<br/>Services"]:::todo --> W13["13<br/>CI/CD"]:::todo --> W14["14<br/>⭐ FINAL"]:::exam
 
     classDef done fill:#2da44e,color:#fff,stroke:#1a7f37
     classDef todo fill:#f6f8fa,color:#57606a,stroke:#d0d7de
@@ -554,9 +627,9 @@ flowchart LR
 | 06 | Database integration | Job postings and job applications: migrations, models, direct and nested routes, seed | ✅ |
 | 07 | Errors and logging | Postman error cases for every feature, optional job-posting fields, request logger, 404 and 5xx Guardians, generic `/404` page, `logs/error.logs` | ✅ |
 | 08 | **Midterm** · Web design | Brand and design documents and the Gate-A home-page study | ✅ |
-| 09 | Middleware | Users and roles in `DDD.md`, registration, login and logout, auth middleware, admin panel, menu by role, user-specific pages (given in class); still planned: request ids, security headers, rate limiting, one error format for the `400`s | 🚧 |
+| 09 | Middleware | Users and roles in `DDD.md`, registration, login and logout, auth middleware, admin panel, menu by role, user-specific pages and the README auth section (given in class). Request ids, security headers, rate limiting and one error format for the `400`s were not given in class and stay open | ✅ |
 | 10 | Front end | React app served by nginx; full stack from one command | 🗓️ |
-| 11 | Auth | Approval screens for admins, role and ownership checks (sign-up and sessions came in week 9) | 🗓️ |
+| 11 | Auth | Role and ownership checks on every route (sign-up, sessions, the admin panel and the menu by role came in week 9) | 🗓️ |
 | 12 | Service layers | Mentorship, connections, notifications, reports | 🗓️ |
 | 13 | Deployment and CI/CD | GitHub Actions, production compose file, backups | 🗓️ |
 | 14 | **Final** | A stranger can run and understand the system from this README | 🗓️ |
@@ -583,7 +656,7 @@ flowchart LR
 
 ## 8. Security and privacy
 
-*(Mostly planned, weeks 9 and 11.)*
+*(Login, sessions and the admin role check exist since week 9, see [Auth](#auth); the rest is planned for week 11.)*
 
 **Deny by default.** Every route will check:
 
@@ -601,10 +674,10 @@ flowchart LR
 | Area | Rule |
 |---|---|
 | 👁️ **Per-field visibility** | Alumni choose who sees each field: only themselves, their connections, or all signed-in users |
-| 🔑 **Passwords** | Hashed with argon2id; sessions in an `HttpOnly` cookie, revocable on the server |
+| 🔑 **Passwords** | Hashed with scrypt (Node `crypto`); sessions in an `HttpOnly` cookie, revocable on the server |
 | 📉 **Minimum data (KVKK)** | No national ID, birth date, grades or home address. Location is city level only. Reports hide groups smaller than five |
 | 🧯 **Errors and logs** | A `5xx` never shows SQL, table names or file paths to the client; the details go only to the terminal and `logs/error.logs`. That file can hold e-mail addresses (from messages like "a user with this e-mail already exists"), so it is git-ignored and, until week 11, holds synthetic data only |
-| 🧪 **No real data until week 11** | Since week 9 changes and personal data need a login, but roles are not checked yet, so demo data stays synthetic and `.env` is never committed. The database port is bound to `127.0.0.1` only |
+| 🧪 **No real data until week 11** | Since week 9 changes and personal data need a login, but only the admin routes check the role, so demo data stays synthetic and `.env` is never committed. The database port is bound to `127.0.0.1` only |
 
 ---
 
