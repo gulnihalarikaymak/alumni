@@ -33,10 +33,12 @@ midnight navy surfaces, ivory text and a light rose accent for readable links.
 
 - The landing and the workspace share one menu, with the same links in the same order:
   Home, Workspace, Opportunities, Announcements, Applications, Users, About, and a
-  Register button and a light/dark theme button on the right. The theme choice is
-  saved once (`localStorage` key `theme`) and applies to every page; without a saved
-  choice the page follows the system setting. Each header keeps its own look. Below 1080px both
-  move the links behind a keyboard-operable menu button.
+  Register button, a TR/EN language button and a light/dark theme button on the
+  right. Each choice is saved once (`localStorage` keys `lang` and `theme`) and
+  applies to every page; without a saved choice the page follows the browser's
+  language and the system theme. Each header keeps its own look. Below 1200px both
+  move the links behind a keyboard-operable menu button, and the language choice
+  moves into that menu.
 - The fixed landing navigation changes from light text over the photograph to
   dark text on an ivory surface.
 - The hero uses word reveals, a photographic gallery, restrained scale motion

@@ -1,5 +1,6 @@
 import { api, card, date, details, el, link } from './workspace-ui.js';
 
+const { t } = window.i18n; // interface language, see i18n.js
 const endpoint = '/health?format=json';
 
 export async function healthPage() {
@@ -10,7 +11,7 @@ export async function healthPage() {
   const fields = details([]);
   function update(data) {
     fields.replaceChildren(...details([
-      ['Service', data.service], ['Version', data.version], ['Uptime', data.uptimeSeconds + ' s'], ['Environment', data.environment]
+      [t('Service'), data.service], [t('Version'), data.version], [t('Uptime'), data.uptimeSeconds + ' s'], [t('Environment'), data.environment]
     ]).childNodes);
     status.className = 'badge ACTIVE';
     if (status.textContent !== data.status) status.textContent = data.status;
@@ -30,7 +31,7 @@ export async function healthPage() {
         update(await api(endpoint));
       } catch {
         status.className = 'badge REJECTED';
-        status.textContent = 'Unavailable';
+        status.textContent = t('Unavailable');
       }
     }
     pending = false;
@@ -42,7 +43,7 @@ export async function healthPage() {
     if (event.persisted) { stopped = false; refresh(); }
   });
   return el('section', { class: 'narrow' },
-    el('header', { class: 'page-head' }, el('div', {}, el('p', { class: 'kicker' }, 'System status'),
-      el('h1', {}, 'Service health')), status),
-    card(fields, el('h2', {}, 'JSON response'), json, link('/api' + endpoint, 'Raw JSON'), el('p', { class: 'meta' }, 'Last response ', checked)));
+    el('header', { class: 'page-head' }, el('div', {}, el('p', { class: 'kicker' }, t('System status')),
+      el('h1', {}, t('Service health'))), status),
+    card(fields, el('h2', {}, t('JSON response')), json, link('/api' + endpoint, t('Raw JSON')), el('p', { class: 'meta' }, t('Last response') + ' ', checked)));
 }

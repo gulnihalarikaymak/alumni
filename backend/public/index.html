@@ -25,6 +25,7 @@
         (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     } catch {}
   </script>
+  <script src="/i18n.js"></script>
   <script src="vendor/gsap.min.js" defer></script>
   <script src="vendor/ScrollTrigger.min.js" defer></script>
   <script src="chapters.js" defer></script>
@@ -43,9 +44,11 @@
         <a href="/job-applications">Applications</a>
         <a href="/users">Users</a>
         <a href="/about">About</a>
+        <button type="button" class="lang-toggle lang-in-menu" data-style="full" hidden></button>
       </nav>
       <div class="header-actions">
         <a class="platform-link" href="/register">Register <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a>
+        <button type="button" class="lang-toggle lang-in-header" hidden></button>
         <button type="button" class="theme-toggle" aria-label="Switch to dark theme" title="Switch theme" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/></svg></button>
         <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation"><span></span><span></span></button>
       </div>
@@ -65,7 +68,7 @@
       <div class="hero-inner wrap">
         <div class="hero-copy">
           <p class="kicker hero-kicker"><span></span>İstanbul Üniversitesi · Alumni Network</p>
-          <h1 id="hero-title" aria-label="The story doesn’t end here."><span class="headline-line" aria-hidden="true"><span class="clip"><span>The</span></span> <span class="clip"><span>story</span></span></span><span class="headline-line" aria-hidden="true"><span class="clip"><span>doesn’t</span></span> <span class="clip"><span>end</span></span> <span class="clip"><em>here.</em></span></span></h1>
+          <h1 id="hero-title" aria-label="The story doesn’t end here." data-headline="The story|doesn’t end here."><span class="headline-line" aria-hidden="true"><span class="clip"><span>The</span></span> <span class="clip"><span>story</span></span></span><span class="headline-line" aria-hidden="true"><span class="clip"><span>doesn’t</span></span> <span class="clip"><span>end</span></span> <span class="clip"><em>here.</em></span></span></h1>
           <p class="hero-description">From the moments that shaped us to the futures we build, our connections continue beyond graduation.</p>
           <div class="hero-actions">
             <a class="pill pill-light" href="#community">Explore the Alumni Network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
@@ -180,5 +183,6 @@
     </section>
   </main>
   <footer class="site-footer"><div class="wrap"><a class="brand" href="#home" aria-label="ATS İÜ Alumni Network, home"><span class="emblem" aria-hidden="true"></span><span class="wordmark"><span>ATS <span lang="tr">İÜ</span></span><small>Alumni Network</small></span></a><span>İstanbul Üniversitesi</span><a class="back-top" href="#home">Back to top <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a></div></footer>
+  <script>i18n.translatePage();</script>
 </body>
 </html>

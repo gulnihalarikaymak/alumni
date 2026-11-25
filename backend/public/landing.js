@@ -10,18 +10,19 @@
       link.href = new URL(link.getAttribute("href"), "http://localhost:3000").href;
     }
   }
+  const t = window.i18n.t; // interface language, see i18n.js
   const frames = [
-    { title: "The Beginning" },
-    { title: "The Milestone", src: "media/milestone.webp", alt: "Graduates tossing their caps into the air" },
-    { title: "The Journey Forward", src: "media/forward.webp", alt: "Two designers working on a model in an architecture studio" },
-    { title: "The Connection", src: "media/connection.webp", alt: "Friends talking over tea around an outdoor table" },
+    { title: t("The Beginning") },
+    { title: t("The Milestone"), src: "media/milestone.webp", alt: t("Graduates tossing their caps into the air") },
+    { title: t("The Journey Forward"), src: "media/forward.webp", alt: t("Two designers working on a model in an architecture studio") },
+    { title: t("The Connection"), src: "media/connection.webp", alt: t("Friends talking over tea around an outdoor table") },
   ];
   const gallery = document.querySelector("#gallery-cover");
   const cover = document.querySelector("#hero-cover");
   const frameControls = document.querySelector(".frame-controls");
   const frameNumber = document.querySelector(".frame-number b");
   const frameName = document.querySelector(".frame-name");
-  const compact = matchMedia("(max-width: 1080px)");
+  const compact = matchMedia("(max-width: 1200px)");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const gsap = window.gsap;
   let frame = 0;
@@ -34,7 +35,7 @@
   function setMenu(open, returnFocus = false) {
     masthead.classList.toggle("menu-open", open);
     menu.setAttribute("aria-expanded", String(open));
-    menu.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    menu.setAttribute("aria-label", t(open ? "Close navigation" : "Open navigation"));
     if (returnFocus) menu.focus();
   }
 
@@ -42,7 +43,7 @@
   const themeButton = document.querySelector(".theme-toggle");
   const root = document.documentElement;
   function setThemeLabel() {
-    themeButton.setAttribute("aria-label", root.dataset.theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+    themeButton.setAttribute("aria-label", t(root.dataset.theme === "dark" ? "Switch to light theme" : "Switch to dark theme"));
   }
   themeButton.hidden = false;
   setThemeLabel();

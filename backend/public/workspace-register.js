@@ -2,6 +2,7 @@ import { api, badge, buttonLink, details, el } from './workspace-ui.js';
 
 // The sign-up page at /register. It sends JSON to POST /api/register, the same
 // route Postman uses. Admin accounts are never self-registered (DDD 4.1).
+const { t } = window.i18n; // interface language, see i18n.js
 const roles = [
   ['STUDENT', 'Student', 'I am studying at İstanbul University.'],
   ['ALUMNI', 'Graduate', 'I completed a degree at İstanbul University.'],
@@ -20,21 +21,21 @@ function input(label, name, attributes = {}, hint) {
 
 function roleChoices() {
   return el('fieldset', { class: 'choices' },
-    el('legend', {}, 'I am joining as'),
+    el('legend', {}, t('I am joining as')),
     roles.map(([value, title, text]) => el('label', { class: 'choice' },
       el('input', { type: 'radio', name: 'role', value, required: true }),
-      el('span', {}, el('strong', {}, title), el('span', { class: 'hint' }, text)))));
+      el('span', {}, el('strong', {}, t(title)), el('span', { class: 'hint' }, t(text))))));
 }
 
 function alumniFields() {
   return el('fieldset', { class: 'stack', id: 'alumni-fields', hidden: true, disabled: true },
-    el('legend', {}, 'Graduate details'),
-    input('Full name', 'fullName', { autocomplete: 'name', required: true, minlength: 2, maxlength: 100 }),
-    input('Graduation year', 'graduationYear',
+    el('legend', {}, t('Graduate details')),
+    input(t('Full name'), 'fullName', { autocomplete: 'name', required: true, minlength: 2, maxlength: 100 }),
+    input(t('Graduation year'), 'graduationYear',
       { type: 'number', inputmode: 'numeric', min: firstYear, max: lastYear, required: true },
-      `From ${firstYear} to ${lastYear}.`),
-    input('City (optional)', 'city', { autocomplete: 'address-level2', maxlength: 60 },
-      'City only, no street address.'));
+      t('From {first} to {last}.', { first: firstYear, last: lastYear })),
+    input(t('City (optional)'), 'city', { autocomplete: 'address-level2', maxlength: 60 },
+      t('City only, no street address.')));
 }
 
 // Only the fields the API expects for the chosen role are sent.
@@ -55,33 +56,33 @@ function formData(formNode) {
 
 function welcome({ user, alumniProfile }) {
   const role = roles.find(([value]) => value === user.role)[1];
-  const rows = [['E-mail', user.email], ['Joining as', badge(role, true)], ['Account', badge(user.status)]];
+  const rows = [[t('E-mail'), user.email], [t('Joining as'), badge(t(role), true)], [t('Account'), badge(user.status)]];
   if (alumniProfile) {
-    rows.push(['Name', alumniProfile.fullName], ['Graduated', alumniProfile.graduationYear]);
-    if (alumniProfile.city) rows.push(['City', alumniProfile.city]);
+    rows.push([t('Name'), alumniProfile.fullName], [t('Graduated'), alumniProfile.graduationYear]);
+    if (alumniProfile.city) rows.push([t('City'), alumniProfile.city]);
   }
-  const title = el('h2', { tabindex: '-1' }, 'Welcome to the network');
+  const title = el('h2', { tabindex: '-1' }, t('Welcome to the network'));
   const panel = el('div', { class: 'stack', role: 'status' }, title,
-    el('p', {}, 'Your account is saved and waiting for approval by an ATS administrator. ' +
-      'Approval and sign-in are planned for a later release.'),
+    el('p', {}, t('Your account is saved and waiting for approval by an ATS administrator. ' +
+      'Approval and sign-in are planned for a later release.')),
     details(rows),
-    el('div', { class: 'form-actions' }, buttonLink('/job-postings', 'Browse opportunities'),
-      buttonLink('/platform', 'Enter the workspace', true)));
+    el('div', { class: 'form-actions' }, buttonLink('/job-postings', t('Browse opportunities')),
+      buttonLink('/platform', t('Enter the workspace'), true)));
   return { panel, title };
 }
 
 function registerForm(container) {
   const errorBox = el('p', { class: 'form-error', role: 'alert', hidden: true, tabindex: '-1' });
   const alumni = alumniFields();
-  const submit = el('button', { class: 'btn', type: 'submit' }, 'Create account');
+  const submit = el('button', { class: 'btn', type: 'submit' }, t('Create account'));
   const formNode = el('form', { class: 'stack' }, errorBox, roleChoices(),
-    input('E-mail', 'email', { type: 'email', autocomplete: 'email', required: true },
-      'Your account is created with this address.'),
+    input(t('E-mail'), 'email', { type: 'email', autocomplete: 'email', required: true },
+      t('Your account is created with this address.')),
     alumni,
     el('label', { class: 'check' },
       el('input', { type: 'checkbox', name: 'acceptPrivacy', required: true }),
-      el('span', {}, 'I accept the privacy notice: ATS stores my e-mail and role and, for graduates, ' +
-        'my name, graduation year and city. No ID number, birth date or home address is collected.')),
+      el('span', {}, t('I accept the privacy notice: ATS stores my e-mail and role and, for graduates, ' +
+        'my name, graduation year and city. No ID number, birth date or home address is collected.'))),
     el('div', { class: 'form-actions' }, submit));
 
   // The graduate fields appear, and are sent, only for the Graduate role.
@@ -105,7 +106,7 @@ function registerForm(container) {
     } catch (error) {
       // The typed values stay in the form so the visitor can correct them.
       errorBox.textContent = error.status === 409
-        ? error.message + '. Use another e-mail address.'
+        ? error.message + '. ' + t('Use another e-mail address.')
         : error.message;
       errorBox.hidden = false;
       errorBox.focus();
@@ -118,13 +119,13 @@ function registerForm(container) {
 
 export function registerPage() {
   const container = el('section', { class: 'card', 'aria-labelledby': 'register-form-title' });
-  container.append(el('h2', { id: 'register-form-title' }, 'Create your account'), registerForm(container));
-  const title = el('h1', {}, 'Join the alumni ', el('em', {}, 'network.'));
+  container.append(el('h2', { id: 'register-form-title' }, t('Create your account')), registerForm(container));
+  const title = el('h1', {}, t('Join the alumni') + ' ', el('em', {}, t('network.')));
   return el('div', { class: 'register' },
     el('div', { class: 'register-intro' },
-      el('p', { class: 'kicker' }, 'Join ATS İÜ'), title,
-      el('p', {}, 'Students, graduates and staff of İstanbul University share announcements, ' +
-        'career opportunities and the people behind them.'),
-      el('img', { src: '/media/milestone.webp', width: 1600, height: 1000, alt: 'Graduates in gowns throwing their caps into the air' })),
+      el('p', { class: 'kicker' }, t('Join ATS İÜ')), title,
+      el('p', {}, t('Students, graduates and staff of İstanbul University share announcements, ' +
+        'career opportunities and the people behind them.')),
+      el('img', { src: '/media/milestone.webp', width: 1600, height: 1000, alt: t('Graduates in gowns throwing their caps into the air') })),
     container);
 }

@@ -1,3 +1,5 @@
+const { t } = window.i18n; // interface language, see i18n.js
+
 // Create nodes with browser DOM APIs. Strings from the API always become text nodes.
 export function el(tag, attributes = {}, ...children) {
   const node = document.createElement(tag);
@@ -22,12 +24,12 @@ export async function api(path, method = 'GET', data) {
   try {
     response = await fetch('/api' + path, options);
   } catch {
-    throw new Error('The service could not be reached. Check your connection and try again.');
+    throw new Error(t('The service could not be reached. Check your connection and try again.'));
   }
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
     const parts = Array.isArray(body.message) ? body.message : [body.message];
-    const error = new Error(parts.filter(Boolean).join(' · ') || 'The request could not be completed. Please try again.');
+    const error = new Error(parts.filter(Boolean).join(' · ') || t('The request could not be completed. Please try again.'));
     error.status = response.status;
     throw error;
   }
@@ -49,7 +51,7 @@ export function heading(title, subtitle, action) {
 export function date(value, dayOnly = false) {
   const options = { dateStyle: 'medium', timeZone: dayOnly ? 'UTC' : 'Europe/Istanbul' };
   if (!dayOnly) options.timeStyle = 'short';
-  return el('time', { datetime: value }, new Intl.DateTimeFormat('en-GB', options).format(new Date(value)));
+  return el('time', { datetime: value }, new Intl.DateTimeFormat(window.i18n.locale, options).format(new Date(value)));
 }
 
 export function details(rows) {
@@ -72,7 +74,7 @@ export function field(label, name, value = '', options = {}) {
   const { choices, multiline, ...attributes } = options;
   let control;
   if (choices) {
-    const blank = el('option', { value: '', disabled: true }, 'Choose…');
+    const blank = el('option', { value: '', disabled: true }, t('Choose…'));
     control = el('select', { name, ...attributes }, blank, choices.map(item => {
       const [key, text] = Array.isArray(item) ? item : [item, item];
       return el('option', { value: key }, text);
@@ -90,7 +92,7 @@ export function form({ path, method, fields, submit, cancel, onSaved }) {
   const errorBox = el('p', { class: 'form-error', role: 'alert', hidden: true, tabindex: '-1' });
   const save = el('button', { class: 'btn', type: 'submit' }, submit);
   const formNode = el('form', { class: 'stack' }, errorBox, fields,
-    el('div', { class: 'form-actions' }, save, cancel ? buttonLink(cancel, 'Cancel', true) : null));
+    el('div', { class: 'form-actions' }, save, cancel ? buttonLink(cancel, t('Cancel'), true) : null));
   formNode.addEventListener('submit', async event => {
     event.preventDefault();
     if (save.disabled) return;
@@ -117,7 +119,7 @@ export function form({ path, method, fields, submit, cancel, onSaved }) {
   return formNode;
 }
 
-export function deleteButton(path, destination, prompt, label = 'Delete') {
+export function deleteButton(path, destination, prompt, label = t('Delete')) {
   const button = el('button', { class: 'link danger', type: 'button' }, label);
   button.addEventListener('click', async () => {
     if (button.disabled || !window.confirm(prompt)) return;
@@ -141,5 +143,5 @@ export function deleteButton(path, destination, prompt, label = 'Delete') {
 }
 
 export function dataLink(path) {
-  return el('p', { class: 'foot' }, link('/api' + path, 'View JSON'));
+  return el('p', { class: 'foot' }, link('/api' + path, t('View JSON')));
 }

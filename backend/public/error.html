@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Page not found — ATS İÜ</title>
   <link rel="icon" href="/emblem.svg" type="image/svg+xml">
+  <script src="/i18n.js"></script>
   <link rel="stylesheet" href="/workspace.css">
   <script>
     try {
@@ -25,7 +26,8 @@
   </section></main>
   <script>
     const from = new URLSearchParams(location.search).get('from');
-    if (from && from.startsWith('/') && !from.startsWith('//') && from.length <= 200) document.getElementById('reason').textContent = 'No page was found at ' + from + '.';
+    i18n.translatePage();
+    if (from && from.startsWith('/') && !from.startsWith('//') && from.length <= 200) document.getElementById('reason').textContent = i18n.t('No page was found at {path}.', { path: from });
   </script>
 </body>
 </html>

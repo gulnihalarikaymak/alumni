@@ -86,6 +86,11 @@ button[hidden], [hidden] { display: none; }
 .primary-nav a[aria-current], .primary-nav a:hover { color: inherit; }
 .primary-nav a[aria-current]::after, .primary-nav a:hover::after { transform: scaleX(1); }
 .header-actions { gap: 10px; }
+/* Language: a TR/EN button in the header; inside the menu on narrow screens */
+.lang-toggle { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; font: 600 .75rem/1 var(--sans); letter-spacing: .06em; }
+.lang-toggle:hover { background: #ffffff20; }
+.is-paper .lang-toggle:hover, .menu-open .lang-toggle:hover { background: var(--color-hover); }
+.lang-in-menu { display: none; }
 .theme-toggle { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; }
 .theme-toggle[hidden] { display: none; }
 .theme-toggle svg { width: 20px; height: 20px; }
@@ -191,8 +196,8 @@ body::after { content: ""; pointer-events: none; position: fixed; z-index: 9; in
 .site-footer .wrap { padding-block: 30px; display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
 .site-footer .wrap > span { font-size: .84rem; color: var(--color-text-soft); }
 .back-top { margin-left: auto; }
-/* The menu has the same seven links as the workspace header; below 1080px they move into the menu. */
-@media (max-width: 1080px) {
+/* The menu has the same seven links as the workspace header; below 1200px they move into the menu. */
+@media (max-width: 1200px) {
   .menu-toggle { display: grid; width: 44px; height: 44px; border-radius: 50%; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; align-content: center; justify-content: center; gap: 5px; }
   .menu-toggle span { width: 17px; height: 1px; background: currentColor; transition: transform .25s; }
   .menu-open .menu-toggle span:first-child { transform: translateY(3px) rotate(45deg); }
@@ -201,6 +206,9 @@ body::after { content: ""; pointer-events: none; position: fixed; z-index: 9; in
   .menu-open .primary-nav { display: grid; gap: 0; }
   .primary-nav a { font-size: 1.1rem; border-bottom: 1px solid var(--color-border); min-height: 52px; }
   .primary-nav a::after { display: none; }
+  .lang-in-header { display: none; }
+  .lang-in-menu { display: flex; align-items: center; width: 100%; height: auto; min-height: 52px; padding: 0; border: 0; border-radius: 0; font: 500 1.1rem/1.2 var(--sans); letter-spacing: 0; text-align: left; }
+  .lang-in-menu[hidden] { display: none; }
 }
 @media (max-width: 950px) {
   :root { --nav-height: 70px; }

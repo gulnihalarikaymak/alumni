@@ -10,7 +10,7 @@
   const controls = journey.querySelector('.journey__controls');
   const buttons = Array.from(controls.querySelectorAll('button'));
   const counter = controls.querySelector('b');
-  const names = scenes.map(scene => scene.querySelector('.chapter__label').textContent.replace(/^Chapter \d+\s*/, '').trim());
+  const names = scenes.map(scene => scene.querySelector('.chapter__label').textContent.replace(/^\D*\d+\s*/, '').trim()); // drop "Chapter 01" / "Bölüm 01"
   const last = scenes.length - 1;
   let media;
   let loadChapter = () => {};
@@ -33,7 +33,7 @@
           const direction = Number(button.dataset.chapterStep);
           const next = index + direction;
           button.disabled = next < 0 || next > last;
-          const label = direction < 0 ? 'Previous chapter' : 'Next chapter';
+          const label = window.i18n.t(direction < 0 ? 'Previous chapter' : 'Next chapter');
           button.setAttribute('aria-label', names[next] ? label + ', ' + names[next] : label);
         });
       }

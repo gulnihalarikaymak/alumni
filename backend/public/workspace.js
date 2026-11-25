@@ -4,6 +4,8 @@ import { listApplications, postingApplications, showApplication } from './worksp
 import { healthPage } from './health-status.js';
 import { registerPage } from './workspace-register.js';
 
+const { t, translate } = window.i18n; // interface language, see i18n.js
+
 const main = document.querySelector('#main');
 const path = location.pathname.replace(/\/+$/, '');
 const [section, id, detail] = path.slice(1).split('/');
@@ -16,7 +18,11 @@ function notFound() {
 }
 
 async function pageContent() {
-  if (path === '/platform' || path === '/about') return document.getElementById(section + '-page').content.cloneNode(true);
+  if (path === '/platform' || path === '/about') {
+    const page = document.getElementById(section + '-page').content.cloneNode(true);
+    translate(page);
+    return page;
+  }
   if (path === '/api/health') return healthPage();
   if (path === '/register') return registerPage();
   if (section === 'job-applications') return id ? showApplication(id) : listApplications();
@@ -38,15 +44,15 @@ async function render() {
     document.title = main.querySelector('h1').textContent + ' — ATS İÜ';
   } catch (error) {
     if (error.status === 404) return notFound();
-    const retry = el('button', { class: 'btn', type: 'button' }, 'Try again');
+    const retry = el('button', { class: 'btn', type: 'button' }, t('Try again'));
     retry.addEventListener('click', () => {
       retry.disabled = true;
-      retry.textContent = 'Loading…';
+      retry.textContent = t('Loading…');
       render();
     });
-    document.title = 'Unable to load page — ATS İÜ';
+    document.title = t('Unable to load page') + ' — ATS İÜ';
     main.replaceChildren(el('section', { class: 'card narrow stack' },
-      el('h1', {}, 'Unable to load page'), el('p', { role: 'alert' }, error.message), el('div', {}, retry)));
+      el('h1', {}, t('Unable to load page')), el('p', { role: 'alert' }, error.message), el('div', {}, retry)));
   } finally {
     main.removeAttribute('aria-busy');
   }

@@ -12,6 +12,7 @@
         (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     } catch {}
   </script>
+  <script src="/i18n.js"></script>
   <link rel="stylesheet" href="/workspace.css">
 </head>
 <body>
@@ -31,8 +32,10 @@
         <a href="/job-applications">Applications</a>
         <a href="/users">Users</a>
         <a href="/about">About</a>
+        <button class="lang-toggle lang-in-menu" type="button" data-style="full" hidden></button>
       </nav>
       <a class="bar-action" href="/register">Register <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a>
+      <button class="lang-toggle lang-in-header" type="button" hidden></button>
       <button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/>
@@ -49,10 +52,11 @@
     <nav aria-label="Additional resources"><a href="/about">About</a><a href="/api/swagger">API docs</a><a href="/api/health">System status</a></nav>
   </footer>
   <script>
+    i18n.translatePage(); // header and footer text in the chosen language (i18n.js)
     const themeButton = document.querySelector('.theme-toggle');
     const themeRoot = document.documentElement;
     function setThemeLabel() {
-      themeButton.setAttribute('aria-label', themeRoot.dataset.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+      themeButton.setAttribute('aria-label', i18n.t(themeRoot.dataset.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'));
     }
     themeButton.hidden = false;
     setThemeLabel();
@@ -62,7 +66,7 @@
       try { localStorage.setItem('theme', themeRoot.dataset.theme); } catch {}
     });
     const menuButton = document.querySelector('.workspace-menu');
-    const compact = matchMedia('(max-width: 67.5rem)');
+    const compact = matchMedia('(max-width: 75rem)');
     function setMenu(open) {
       menuButton.hidden = !compact.matches;
       document.querySelector('#workspace-nav').hidden = compact.matches && !open;

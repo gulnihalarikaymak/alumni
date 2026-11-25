@@ -68,7 +68,7 @@ a:hover { text-decoration-thickness: 2px; }
 [hidden] { display: none !important; }
 .bar, main, .site-foot { width: min(100% - clamp(2rem, 9vw, 10rem), 90rem); margin-inline: auto; }
 .site { border-bottom: 1px solid var(--line); }
-.bar { display: flex; align-items: center; min-height: 4.75rem; gap: clamp(1rem, 3.5vw, 4rem); }
+.bar { display: flex; align-items: center; min-height: 4.75rem; gap: clamp(1rem, 2.5vw, 4rem); }
 .brand { display: inline-flex; align-items: center; gap: .7rem; margin-right: auto; color: var(--ink); font: 400 1.85rem/.9 var(--serif); text-decoration: none; }
 .brand-mark { width: 2.65rem; aspect-ratio: 1; background: currentColor; mask: url("/emblem.svg") center / contain no-repeat; }
 .brand small { display: block; font: 500 .66rem/1.3 var(--sans); letter-spacing: .075em; margin-top: .3rem; }
@@ -80,6 +80,10 @@ a:hover { text-decoration-thickness: 2px; }
 .bar-action:hover, .bar-action[aria-current] { background: var(--tint); border-color: var(--muted); }
 .theme-toggle { display: grid; place-items: center; background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 50%; height: 2.75rem; width: 2.75rem; cursor: pointer; }
 .theme-toggle svg { width: 1.35rem; }
+/* Language: a TR/EN button in the header; inside the menu on narrow screens */
+.lang-toggle { display: grid; place-items: center; height: 2.75rem; width: 2.75rem; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 .75rem/1 var(--sans); letter-spacing: .06em; cursor: pointer; }
+.lang-toggle:hover { background: var(--tint); }
+.lang-in-menu { display: none; }
 .theme-toggle:hover { background: var(--tint); }
 .workspace-menu { min-height: 2.75rem; padding: 0 1.15rem; border-radius: 2rem; border: 1px solid var(--line); color: var(--ink); background: var(--surface); font: 500 .9rem var(--sans); cursor: pointer; }
 main { flex: 1; min-width: 0; padding-block: clamp(2.5rem, 6vw, 6rem); }
@@ -177,10 +181,12 @@ textarea { resize: vertical; }
 .site-foot > a { font: 400 1.45rem/1.2 var(--serif); color: var(--ink); text-decoration: none; }
 .site-foot nav a { color: var(--muted); }
 .health-json { color: #f4f1eb; background: #101b2a; padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; }
-/* Same menu switch as the landing header (1080px): the seven links move behind the Menu button. */
-@media (max-width: 67.5rem) {
+/* Same menu switch as the landing header (1200px): the seven links move behind the Menu button. */
+@media (max-width: 75rem) {
   .bar { flex-wrap: wrap; padding-block: .65rem; min-height: 4.2rem; gap: .4rem; }
   .nav { order: 3; width: 100%; padding-bottom: .3rem; }
+  .lang-in-header { display: none; }
+  .lang-in-menu { display: inline-flex; width: auto; height: auto; min-height: 2.75rem; padding: 0; border: 0; border-radius: 0; color: var(--accent); font: 500 .91rem var(--sans); letter-spacing: 0; text-decoration: underline; text-underline-offset: .3em; }
 }
 @media (max-width: 56rem) {
   .split { grid-template-columns: minmax(0,1fr); }
