@@ -24,13 +24,15 @@
       </a>
       <button class="workspace-menu" type="button" aria-controls="workspace-nav" aria-expanded="false" hidden>Menu</button>
       <nav class="nav" id="workspace-nav" aria-label="Platform">
+        <a href="/">Home</a>
         <a href="/platform">Workspace</a>
         <a href="/job-postings">Opportunities</a>
         <a href="/announcements">Announcements</a>
         <a href="/job-applications">Applications</a>
         <a href="/users">Users</a>
-        <a href="/register">Register</a>
+        <a href="/about">About</a>
       </nav>
+      <a class="bar-action" href="/register">Register <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg></a>
       <button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/>
@@ -60,7 +62,7 @@
       try { localStorage.setItem('theme', themeRoot.dataset.theme); } catch {}
     });
     const menuButton = document.querySelector('.workspace-menu');
-    const compact = matchMedia('(max-width: 56rem)');
+    const compact = matchMedia('(max-width: 67.5rem)');
     function setMenu(open) {
       menuButton.hidden = !compact.matches;
       document.querySelector('#workspace-nav').hidden = compact.matches && !open;

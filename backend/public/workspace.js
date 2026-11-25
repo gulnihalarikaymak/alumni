@@ -7,7 +7,8 @@ import { registerPage } from './workspace-register.js';
 const main = document.querySelector('#main');
 const path = location.pathname.replace(/\/+$/, '');
 const [section, id, detail] = path.slice(1).split('/');
-const sectionLink = Array.from(document.querySelectorAll('#workspace-nav a')).find(a => a.pathname === '/' + section);
+// The header links are the same on every page (also on the landing); mark the current one.
+const sectionLink = Array.from(document.querySelectorAll('#workspace-nav a, .bar-action')).find(a => a.pathname === '/' + section);
 sectionLink?.setAttribute('aria-current', 'page');
 
 function notFound() {

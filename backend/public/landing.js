@@ -4,15 +4,12 @@
   const menu = document.querySelector(".menu-toggle");
   const nav = document.querySelector(".primary-nav");
   const progress = document.querySelector(".page-progress");
-  const community = document.querySelector("#community");
   // The historical double-click preview can still open the real local ATS pages.
   if (location.protocol === "file:" || location.pathname.endsWith("/backend/public/index.html")) {
     for (const link of document.querySelectorAll('a[href^="/"]')) {
       link.href = new URL(link.getAttribute("href"), "http://localhost:3000").href;
     }
   }
-  const homeLink = nav.querySelector('[href="#home"]');
-  const communityLink = nav.querySelector('[href="#community"]');
   const frames = [
     { title: "The Beginning" },
     { title: "The Milestone", src: "media/milestone.webp", alt: "Graduates tossing their caps into the air" },
@@ -24,7 +21,7 @@
   const frameControls = document.querySelector(".frame-controls");
   const frameNumber = document.querySelector(".frame-number b");
   const frameName = document.querySelector(".frame-name");
-  const compact = matchMedia("(max-width: 950px)");
+  const compact = matchMedia("(max-width: 1080px)");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const gsap = window.gsap;
   let frame = 0;
@@ -60,12 +57,6 @@
     const headerHeight = masthead.offsetHeight;
     const atHome = y + headerHeight < hero.offsetHeight;
     masthead.classList.toggle("is-paper", !atHome);
-    const rect = community.getBoundingClientRect();
-    const atCommunity = rect.top <= headerHeight + 2 && rect.bottom > headerHeight;
-    for (const [link, active] of [[homeLink, atHome], [communityLink, atCommunity]]) {
-      if (active) link.setAttribute("aria-current", "location");
-      else link.removeAttribute("aria-current");
-    }
     const max = document.documentElement.scrollHeight - window.innerHeight;
     progress.style.transform = "scaleX(" + (max > 0 ? Math.max(0, Math.min(1, y / max)) : 0) + ")";
   }

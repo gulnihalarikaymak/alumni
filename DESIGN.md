@@ -30,8 +30,12 @@ variables in `workspace.css`, including darker burgundy for readable links.
 
 ## Components and motion
 
+- The landing and the workspace share one menu, with the same links in the same order:
+  Home, Workspace, Opportunities, Announcements, Applications, Users, About, and a
+  Register button on the right. Each header keeps its own look. Below 1080px both
+  move the links behind a keyboard-operable menu button.
 - The fixed landing navigation changes from light text over the photograph to
-  dark text on an ivory surface. Mobile navigation has a keyboard-operable menu.
+  dark text on an ivory surface.
 - The hero uses word reveals, a photographic gallery, restrained scale motion
   and a desktop pointer light.
 - GSAP ScrollTrigger pins the four chapters on suitable desktop viewports.

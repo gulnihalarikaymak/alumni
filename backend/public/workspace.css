@@ -75,6 +75,9 @@ a:hover { text-decoration-thickness: 2px; }
 .nav, .site-foot nav, .resources nav { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem clamp(.7rem, 1.5vw, 2rem); }
 .nav a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--muted); font-size: .91rem; text-decoration: none; }
 .nav a:hover, .nav a[aria-current] { color: var(--ink); text-decoration: underline; text-underline-offset: .45em; }
+.bar-action { display: inline-flex; align-items: center; gap: .7rem; min-height: 2.75rem; padding: 0 1.1rem; border: 1px solid var(--line); border-radius: 2rem; color: var(--ink); font-size: .88rem; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.bar-action svg { width: 1rem; height: 1rem; }
+.bar-action:hover, .bar-action[aria-current] { background: var(--tint); border-color: var(--muted); }
 .theme-toggle { display: grid; place-items: center; background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 50%; height: 2.75rem; width: 2.75rem; cursor: pointer; }
 .theme-toggle svg { width: 1.35rem; }
 .theme-toggle:hover { background: var(--tint); }
@@ -174,9 +177,12 @@ textarea { resize: vertical; }
 .site-foot > a { font: 400 1.45rem/1.2 var(--serif); color: var(--ink); text-decoration: none; }
 .site-foot nav a { color: var(--muted); }
 .health-json { color: #f4f1eb; background: #101b2a; padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; }
-@media (max-width: 56rem) {
+/* Same menu switch as the landing header (1080px): the seven links move behind the Menu button. */
+@media (max-width: 67.5rem) {
   .bar { flex-wrap: wrap; padding-block: .65rem; min-height: 4.2rem; gap: .4rem; }
   .nav { order: 3; width: 100%; padding-bottom: .3rem; }
+}
+@media (max-width: 56rem) {
   .split { grid-template-columns: minmax(0,1fr); }
   .card { padding: 1.35rem; }
 }
@@ -184,7 +190,10 @@ textarea { resize: vertical; }
   .bar, main, .site-foot { width: calc(100% - 2rem); }
   .nav { gap: 0 .9rem; }
   .nav a { min-height: 2.75rem; font-size: .9rem; }
-  .bar { column-gap: 1rem; }
+  .bar { column-gap: .4rem; }
+  .brand { font-size: 1.6rem; gap: .5rem; }
+  .bar-action, .workspace-menu { padding: 0 .7rem; font-size: .82rem; }
+  .bar-action svg { display: none; }
   .workspace-intro, .places { grid-template-columns: minmax(0, 1fr); }
   .workspace-intro img { max-height: 18rem; aspect-ratio: 3/2; }
   .entries li { grid-template-columns: minmax(0,1fr); gap: .35rem; }
