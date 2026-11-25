@@ -89,7 +89,7 @@ from week 11, what the account may do.
 
 | Role | Who | In code today | Planned (week 11 and later) |
 |---|---|---|---|
-| `ADMIN` | IT or alumni-office administrator | stored only | approves or rejects sign-ups, suspends accounts, manages roles |
+| `ADMIN` | IT or alumni-office administrator | the admin panel `/admin` (task 5): approves or rejects sign-ups, changes any role and status, deletes users; the only role that may change users | reports, audit of changes |
 | `STAFF` | university staff (career centre, alumni office) | stored; cannot apply to job postings | posts announcements, job postings and events; reads aggregate reports |
 | `ALUMNI` | a graduate | may apply to job postings | keeps an alumni profile with career and education history (4.3–4.5), chooses who sees what, offers mentorship, registers for events |
 | `STUDENT` | a current student | may apply to job postings | searches the alumni directory, requests mentorship, registers for events |
@@ -104,8 +104,9 @@ Role rules:
 | Only `ALUMNI` and `STUDENT` may apply to a job posting; other roles → `400` | `JobApplicationsService` (4.9) |
 | Only `STUDENT`, `ALUMNI` and `STAFF` may self-register; `ADMIN` → `400` | `RegistrationService` (4.10) |
 | Only an `ALUMNI` user has an alumni profile (at most one) | `RegistrationService` (4.10) and the `UQ` on `user_id` (4.3) |
-| Only `ADMIN` may change a user's `role` or `status` | planned, week 11; today any client can |
-| Only `STAFF` and `ADMIN` may create announcements, job postings and events | planned, week 11; today any client can |
+| Only `ADMIN` may create, change or delete a user (including `role` and `status`) and read `/api/admin`; others → `403` | `AuthMiddleware` (4.12) |
+| An admin cannot change their own role, deactivate their own account or delete it → `400` | `UsersService` (4.1) |
+| Only `STAFF` and `ADMIN` may create announcements, job postings and events | planned, week 11; today any logged-in user can |
 
 #### Account status
 
@@ -280,12 +281,12 @@ logged-in user on the request (`req.user`, `null` for a visitor). The table belo
 `backend/src/auth/access-rules.ts`. Without a login, a protected API route answers `401`
 and a protected page redirects to `/login?next=<page>`.
 
-| | Without login | Login required |
-|---|---|---|
-| JSON API | `GET` announcements and job postings (list and one), `GET /api/health`, Swagger, `POST /api/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | everything else: every `POST`/`PUT`/`PATCH`/`DELETE`, users, job applications (also under a posting or a user) |
-| Pages | `/`, `/platform`, `/about`, announcements and job postings (list and one), `/register`, `/login`, `/404` | `/users…`, `/job-applications…`, every `…/create` and `…/edit` page, `/job-postings/:id/applications` |
+| | Without login | Login required | `ADMIN` only (`403` for other roles) |
+|---|---|---|---|
+| JSON API | `GET` announcements and job postings (list and one), `GET /api/health`, Swagger, `POST /api/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | everything else: every `POST`/`PUT`/`PATCH`/`DELETE`, users, job applications (also under a posting or a user) | `GET /api/admin/summary`; `POST`, `PUT`, `PATCH`, `DELETE` on `/api/users` |
+| Pages | `/`, `/platform`, `/about`, announcements and job postings (list and one), `/register`, `/login`, `/404` | `/users…`, `/job-applications…`, `/admin`, every `…/create` and `…/edit` page, `/job-postings/:id/applications` | (`/admin` shows "Only admins" to other roles: its data is `ADMIN` only) |
 
-Any logged-in user passes; the role is not checked yet (week 11). An unknown `/api` path
+Apart from the `ADMIN` column, any logged-in user passes; other role checks come in week 11. An unknown `/api` path
 answers `401` to a visitor and `404` after login.
 
 The first `ACTIVE` account is the admin from `.env` (`ADMIN_EMAIL`, `ADMIN_PASSWORD`),

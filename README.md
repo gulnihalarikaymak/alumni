@@ -146,6 +146,7 @@ flowchart LR
 | `http://localhost:3000/job-applications` | 📄 Web pages for all job applications |
 | `http://localhost:3000/register` | 📄 Sign-up page for students, graduates and staff (`POST /api/register`) |
 | `http://localhost:3000/login` | 📄 Login page; the header button switches between Log in and Log out (`/api/auth`) |
+| `http://localhost:3000/admin` | 🛡️ Admin panel (ADMIN only): approve accounts, change roles and status, delete users, links to manage the content |
 | `http://localhost:3000/404` | 📄 The generic "Page not found" page; invalid web requests are redirected here |
 | `http://localhost:3000/api/...` | 🔌 JSON API for the same data (`users`, `announcements`, `job-postings`, `job-applications`) |
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
@@ -310,6 +311,8 @@ The API returns `400` for invalid input or non-numeric IDs, `409` for duplicate 
 
 **Auth middleware.** `AuthMiddleware` runs on every request after the logger: it puts the logged-in user on `req.user` and stops requests that need a login (`backend/src/auth/access-rules.ts`). Reading announcements and job postings stays public; every change, and every read of users and job applications (personal data), needs a login: `401` from the API, or a redirect to `/login?next=…` for a page, which returns there after login. The first admin comes from `.env`: copy `.env.example` to `.env` and set `ADMIN_EMAIL` and `ADMIN_PASSWORD`; on startup that ACTIVE admin is created if the e-mail has no account yet. Log in as the admin and approve new accounts by setting their status to `ACTIVE` on their user page. Postman: run `0 - Log in as admin` first; its `adminEmail` / `adminPassword` must match `.env`. Details in [DDD.md §4.12](DDD.md).
 
+**Admin panel.** `/admin` shows counts (`GET /api/admin/summary`), the accounts waiting for approval (Approve / Reject) and every user with a role and a status control (Save / Delete), plus links to create and manage announcements, job postings and applications. Only an `ADMIN` may read `/api/admin` or create, change or delete a user; any other role gets `403` from the auth middleware and sees "Only admins can open this page". An admin cannot change their own role, deactivate or delete their own account (`400`), so the panel never locks its last admin out. To make an account an admin: log in as an admin, open `/admin` and set its role to `ADMIN`. Details in [DDD.md §4.1 and §4.12](DDD.md).
+
 Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
 
 ### Job postings and applications
@@ -359,7 +362,7 @@ Four small pieces in `backend/src/common/` (plus the `/404` page) make every req
 | Piece | File | What it does |
 |---|---|---|
 | 📝 **Request logger** (middleware) | `logger.middleware.ts` | One terminal line per request, written when the response ends: `10:20:30 POST /api/users 201 18 ms` (time, method, route, status, duration). Read it with `docker compose logs -f backend` |
-| 🔐 **Auth middleware** | `auth/auth.middleware.ts` | Reads the login cookie on every request, sets `req.user`, answers `401` (API) or redirects to `/login` (pages) when a route needs a login. The rules are in `auth/access-rules.ts` |
+| 🔐 **Auth middleware** | `auth/auth.middleware.ts` | Reads the login cookie on every request, sets `req.user`, answers `401` (API) or redirects to `/login` (pages) when a route needs a login, and `403` when an API route is for admins only. The rules are in `auth/access-rules.ts` |
 | 🔎 **404 Guardian** (filter) | `not-found.filter.ts` | Every `404` has a reason. The API and curl get JSON `{statusCode, error, message, path}`; a browser is redirected, see below |
 | 🛡️ **5xx Guardian** (filter) | `server-error.filter.ts` | A bug or a database failure is written in full on the terminal, while the client gets only a fixed message, so no SQL, table name or file path leaks. A browser gets a "Something went wrong" page |
 | 🗂️ **Error log file** | `error-log.ts` | Every failed request (status `400` and above) is added to `logs/error.logs` |
@@ -417,6 +420,7 @@ alumni/
 │       ├── job-applications/   ┘
 │       ├── registration/       POST /api/register: user and alumni profile in one step
 │       ├── auth/               POST /api/auth/login and /logout, GET /api/auth/me: password hashing and sessions
+│       ├── admin/              GET /api/admin/summary: counts for the admin panel (ADMIN only)
 │       └── health/             GET /api/health
 └── postman/                    request collection, including error cases
 ```

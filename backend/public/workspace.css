@@ -236,6 +236,18 @@ input[type="radio"], input[type="checkbox"] { width: 1.15rem; height: 1.15rem; m
 
 .form-error { overflow-wrap: anywhere; padding: .85rem 1rem; border-left: 3px solid var(--danger-ink); color: var(--danger-ink); background: var(--danger-bg); }
 #action-error { margin-bottom: 1rem; }
+/* Admin panel (/admin) */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .75rem; margin-bottom: clamp(1rem, 2vw, 2rem); }
+.stat { display: grid; gap: .3rem; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.stat:hover { border-color: var(--accent); }
+.stat-value { font: 400 clamp(2.2rem, 3.5vw, 3rem)/1 var(--serif); color: var(--accent); }
+.stat-label { color: var(--muted); font-size: .88rem; }
+.card .card.flush { border: 0; }
+.admin-users { margin-top: clamp(1.5rem, 3vw, 3rem); }
+.admin-users h2 { margin-bottom: 1rem; }
+.btn.small { min-height: 2.3rem; padding: .3rem .9rem; font-size: .85rem; }
+td select { width: auto; min-height: 2.3rem; padding: .3rem .5rem; font-size: .88rem; }
+td select:disabled { opacity: .7; }
 .notice { margin-bottom: 1.25rem; padding: .85rem 1rem; border-left: 3px solid var(--pending-ink); color: var(--pending-ink); background: var(--pending-bg); }
 button:disabled { cursor: wait; opacity: .65; }
 .missing .sub { overflow-wrap: anywhere; }

@@ -80,6 +80,10 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
   (scrypt hash) and a `sessions` table; the header button switches between Log in and Log out
 - [x] Auth middleware: reads the login cookie on every request (`req.user`); changes and personal data
   (users, applications) need a login (`401` or redirect to `/login`); first admin account from `.env`
+- [x] Admin page: `/admin` panel (counts, approve or reject accounts, change roles and status, delete users,
+  links to manage content); only `ADMIN` may change users (`403`); an admin cannot lock themselves out
+  - [ ] Assign the ADMIN role to my own account in the panel
+  - [ ] Open the panel with my own account and change data there
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

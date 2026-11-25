@@ -41,26 +41,38 @@ export class UsersService {
   }
 
   // PUT: full replacement, email + role + status all required
-  async replace(id: number, body: unknown): Promise<User> {
+  async replace(id: number, body: unknown, actor?: User | null): Promise<User> {
     await this.findOne(id);
     const f = this.validate(body, 'replace');
     await this.assertEmailFree(f.email!, id);
+    this.assertKeepsOwnAccess(id, f, actor);
 
     return (await this.userModel.update(id, { email: f.email!, role: f.role!, status: f.status! }))!;
   }
 
   // PATCH: partial update, at least one of email / role / status
-  async update(id: number, body: unknown): Promise<User> {
+  async update(id: number, body: unknown, actor?: User | null): Promise<User> {
     await this.findOne(id);
     const f = this.validate(body, 'update');
     if (f.email !== undefined) await this.assertEmailFree(f.email, id);
+    this.assertKeepsOwnAccess(id, f, actor);
 
     return (await this.userModel.update(id, f))!;
   }
 
   // DELETE: remove the user through the model
-  async remove(id: number): Promise<void> {
+  async remove(id: number, actor?: User | null): Promise<void> {
+    if (actor?.id === id) throw new BadRequestException(['You cannot delete your own account']);
     if (!(await this.userModel.delete(id))) throw new NotFoundException(`User ${id} not found`);
+  }
+
+  // An admin cannot take away their own access (task 5): changing their own role
+  // from ADMIN or their own status from ACTIVE would lock them out of the panel.
+  private assertKeepsOwnAccess(id: number, f: UserFields, actor?: User | null): void {
+    if (actor?.id !== id) return;
+    if ((f.role && f.role !== actor.role) || (f.status && f.status !== 'ACTIVE')) {
+      throw new BadRequestException(['You cannot change your own role or deactivate your own account']);
+    }
   }
 
   private async assertEmailFree(email: string, exceptId?: number): Promise<void> {

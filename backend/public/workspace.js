@@ -4,6 +4,7 @@ import { listApplications, postingApplications, showApplication } from './worksp
 import { healthPage } from './health-status.js';
 import { registerPage } from './workspace-register.js';
 import { loginPage } from './workspace-login.js';
+import { adminPage } from './workspace-admin.js';
 
 const { t, translate } = window.i18n; // interface language, see i18n.js
 
@@ -27,6 +28,7 @@ async function pageContent() {
   if (path === '/api/health') return healthPage();
   if (path === '/register') return registerPage();
   if (path === '/login') return loginPage();
+  if (path === '/admin') return adminPage();
   if (section === 'job-applications') return id ? showApplication(id) : listApplications();
   if (!['users', 'announcements', 'job-postings'].includes(section)) return notFound();
   if (!id) return listRecords(section);

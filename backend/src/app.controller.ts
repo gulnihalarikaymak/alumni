@@ -8,6 +8,7 @@ const workspacePaths = [
   'about',
   'register',
   'login',
+  'admin',
   ...['users', 'announcements', 'job-postings'].flatMap((resource) => [
     resource,
     `${resource}/create`,

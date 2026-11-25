@@ -1,0 +1,10 @@
+$kind: http-request
+name: Delete own account -> 400
+url: "{{baseUrl}}/api/users/{{adminId}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 400", () => pm.response.to.have.status(400));
+    language: text/javascript
+order: 3000

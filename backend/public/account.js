@@ -27,4 +27,14 @@
     }
   });
   login.replaceWith(logout);
+
+  // An ADMIN also gets an "Admin" link in the menu, before "About" (task 5).
+  if (user.role === 'ADMIN') {
+    const nav = document.querySelector('#workspace-nav, #primary-nav');
+    const admin = document.createElement('a');
+    admin.href = '/admin';
+    admin.textContent = t('Admin');
+    if (location.pathname === '/admin') admin.setAttribute('aria-current', 'page');
+    nav.insertBefore(admin, nav.querySelector('a[href="/about"]'));
+  }
 })();

@@ -16,5 +16,6 @@ scripts:
     code: |-
       pm.test("Status is 200", () => pm.response.to.have.status(200));
       pm.test("logged in as an ADMIN", () => pm.expect(pm.response.json().user.role).to.eql("ADMIN"));
+      pm.collectionVariables.set("adminId", pm.response.json().user.id);
     language: text/javascript
 order: 1000

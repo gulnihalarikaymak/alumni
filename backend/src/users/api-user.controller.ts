@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -22,6 +23,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import type { Request } from 'express';
 import { UsersService } from './users.service';
 import { User } from './user.model';
 import {
@@ -33,6 +35,7 @@ import {
 } from './user.dto';
 
 // JSON API for users. Returns data for programs (Postman, the React app).
+// Every change here is ADMIN only (auth/access-rules.ts); an admin cannot lock themselves out.
 // The HTML pages for people are in UserController.
 // Path: /api/users, set in app.routes.ts.
 @ApiTags('users')
@@ -76,8 +79,8 @@ export class ApiUserController {
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
   @ApiConflictResponse({ type: ErrorResponse, description: 'e-mail already in use' })
-  replace(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): Promise<User> {
-    return this.usersService.replace(id, body);
+  replace(@Param('id', ParseIntPipe) id: number, @Body() body: unknown, @Req() req: Request): Promise<User> {
+    return this.usersService.replace(id, body, req.user); // req.user: set by AuthMiddleware
   }
 
   @Patch(':id')
@@ -88,8 +91,8 @@ export class ApiUserController {
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
   @ApiConflictResponse({ type: ErrorResponse, description: 'e-mail already in use' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: unknown): Promise<User> {
-    return this.usersService.update(id, body);
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: unknown, @Req() req: Request): Promise<User> {
+    return this.usersService.update(id, body, req.user);
   }
 
   @Delete(':id')
@@ -99,7 +102,7 @@ export class ApiUserController {
   @ApiNoContentResponse({ description: 'Deleted' })
   @ApiBadRequestResponse({ type: ErrorResponse })
   @ApiNotFoundResponse({ type: ErrorResponse })
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.usersService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: Request): Promise<void> {
+    return this.usersService.remove(id, req.user);
   }
 }

@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, RouterModule } from '@nestjs/core';
+import { ApiAdminModule } from './admin/api-admin.module';
 import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { AppController } from './app.controller';
 import { ApiAuthModule } from './auth/api-auth.module';
@@ -33,6 +34,7 @@ import { ApiUserModule } from './users/api-user.module';
     ApiUserJobApplicationModule,
     ApiRegistrationModule,
     ApiAuthModule,
+    ApiAdminModule,
   ],
   controllers: [AppController],
   // The Guardians. Nest asks the filter registered last first, so the general

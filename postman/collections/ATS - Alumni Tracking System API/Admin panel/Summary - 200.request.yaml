@@ -1,0 +1,11 @@
+$kind: http-request
+name: Summary -> 200 (ADMIN only)
+url: "{{baseUrl}}/api/admin/summary"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 200", () => pm.response.to.have.status(200));
+      pm.test("counts users per status", () => pm.expect(pm.response.json().users.byStatus).to.have.property("PENDING"));
+    language: text/javascript
+order: 1000

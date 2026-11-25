@@ -4,6 +4,7 @@ variables:
   baseUrl: http://localhost:3000
   adminEmail: admin@example.com
   adminPassword: local-admin-password
+  adminId: ""
   userId: "1"
   userEmail: ""
   dupEmail: ""
