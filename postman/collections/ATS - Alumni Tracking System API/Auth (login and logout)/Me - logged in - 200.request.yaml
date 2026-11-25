@@ -7,5 +7,11 @@ scripts:
     code: |-
       pm.test("Status is 200", () => pm.response.to.have.status(200));
       pm.test("user is the one who logged in", () => pm.expect(pm.response.json().user.email).to.eql(pm.collectionVariables.get("loginEmail")));
+      pm.test("a student's menu has Applications but not Users or Admin", () => {
+        const hrefs = pm.response.json().menu.map(item => item.href);
+        pm.expect(hrefs).to.include("/job-applications");
+        pm.expect(hrefs).to.not.include("/users");
+        pm.expect(hrefs).to.not.include("/admin");
+      });
     language: text/javascript
 order: 7000

@@ -1,40 +1,58 @@
-// The header's account button, on the landing and on every workspace page.
-// In the HTML it is a "Log in" link to /login, which also works without JavaScript.
-// When someone is logged in (GET /api/auth/me), it becomes a "Log out" button.
+// The header's menu and account button, on the landing and on every workspace page.
+// In the HTML the menu holds the visitor's links and the account button is a
+// "Log in" link to /login, so both work without JavaScript.
+// GET /api/auth/me says who is logged in and which menu links their role gets
+// (task 6, backend/src/auth/navigation.ts): the menu is drawn from that list,
+// and "Log in" becomes "Log out" for a logged-in user.
 (async () => {
   const { t } = window.i18n;
-  const login = document.querySelector('.account-action');
-  if (!login) return;
 
-  let user = null;
+  let me;
   try {
     const response = await fetch('/api/auth/me', { headers: { Accept: 'application/json' }, cache: 'no-store' });
-    user = (await response.json()).user;
-  } catch { /* The API cannot be reached: keep the "Log in" link. */ }
-  if (!user) return;
+    me = await response.json();
+  } catch {
+    return; // The API cannot be reached: keep the visitor menu and the "Log in" link.
+  }
 
-  const logout = document.createElement('button');
-  logout.type = 'button';
-  logout.className = login.className;
-  logout.textContent = t('Log out');
-  logout.title = t('Logged in as {email}', { email: user.email });
-  logout.addEventListener('click', async () => {
-    logout.disabled = true;
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-    } finally {
-      location.reload(); // the page reloads without the session
-    }
-  });
-  login.replaceWith(logout);
+  drawMenu(me.menu ?? []);
+  if (me.user) showLogout(me.user);
 
-  // An ADMIN also gets an "Admin" link in the menu, before "About" (task 5).
-  if (user.role === 'ADMIN') {
+  function drawMenu(items) {
     const nav = document.querySelector('#workspace-nav, #primary-nav');
-    const admin = document.createElement('a');
-    admin.href = '/admin';
-    admin.textContent = t('Admin');
-    if (location.pathname === '/admin') admin.setAttribute('aria-current', 'page');
-    nav.insertBefore(admin, nav.querySelector('a[href="/about"]'));
+    if (!nav || items.length === 0) return;
+    // Reuse the links the page already has (on the landing, Home is "#home"); create the others.
+    const pageLinks = new Map(Array.from(nav.querySelectorAll('a'), a =>
+      [a.getAttribute('href') === '#home' ? '/' : a.getAttribute('href'), a]));
+    const links = items.map(item => pageLinks.get(item.href) ?? newLink(item));
+    nav.querySelectorAll('a').forEach(a => a.remove());
+    nav.prepend(...links); // the language button stays at the end of the menu
+  }
+
+  function newLink(item) {
+    const link = document.createElement('a');
+    link.href = item.href;
+    link.textContent = t(item.label);
+    if (location.pathname.split('/')[1] === item.href.slice(1)) link.setAttribute('aria-current', 'page');
+    return link;
+  }
+
+  function showLogout(user) {
+    const login = document.querySelector('.account-action');
+    if (!login) return;
+    const logout = document.createElement('button');
+    logout.type = 'button';
+    logout.className = login.className;
+    logout.textContent = t('Log out');
+    logout.title = t('Logged in as {email}', { email: user.email });
+    logout.addEventListener('click', async () => {
+      logout.disabled = true;
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } finally {
+        location.reload(); // the page reloads without the session
+      }
+    });
+    login.replaceWith(logout);
   }
 })();

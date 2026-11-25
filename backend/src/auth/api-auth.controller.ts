@@ -14,6 +14,7 @@ import { ErrorResponse } from '../users/user.dto';
 import { User } from '../users/user.model';
 import { LoginDto, LoginResponse, MeResponse } from './auth.dto';
 import { AuthService } from './auth.service';
+import { MenuItem, menuFor } from './navigation';
 import { clearSessionCookie, readSessionToken, setSessionCookie } from './session-cookie';
 
 // JSON API for login and logout. The /login page and the header use it.
@@ -48,9 +49,13 @@ export class ApiAuthController {
   }
 
   @Get('me')
-  @ApiOperation({ summary: 'Who is logged in', description: 'user is null when nobody is logged in' })
+  @ApiOperation({
+    summary: 'Who is logged in',
+    description: 'user is null when nobody is logged in; menu is the header menu for that role (task 6)',
+  })
   @ApiOkResponse({ type: MeResponse })
-  async me(@Req() req: Request): Promise<{ user: User | null }> {
-    return { user: await this.authService.currentUser(readSessionToken(req)) };
+  async me(@Req() req: Request): Promise<{ user: User | null; menu: MenuItem[] }> {
+    const user = await this.authService.currentUser(readSessionToken(req));
+    return { user, menu: menuFor(user) };
   }
 }

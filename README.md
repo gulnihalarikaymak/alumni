@@ -307,11 +307,13 @@ The API returns `400` for invalid input or non-numeric IDs, `409` for duplicate 
 
 **Registration.** The `/register` page sends `POST /api/register` → `201` with `{ user, alumniProfile }`. A visitor joins as `STUDENT`, `ALUMNI` or `STAFF` (never `ADMIN`), chooses a password (8–128 characters, stored only as a scrypt hash) and must accept the privacy notice; a graduate also gives a full name, graduation year and an optional city, saved in `alumni_profiles` in the same transaction. The account starts as `PENDING`. Rules are in [DDD.md §4.10](DDD.md).
 
-**Login and logout.** `POST /api/auth/login` checks the e-mail and password and sets the `ats_session` cookie (HttpOnly, SameSite=Lax, 7 days) → `200`; a wrong e-mail or password → `401`, an account that is not `ACTIVE` → `403`. `POST /api/auth/logout` → `204` ends the session. `GET /api/auth/me` → `200` with `{ user }` or `{ user: null }`. The `sessions` table keeps only a hash of the cookie token. No new package: hashing uses Node's built-in `crypto`. Rules are in [DDD.md §4.11](DDD.md).
+**Login and logout.** `POST /api/auth/login` checks the e-mail and password and sets the `ats_session` cookie (HttpOnly, SameSite=Lax, 7 days) → `200`; a wrong e-mail or password → `401`, an account that is not `ACTIVE` → `403`. `POST /api/auth/logout` → `204` ends the session. `GET /api/auth/me` → `200` with `{ user, menu }` (`user` is `null` for a visitor). The `sessions` table keeps only a hash of the cookie token. No new package: hashing uses Node's built-in `crypto`. Rules are in [DDD.md §4.11](DDD.md).
 
 **Auth middleware.** `AuthMiddleware` runs on every request after the logger: it puts the logged-in user on `req.user` and stops requests that need a login (`backend/src/auth/access-rules.ts`). Reading announcements and job postings stays public; every change, and every read of users and job applications (personal data), needs a login: `401` from the API, or a redirect to `/login?next=…` for a page, which returns there after login. The first admin comes from `.env`: copy `.env.example` to `.env` and set `ADMIN_EMAIL` and `ADMIN_PASSWORD`; on startup that ACTIVE admin is created if the e-mail has no account yet. Log in as the admin and approve new accounts by setting their status to `ACTIVE` on their user page. Postman: run `0 - Log in as admin` first; its `adminEmail` / `adminPassword` must match `.env`. Details in [DDD.md §4.12](DDD.md).
 
 **Admin panel.** `/admin` shows counts (`GET /api/admin/summary`), the accounts waiting for approval (Approve / Reject) and every user with a role and a status control (Save / Delete), plus links to create and manage announcements, job postings and applications. Only an `ADMIN` may read `/api/admin` or create, change or delete a user; any other role gets `403` from the auth middleware and sees "Only admins can open this page". An admin cannot change their own role, deactivate or delete their own account (`400`), so the panel never locks its last admin out. To make an account an admin: log in as an admin, open `/admin` and set its role to `ADMIN`. Details in [DDD.md §4.1 and §4.12](DDD.md).
+
+**Menu by role.** `GET /api/auth/me` also returns `menu`, the header links for the role (`backend/src/auth/navigation.ts`), and `account.js` draws the header menu from it on the landing and the workspace. A visitor sees Home, Workspace, Opportunities, Announcements and About; every logged-in user also gets Applications; an `ADMIN` also gets Users and Admin. The HTML holds the visitor's menu, so it works without JavaScript. Hiding a link does not protect a page: the auth middleware still decides access. Details in [DDD.md §4.13](DDD.md).
 
 Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
 
@@ -419,7 +421,7 @@ alumni/
 │       ├── job-postings/       │ model, service, controllers, modules
 │       ├── job-applications/   ┘
 │       ├── registration/       POST /api/register: user and alumni profile in one step
-│       ├── auth/               POST /api/auth/login and /logout, GET /api/auth/me: password hashing and sessions
+│       ├── auth/               POST /api/auth/login and /logout, GET /api/auth/me: password hashing, sessions, menu by role
 │       ├── admin/              GET /api/admin/summary: counts for the admin panel (ADMIN only)
 │       └── health/             GET /api/health
 └── postman/                    request collection, including error cases
@@ -548,7 +550,7 @@ flowchart LR
 | 06 | Database integration | Job postings and job applications: migrations, models, direct and nested routes, seed | ✅ |
 | 07 | Errors and logging | Postman error cases for every feature, optional job-posting fields, request logger, 404 and 5xx Guardians, generic `/404` page, `logs/error.logs` | ✅ |
 | 08 | **Midterm** · Web design | Brand and design documents and the Gate-A home-page study | ✅ |
-| 09 | Middleware | Users and roles in `DDD.md`, registration, login and logout (given in class); still planned: request ids, security headers, rate limiting, one error format for the `400`s | 🚧 |
+| 09 | Middleware | Users and roles in `DDD.md`, registration, login and logout, auth middleware, admin panel, menu by role (given in class); still planned: request ids, security headers, rate limiting, one error format for the `400`s | 🚧 |
 | 10 | Front end | React app served by nginx; full stack from one command | 🗓️ |
 | 11 | Auth | Approval screens for admins, role and ownership checks (sign-up and sessions came in week 9) | 🗓️ |
 | 12 | Service layers | Mentorship, connections, notifications, reports | 🗓️ |

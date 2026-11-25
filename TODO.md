@@ -82,8 +82,11 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
   (users, applications) need a login (`401` or redirect to `/login`); first admin account from `.env`
 - [x] Admin page: `/admin` panel (counts, approve or reject accounts, change roles and status, delete users,
   links to manage content); only `ADMIN` may change users (`403`); an admin cannot lock themselves out
-  - [ ] Assign the ADMIN role to my own account in the panel
-  - [ ] Open the panel with my own account and change data there
+  - [x] Assign the ADMIN role to my own account in the panel
+  - [x] Open the panel with my own account and change data there
+- [x] Dynamic navigation: menu items by user role (`menu` in `GET /api/auth/me`, drawn by the header on
+  the landing and the workspace); a visitor sees the public pages, a logged-in user also Applications,
+  an `ADMIN` also Users and Admin
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

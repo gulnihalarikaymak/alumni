@@ -7,5 +7,9 @@ scripts:
     code: |-
       pm.test("Status is 200", () => pm.response.to.have.status(200));
       pm.test("nobody is logged in", () => pm.expect(pm.response.json().user).to.eql(null));
+      pm.test("a visitor's menu has only public pages", () => {
+        const hrefs = pm.response.json().menu.map(item => item.href);
+        pm.expect(hrefs).to.eql(["/", "/platform", "/job-postings", "/announcements", "/about"]);
+      });
     language: text/javascript
 order: 9000

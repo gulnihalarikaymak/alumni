@@ -293,6 +293,21 @@ The first `ACTIVE` account is the admin from `.env` (`ADMIN_EMAIL`, `ADMIN_PASSW
 created on startup if that e-mail has no account yet. It approves new accounts by setting
 their status to `ACTIVE`.
 
+### 4.13 Menu by role *(task 6, week 9, no table of its own)*
+
+`GET /api/auth/me` returns `{ user, menu }`. `menu` is the header menu for the
+role, built by `backend/src/auth/navigation.ts`; the landing and the workspace draw
+their menu from it (`backend/public/account.js`).
+
+| Menu link | Visitor | `STUDENT` | `ALUMNI` | `STAFF` | `ADMIN` |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Home, Workspace, Opportunities, Announcements, About | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Applications (`/job-applications`) | | ✓ | ✓ | ✓ | ✓ |
+| Users (`/users`), Admin (`/admin`) | | | | | ✓ |
+
+The menu only hides links. Access is still decided by `AuthMiddleware` (4.12):
+a user who types `/users` gets the page if their login allows it.
+
 ## 5. Enums
 
 | Enum | Values |
