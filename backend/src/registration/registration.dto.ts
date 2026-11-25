@@ -9,6 +9,9 @@ export class RegisterDto {
   @ApiProperty({ enum: ['STUDENT', 'ALUMNI', 'STAFF'], example: 'ALUMNI' })
   role!: string;
 
+  @ApiProperty({ example: 'a-long-password', description: '8–128 characters, stored only as a hash' })
+  password!: string;
+
   @ApiProperty({ example: true, description: 'the privacy notice must be accepted' })
   acceptPrivacy!: boolean;
 

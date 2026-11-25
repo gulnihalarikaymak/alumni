@@ -1,0 +1,18 @@
+$kind: http-request
+name: Setup - approve account (PATCH status ACTIVE) -> 200
+url: "{{baseUrl}}/api/users/{{loginUserId}}"
+method: PATCH
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "status": "ACTIVE"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 200", () => pm.response.to.have.status(200));
+    language: text/javascript
+order: 3000

@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, RouterModule } from '@nestjs/core';
 import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { AppController } from './app.controller';
+import { ApiAuthModule } from './auth/api-auth.module';
 import { LoggerMiddleware } from './common/logger.middleware';
 import { NotFoundFilter } from './common/not-found.filter';
 import { ServerErrorFilter } from './common/server-error.filter';
@@ -28,6 +29,7 @@ import { ApiUserModule } from './users/api-user.module';
     ApiJobPostingApplicationModule,
     ApiUserJobApplicationModule,
     ApiRegistrationModule,
+    ApiAuthModule,
   ],
   controllers: [AppController],
   // The Guardians. Nest asks the filter registered last first, so the general

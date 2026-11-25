@@ -3,6 +3,7 @@ import { editRecord, listRecords, showRecord } from './workspace-records.js';
 import { listApplications, postingApplications, showApplication } from './workspace-applications.js';
 import { healthPage } from './health-status.js';
 import { registerPage } from './workspace-register.js';
+import { loginPage } from './workspace-login.js';
 
 const { t, translate } = window.i18n; // interface language, see i18n.js
 
@@ -10,7 +11,7 @@ const main = document.querySelector('#main');
 const path = location.pathname.replace(/\/+$/, '');
 const [section, id, detail] = path.slice(1).split('/');
 // The header links are the same on every page (also on the landing); mark the current one.
-const sectionLink = Array.from(document.querySelectorAll('#workspace-nav a, .bar-action')).find(a => a.pathname === '/' + section);
+const sectionLink = Array.from(document.querySelectorAll('#workspace-nav a, a.bar-action')).find(a => a.pathname === '/' + section);
 sectionLink?.setAttribute('aria-current', 'page');
 
 function notFound() {
@@ -25,6 +26,7 @@ async function pageContent() {
   }
   if (path === '/api/health') return healthPage();
   if (path === '/register') return registerPage();
+  if (path === '/login') return loginPage();
   if (section === 'job-applications') return id ? showApplication(id) : listApplications();
   if (!['users', 'announcements', 'job-postings'].includes(section)) return notFound();
   if (!id) return listRecords(section);

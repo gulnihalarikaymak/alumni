@@ -1,4 +1,4 @@
-import { api, badge, buttonLink, details, el } from './workspace-ui.js';
+import { api, badge, buttonLink, details, el, link } from './workspace-ui.js';
 
 // The sign-up page at /register. It sends JSON to POST /api/register, the same
 // route Postman uses. Admin accounts are never self-registered (DDD 4.1).
@@ -44,6 +44,7 @@ function formData(formNode) {
   const data = {
     email: values.get('email'),
     role: values.get('role'),
+    password: values.get('password'),
     acceptPrivacy: formNode.elements.acceptPrivacy.checked
   };
   if (data.role === 'ALUMNI') {
@@ -64,10 +65,10 @@ function welcome({ user, alumniProfile }) {
   const title = el('h2', { tabindex: '-1' }, t('Welcome to the network'));
   const panel = el('div', { class: 'stack', role: 'status' }, title,
     el('p', {}, t('Your account is saved and waiting for approval by an ATS administrator. ' +
-      'Approval and sign-in are planned for a later release.')),
+      'You can log in once it is approved.')),
     details(rows),
     el('div', { class: 'form-actions' }, buttonLink('/job-postings', t('Browse opportunities')),
-      buttonLink('/platform', t('Enter the workspace'), true)));
+      buttonLink('/login', t('Log in'), true)));
   return { panel, title };
 }
 
@@ -78,12 +79,23 @@ function registerForm(container) {
   const formNode = el('form', { class: 'stack' }, errorBox, roleChoices(),
     input(t('E-mail'), 'email', { type: 'email', autocomplete: 'email', required: true },
       t('Your account is created with this address.')),
+    input(t('Password'), 'password', { type: 'password', autocomplete: 'new-password', required: true, minlength: 8, maxlength: 128 },
+      t('At least 8 characters.')),
+    input(t('Repeat password'), 'passwordRepeat', { type: 'password', autocomplete: 'new-password', required: true }),
     alumni,
     el('label', { class: 'check' },
       el('input', { type: 'checkbox', name: 'acceptPrivacy', required: true }),
       el('span', {}, t('I accept the privacy notice: ATS stores my e-mail and role and, for graduates, ' +
         'my name, graduation year and city. No ID number, birth date or home address is collected.'))),
-    el('div', { class: 'form-actions' }, submit));
+    el('div', { class: 'form-actions' }, submit),
+    el('p', { class: 'meta' }, t('Already registered?') + ' ', link('/login', t('Log in'))));
+
+  // The two passwords must match before the browser lets the form submit.
+  const { password, passwordRepeat } = formNode.elements;
+  const checkRepeat = () => passwordRepeat.setCustomValidity(
+    passwordRepeat.value && passwordRepeat.value !== password.value ? t('The passwords do not match.') : '');
+  password.addEventListener('input', checkRepeat);
+  passwordRepeat.addEventListener('input', checkRepeat);
 
   // The graduate fields appear, and are sent, only for the Graduate role.
   formNode.addEventListener('change', event => {

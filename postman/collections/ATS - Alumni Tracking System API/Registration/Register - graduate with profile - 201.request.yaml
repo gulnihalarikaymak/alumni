@@ -9,6 +9,7 @@ body:
   content: |-
     {
       "email": "register-alumni-{{$timestamp}}@example.com",
+      "password": "test-password-1",
       "role": "ALUMNI",
       "acceptPrivacy": true,
       "fullName": "Deniz Kaya",

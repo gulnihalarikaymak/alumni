@@ -9,7 +9,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | **Storage** | Docker volume `alumni-db-data`: kept by `docker compose down`, deleted by `docker compose down -v` |
 | **Access** | Prisma 7: schema in `backend/prisma/schema.prisma`, migrations in `backend/prisma/migrations/`. The models in `backend/src/*/*.model.ts` read and write through `PrismaService` |
 | **Demo data** | `backend/prisma/seed.ts` builds records with the factories in `backend/prisma/factories.ts`: synthetic Turkish names (fakerTR), e-mails at `example.com` |
-| **Status** | All tables below exist in the database (first migration). Five are used by the code (`users`, `announcements`, `job_postings`, `job_applications`, and `alumni_profiles` at registration); the rest are not used yet (week still to be set) and may still change |
+| **Status** | All tables below exist in the database (created by the migrations). Six are used by the code (`users`, `announcements`, `job_postings`, `job_applications`, `sessions`, and `alumni_profiles` at registration); the rest are not used yet (week still to be set) and may still change |
 
 ## 1. Conventions
 
@@ -36,6 +36,7 @@ This is the design the Prisma schema (week 5) will implement; when the schema ch
 | Event registration | `event_registrations` | Which user registered for which event | planned, week to be set |
 | Job posting | `job_postings` | An open position shared with graduates and students | in code (PostgreSQL) |
 | Job application | `job_applications` | A user's application to a job posting | in code (PostgreSQL) |
+| Session | `sessions` | One login: which user, until when | in code (PostgreSQL), week 9 |
 
 ## 3. Relationships
 
@@ -47,6 +48,7 @@ erDiagram
     users ||--o{ event_registrations : makes
     events ||--o{ event_registrations : receives
     users ||--o{ job_applications : submits
+    users ||--o{ sessions : "logs in"
     job_postings ||--o{ job_applications : receives
     announcements
 ```
@@ -65,9 +67,10 @@ erDiagram
 | `email` | varchar | UQ, NN | lower-case; duplicate → `409` |
 | `role` | enum `Role` | NN | `ADMIN`, `STAFF`, `ALUMNI`, `STUDENT` |
 | `status` | enum `Status` | NN, default `PENDING` | a new user always starts as `PENDING` |
+| `password_hash` | text | | `scrypt$<salt>$<hash>`, set at registration (4.10); empty = cannot log in. Never returned by the API |
 | `created_at` | timestamptz | NN, default now | |
 
-No password column yet: authentication arrives in week 11.
+Users created through `POST /api/users` (the admin CRUD) have no password and cannot log in.
 
 Rules in code today (`UsersService`):
 
@@ -124,9 +127,9 @@ stateDiagram-v2
 | `REJECTED` | the sign-up was refused |
 | `SUSPENDED` | an approved account that is blocked for now |
 
-Today the diagram is not enforced: `PUT` and `PATCH` accept any status value, and the status
-does not yet limit what a user can do (a `PENDING` student can still apply to a job posting).
-The transitions and the "only `ACTIVE` users act" rule arrive with sign-in in week 11.
+Only an `ACTIVE` account can log in (4.11). Apart from that, the diagram is not enforced yet:
+`PUT` and `PATCH` accept any status value, and a `PENDING` student can still apply to a job
+posting. The transitions and role checks on the other routes arrive in week 11.
 
 ### 4.2 `announcements` *(in code)*
 
@@ -243,11 +246,32 @@ for a graduate, to `alumni_profiles`. Rules (`RegistrationService`):
 | `email` | required; same rules as 4.1; already used → `409` |
 | `role` | required; `STUDENT`, `ALUMNI` or `STAFF`. `ADMIN` cannot self-register → `400` |
 | `acceptPrivacy` | must be `true` (the privacy notice is accepted); not stored |
+| `password` | required; 8–128 characters; stored only as `password_hash` (4.1) |
 | `fullName`, `graduationYear`, `city` | for `ALUMNI` only, see 4.3 (`city` optional); sent with another role → `400` |
 
 The new account is always `PENDING`. Any other field is a `400`. If two requests send the same
 e-mail at the same moment, the `UNIQUE` constraint stops the second one, which gets `409`.
-No password yet: sign-in arrives in week 11.
+
+### 4.11 `sessions` *(in code, week 9)*
+
+One row per login. The browser keeps a random token in the `ats_session` cookie (HttpOnly,
+SameSite=Lax, 7 days); the table stores only the token's SHA-256 hash.
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| `id` | integer | PK | |
+| `token_hash` | text | UQ, NN | SHA-256 of the cookie token, hex |
+| `user_id` | integer | FK → `users.id`, NN | delete the user → delete their sessions |
+| `created_at` | timestamptz | NN, default now | |
+| `expires_at` | timestamptz | NN | 7 days after login; an expired session is deleted when it is next read |
+
+Rules (`AuthService`, routes under `/api/auth`):
+
+| Route | Rule |
+|---|---|
+| `POST /api/auth/login` | `email` and `password` required (`400`). Unknown e-mail, no password or wrong password → `401` with one message for all three. Account not `ACTIVE` → `403` with its status. Success → `200`, the user and a new cookie |
+| `POST /api/auth/logout` | deletes the session of the cookie (if any) and clears the cookie → `204` |
+| `GET /api/auth/me` | `200` with `{ user }`, or `{ user: null }` when nobody is logged in, the session expired or the account is no longer `ACTIVE` |
 
 ## 5. Enums
 

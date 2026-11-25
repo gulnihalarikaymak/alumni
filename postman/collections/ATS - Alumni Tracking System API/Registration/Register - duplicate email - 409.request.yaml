@@ -9,6 +9,7 @@ body:
   content: |-
     {
       "email": "{{registeredEmail}}",
+      "password": "test-password-1",
       "role": "STAFF",
       "acceptPrivacy": true
     }

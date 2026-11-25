@@ -26,6 +26,8 @@ The landing starts at `/`. The workspace starts at `/platform`. API feature pref
 | `workspace-records.js`, `workspace-applications.js` | Resource lists, detail pages, forms and application actions |
 | `workspace-ui.js` | Shared request, form and DOM helpers |
 | `workspace-register.js` | Sign-up page at `/register`, sends `POST /api/register` |
+| `workspace-login.js` | Login page at `/login`, sends `POST /api/auth/login` |
+| `account.js` | The header's Log in / Log out button on every page (`GET /api/auth/me`, `POST /api/auth/logout`) |
 | `i18n.js` | English/Turkish interface text for every page: the dictionary, `t()` and the TR/EN button |
 
 Open `/users`, `/announcements`, `/job-postings` or `/job-applications` directly or through the workspace. A static preview can display the landing. Use the running NestJS application for workspace deep links and PostgreSQL-backed CRUD.

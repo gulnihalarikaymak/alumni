@@ -77,6 +77,7 @@ a:hover { text-decoration-thickness: 2px; }
 .nav a:hover, .nav a[aria-current] { color: var(--ink); text-decoration: underline; text-underline-offset: .45em; }
 .bar-action { display: inline-flex; align-items: center; gap: .7rem; min-height: 2.75rem; padding: 0 1.1rem; border: 1px solid var(--line); border-radius: 2rem; color: var(--ink); font-size: .88rem; font-weight: 500; text-decoration: none; white-space: nowrap; }
 .bar-action svg { width: 1rem; height: 1rem; }
+button.bar-action { background: transparent; font-family: var(--sans); cursor: pointer; }
 .bar-action:hover, .bar-action[aria-current] { background: var(--tint); border-color: var(--muted); }
 .theme-toggle { display: grid; place-items: center; background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 50%; height: 2.75rem; width: 2.75rem; cursor: pointer; }
 .theme-toggle svg { width: 1.35rem; }

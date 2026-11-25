@@ -9,6 +9,7 @@ body:
   content: |-
     {
       "email": "register-admin-{{$timestamp}}@example.com",
+      "password": "test-password-1",
       "role": "ADMIN",
       "acceptPrivacy": true
     }

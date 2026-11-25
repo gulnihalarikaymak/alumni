@@ -72,7 +72,7 @@ flowchart LR
 | 🛡️ **Admin** | Approve sign-ups, manage accounts and roles |
 
 > [!IMPORTANT]
-> This describes the planned access model. The current coursework workspace has public CRUD routes backed by synthetic records. Sign-in and role-based access are scheduled for week 11.
+> This describes the planned access model. The current coursework workspace has public CRUD routes backed by synthetic records. Registration, login and logout exist since week 9 (only `ACTIVE` accounts can log in); role-based access to the other routes is scheduled for week 11.
 
 ### Scope
 
@@ -145,6 +145,7 @@ flowchart LR
 | `http://localhost:3000/job-postings` | 📄 Web pages for job postings, and each posting's applications |
 | `http://localhost:3000/job-applications` | 📄 Web pages for all job applications |
 | `http://localhost:3000/register` | 📄 Sign-up page for students, graduates and staff (`POST /api/register`) |
+| `http://localhost:3000/login` | 📄 Login page; the header button switches between Log in and Log out (`/api/auth`) |
 | `http://localhost:3000/404` | 📄 The generic "Page not found" page; invalid web requests are redirected here |
 | `http://localhost:3000/api/...` | 🔌 JSON API for the same data (`users`, `announcements`, `job-postings`, `job-applications`) |
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
@@ -303,7 +304,9 @@ The API feature prefixes are in `backend/src/app.routes.ts`. Users, announcement
 
 The API returns `400` for invalid input or non-numeric IDs, `409` for duplicate e-mail addresses and `404` for missing records. Forms show the validation feedback returned by the service.
 
-**Registration.** The `/register` page sends `POST /api/register` → `201` with `{ user, alumniProfile }`. A visitor joins as `STUDENT`, `ALUMNI` or `STAFF` (never `ADMIN`) and must accept the privacy notice; a graduate also gives a full name, graduation year and an optional city, saved in `alumni_profiles` in the same transaction. The account starts as `PENDING`; approval and sign-in come in week 11. Rules are in [DDD.md §4.10](DDD.md).
+**Registration.** The `/register` page sends `POST /api/register` → `201` with `{ user, alumniProfile }`. A visitor joins as `STUDENT`, `ALUMNI` or `STAFF` (never `ADMIN`), chooses a password (8–128 characters, stored only as a scrypt hash) and must accept the privacy notice; a graduate also gives a full name, graduation year and an optional city, saved in `alumni_profiles` in the same transaction. The account starts as `PENDING`. Rules are in [DDD.md §4.10](DDD.md).
+
+**Login and logout.** `POST /api/auth/login` checks the e-mail and password and sets the `ats_session` cookie (HttpOnly, SameSite=Lax, 7 days) → `200`; a wrong e-mail or password → `401`, an account that is not `ACTIVE` → `403`. `POST /api/auth/logout` → `204` ends the session. `GET /api/auth/me` → `200` with `{ user }` or `{ user: null }`. The `sessions` table keeps only a hash of the cookie token. No new package: hashing uses Node's built-in `crypto`. Until the admin screens of week 11, approve an account by setting its status to `ACTIVE` on its user page. Rules are in [DDD.md §4.11](DDD.md).
 
 Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
 
@@ -410,6 +413,7 @@ alumni/
 │       ├── job-postings/       │ model, service, controllers, modules
 │       ├── job-applications/   ┘
 │       ├── registration/       POST /api/register: user and alumni profile in one step
+│       ├── auth/               POST /api/auth/login and /logout, GET /api/auth/me: password hashing and sessions
 │       └── health/             GET /api/health
 └── postman/                    request collection, including error cases
 ```
@@ -508,7 +512,7 @@ erDiagram
 
 | | In code | Not used yet |
 |---|---|---|
-| Tables | `users`, `announcements`, `job_postings`, `job_applications`, `alumni_profiles` (created at registration) | `career_entries`, `education_entries`, `events`, `event_registrations` |
+| Tables | `users`, `announcements`, `job_postings`, `job_applications`, `sessions`, `alumni_profiles` (created at registration) | `career_entries`, `education_entries`, `events`, `event_registrations` |
 
 > [!NOTE]
 > Unique pairs: a user applies **once per posting** (`job_posting_id`, `applicant_id`) and registers **once per event** (`event_id`, `user_id`). Deleting a parent row deletes its children (`ON DELETE CASCADE`).
@@ -537,9 +541,9 @@ flowchart LR
 | 06 | Database integration | Job postings and job applications: migrations, models, direct and nested routes, seed | ✅ |
 | 07 | Errors and logging | Postman error cases for every feature, optional job-posting fields, request logger, 404 and 5xx Guardians, generic `/404` page, `logs/error.logs` | ✅ |
 | 08 | **Midterm** · Web design | Brand and design documents and the Gate-A home-page study | ✅ |
-| 09 | Middleware | Request ids, security headers, rate limiting, one error format for the `400`s too (the logger and the 404 and 5xx Guardians are already done) | 🗓️ |
+| 09 | Middleware | Users and roles in `DDD.md`, registration, login and logout (given in class); still planned: request ids, security headers, rate limiting, one error format for the `400`s | 🚧 |
 | 10 | Front end | React app served by nginx; full stack from one command | 🗓️ |
-| 11 | Auth | Sign-up with approval, sessions, role and ownership checks | 🗓️ |
+| 11 | Auth | Approval screens for admins, role and ownership checks (sign-up and sessions came in week 9) | 🗓️ |
 | 12 | Service layers | Mentorship, connections, notifications, reports | 🗓️ |
 | 13 | Deployment and CI/CD | GitHub Actions, production compose file, backups | 🗓️ |
 | 14 | **Final** | A stranger can run and understand the system from this README | 🗓️ |

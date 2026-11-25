@@ -82,7 +82,8 @@ export class UserModel {
 }
 
 // A database row holds a Date; the rest of the app (JSON, views) uses an ISO string.
-function toUser(row: UserRow): User {
+// password_hash is never copied, so no API response can contain it.
+export function toUser(row: UserRow): User {
   return {
     id: row.id,
     email: row.email,

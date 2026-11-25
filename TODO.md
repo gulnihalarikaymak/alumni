@@ -76,6 +76,8 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Update `DDD.md` for users and their roles in the system
 - [x] Register page and functionality: `/register` page in the Beyond the Years style and
   `POST /api/register` (role, e-mail, privacy notice; a graduate also gives name, graduation year and city)
+- [x] Login and logout: `/login` page, `POST /api/auth/login` and `/logout`, `GET /api/auth/me`; passwords
+  (scrypt hash) and a `sessions` table; the header button switches between Log in and Log out
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

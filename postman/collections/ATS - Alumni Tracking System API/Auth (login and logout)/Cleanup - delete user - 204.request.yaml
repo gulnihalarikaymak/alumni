@@ -1,0 +1,10 @@
+$kind: http-request
+name: Cleanup - delete user -> 204
+url: "{{baseUrl}}/api/users/{{loginUserId}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 204", () => pm.response.to.have.status(204));
+    language: text/javascript
+order: 10000

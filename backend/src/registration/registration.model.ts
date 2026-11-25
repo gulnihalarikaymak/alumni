@@ -22,6 +22,7 @@ export interface Registration {
 export interface NewRegistration {
   email: string;
   role: RegistrationRole;
+  passwordHash: string;
   profile?: Omit<AlumniProfile, 'id'>;
 }
 
@@ -46,6 +47,7 @@ export class RegistrationModel {
         data: {
           email: data.email,
           role: data.role,
+          passwordHash: data.passwordHash,
           status: 'PENDING', // every new account waits for an admin (DDD 4.1)
           alumniProfile: data.profile ? { create: data.profile } : undefined,
         },

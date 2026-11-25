@@ -9,7 +9,7 @@ ATS is a Web Programming course project (YBSB3001). Keep each change small enoug
 - Keep NestJS JSON controllers focused on HTTP, services on validation and business rules, and models on Prisma storage. Each feature lives in its own folder under `backend/src/`. API prefixes are in `backend/src/app.routes.ts`.
 - Prisma 7 models use the shared `PrismaService` to reach PostgreSQL 18. For a data model change, update the schema and [DDD.md](DDD.md) together and generate a new migration. Keep committed migrations intact.
 - The API returns `201` on creation, `204` on deletion, `400` on invalid input, `404` for missing records and `409` for conflicts. Keep error handling and request logging in `backend/src/common/`. Return safe messages for server failures and keep error stacks in server logs.
-- React and authentication are future coursework. Implement features within the assigned week's scope.
+- Login and logout exist since week 9 (`backend/src/auth/`); role checks on other routes and React are future coursework. Implement features within the assigned week's scope.
 
 ## Build and verification
 

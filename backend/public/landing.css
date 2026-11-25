@@ -98,6 +98,7 @@ button[hidden], [hidden] { display: none; }
 .is-paper .theme-toggle:hover, .menu-open .theme-toggle:hover { background: var(--color-hover); }
 .platform-link { border: 1px solid currentColor; padding: 9px 17px; border-radius: 30px; display: flex; align-items: center; gap: 13px; font-size: .815rem; font-weight: 500; min-height: 42px; }
 .platform-link, .scroll-cue { white-space: nowrap; }
+button.platform-link { background: transparent; color: inherit; font-family: var(--sans); cursor: pointer; }
 .platform-link svg, .text-link svg, .ink-link svg, .back-top svg { width: 16px; height: 16px; }
 .platform-link:hover { background: #ffffff20; }
 .is-paper .platform-link:hover, .menu-open .platform-link:hover { background: var(--color-hover); }

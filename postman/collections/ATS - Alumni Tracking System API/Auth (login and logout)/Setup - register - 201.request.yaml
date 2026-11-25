@@ -1,0 +1,24 @@
+$kind: http-request
+name: Setup - register -> 201
+url: "{{baseUrl}}/api/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "login-{{$timestamp}}@example.com",
+      "role": "STUDENT",
+      "password": "test-password-1",
+      "acceptPrivacy": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 201", () => pm.response.to.have.status(201));
+      const r = pm.response.json();
+      pm.collectionVariables.set("loginUserId", r.user.id);
+      pm.collectionVariables.set("loginEmail", r.user.email);
+    language: text/javascript
+order: 1000

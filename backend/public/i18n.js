@@ -293,8 +293,27 @@
     'Create account': 'Hesap oluştur',
     'Use another e-mail address.': 'Başka bir e-posta adresi kullanın.',
     'Welcome to the network': 'Ağa hoş geldiniz',
-    'Your account is saved and waiting for approval by an ATS administrator. Approval and sign-in are planned for a later release.':
-      'Hesabınız kaydedildi ve bir ATS yöneticisinin onayını bekliyor. Onay ve giriş özellikleri sonraki bir sürümde gelecek.',
+    'Your account is saved and waiting for approval by an ATS administrator. You can log in once it is approved.':
+      'Hesabınız kaydedildi ve bir ATS yöneticisinin onayını bekliyor. Onaylandıktan sonra giriş yapabilirsiniz.',
+    'Password': 'Şifre',
+    'At least 8 characters.': 'En az 8 karakter.',
+    'Repeat password': 'Şifre (tekrar)',
+    'The passwords do not match.': 'Şifreler aynı değil.',
+    'Already registered?': 'Zaten kayıtlı mısınız?',
+
+    // Login and logout
+    'Log in': 'Giriş yap',
+    'Log out': 'Çıkış yap',
+    'Logged in as {email}': '{email} olarak giriş yapıldı',
+    'Welcome back': 'Tekrar hoş geldiniz',
+    'Log in to the': 'Mezun ağına',
+    'alumni network.': 'giriş yapın.',
+    'Use the e-mail and password you registered with. Only approved (ACTIVE) accounts can log in.':
+      'Kayıt olurken kullandığınız e-posta ve şifreyle giriş yapın. Yalnızca onaylanmış (ACTIVE) hesaplar giriş yapabilir.',
+    'Log in to your account': 'Hesabınıza giriş yapın',
+    'No account yet?': 'Henüz hesabınız yok mu?',
+    'E-mail or password is incorrect.': 'E-posta veya şifre hatalı.',
+    'You are logged in': 'Giriş yaptınız',
     'Joining as': 'Katılım türü',
     'Account': 'Hesap',
     'Name': 'Ad',

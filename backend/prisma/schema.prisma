@@ -55,12 +55,28 @@ model User {
   email              String              @unique // stored lower-case by UsersService
   role               Role
   status             Status              @default(PENDING)
+  // "scrypt$<salt>$<hash>", set at registration; empty = this account cannot log in yet
+  passwordHash       String?             @map("password_hash")
   createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz
   alumniProfile      AlumniProfile?
   eventRegistrations EventRegistration[]
   jobApplications    JobApplication[]
+  sessions           Session[]
 
   @@map("users")
+}
+
+// Week 9: one row per login. The browser keeps a random token in a cookie;
+// the table keeps only its SHA-256 hash, so a copy of the table cannot log anyone in.
+model Session {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   @unique @map("token_hash")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  expiresAt DateTime @map("expires_at") @db.Timestamptz
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 // In code since homework 1 (in memory until week 5)
