@@ -339,6 +339,14 @@
     'Name': 'Ad',
     'Graduated': 'Mezuniyet',
 
+    // My account (task 7)
+    'My account': 'Hesabım',
+    'Member since': 'Üyelik tarihi',
+    'Alumni profile': 'Mezun profili',
+    'My applications': 'Başvurularım',
+    'Shortcuts': 'Kısa yollar',
+    'Open the admin panel': 'Yönetim panelini aç',
+
     // Error pages
     'Page not found — ATS İÜ': 'Sayfa bulunamadı — ATS İÜ',
     'Page not found': 'Sayfa bulunamadı',

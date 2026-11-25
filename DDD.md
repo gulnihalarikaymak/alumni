@@ -283,8 +283,8 @@ and a protected page redirects to `/login?next=<page>`.
 
 | | Without login | Login required | `ADMIN` only (`403` for other roles) |
 |---|---|---|---|
-| JSON API | `GET` announcements and job postings (list and one), `GET /api/health`, Swagger, `POST /api/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | everything else: every `POST`/`PUT`/`PATCH`/`DELETE`, users, job applications (also under a posting or a user) | `GET /api/admin/summary`; `POST`, `PUT`, `PATCH`, `DELETE` on `/api/users` |
-| Pages | `/`, `/platform`, `/about`, announcements and job postings (list and one), `/register`, `/login`, `/404` | `/users…`, `/job-applications…`, `/admin`, every `…/create` and `…/edit` page, `/job-postings/:id/applications` | (`/admin` shows "Only admins" to other roles: its data is `ADMIN` only) |
+| JSON API | `GET` announcements and job postings (list and one), `GET /api/health`, Swagger, `POST /api/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | everything else: every `POST`/`PUT`/`PATCH`/`DELETE`, users, job applications (also under a posting or a user), `GET /api/account` | `GET /api/admin/summary`; `POST`, `PUT`, `PATCH`, `DELETE` on `/api/users` |
+| Pages | `/`, `/platform`, `/about`, announcements and job postings (list and one), `/register`, `/login`, `/404` | `/users…`, `/job-applications…`, `/admin`, `/account`, every `…/create` and `…/edit` page, `/job-postings/:id/applications` | (`/admin` shows "Only admins" to other roles: its data is `ADMIN` only) |
 
 Apart from the `ADMIN` column, any logged-in user passes; other role checks come in week 11. An unknown `/api` path
 answers `401` to a visitor and `404` after login.
@@ -304,9 +304,30 @@ their menu from it (`backend/public/account.js`).
 | Home, Workspace, Opportunities, Announcements, About | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Applications (`/job-applications`) | | ✓ | ✓ | ✓ | ✓ |
 | Users (`/users`), Admin (`/admin`) | | | | | ✓ |
+| My account (`/account`, 4.14) | | ✓ | ✓ | ✓ | ✓ |
 
 The menu only hides links. Access is still decided by `AuthMiddleware` (4.12):
 a user who types `/users` gets the page if their login allows it.
+
+### 4.14 My account *(task 7, week 9, no table of its own)*
+
+`/account` is the logged-in user's own page. Its data comes from `GET /api/account`
+(`backend/src/account/`), which has no id in the URL: it always reads `req.user`,
+so nobody can open another user's page through it. Without a login → `401`
+(the page redirects to `/login`).
+
+`GET /api/account` returns `{ user, alumniProfile, applications }`; a section the
+role does not have is `null`.
+
+| Section | `STUDENT` | `ALUMNI` | `STAFF` | `ADMIN` | Data |
+|---|:---:|:---:|:---:|:---:|---|
+| Account: e-mail, role, status, member since | ✓ | ✓ | ✓ | ✓ | `users` (4.1) |
+| Alumni profile: full name, graduation year, city | | ✓ | | | `alumni_profiles` (4.3) |
+| My applications, with the posting's title and company | ✓ | ✓ | | | `job_applications` → `job_postings` (4.9) |
+| Shortcuts: new announcement, new job posting | | | ✓ | | links only |
+| Shortcut: admin panel | | | | ✓ | link only |
+
+The roles that see "My applications" are the roles that may apply (4.9).
 
 ## 5. Enums
 

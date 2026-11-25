@@ -31,7 +31,7 @@ const ADMIN_API: Route[] = [
 // Browser pages that need a login; a visitor is sent to /login first.
 // (/admin opens for any login; its data comes from ADMIN_API, so others see "only admins".)
 const PRIVATE_PAGES: RegExp[] = [
-  /^\/(users|job-applications|admin)(\/|$)/, // personal data and the admin panel
+  /^\/(users|job-applications|admin|account)(\/|$)/, // personal data, the admin panel and "My account"
   /\/(create|edit)$/, // forms that change records
   /^\/job-postings\/[^/]+\/applications$/, // a posting's applicants
 ];

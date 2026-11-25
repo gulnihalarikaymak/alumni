@@ -1,4 +1,5 @@
 import { Routes } from '@nestjs/core';
+import { ApiAccountModule } from './account/api-account.module';
 import { ApiAdminModule } from './admin/api-admin.module';
 import { ApiAnnouncementModule } from './announcements/api-announcement.module';
 import { ApiAuthModule } from './auth/api-auth.module';
@@ -30,6 +31,7 @@ export const routes: Routes = [
       { path: 'register', module: ApiRegistrationModule },
       { path: 'auth', module: ApiAuthModule },
       { path: 'admin', module: ApiAdminModule },
+      { path: 'account', module: ApiAccountModule },
       { path: 'health', module: HealthModule },
     ],
   },

@@ -87,6 +87,9 @@ When every task of a week is ticked, the week is marked ✅ in the [README roadm
 - [x] Dynamic navigation: menu items by user role (`menu` in `GET /api/auth/me`, drawn by the header on
   the landing and the workspace); a visitor sees the public pages, a logged-in user also Applications,
   an `ADMIN` also Users and Admin
+- [x] User-specific pages: `/account` ("My account") and `GET /api/account` show the logged-in user's own data
+  by role (account details; alumni profile for `ALUMNI`; own applications for `ALUMNI` and `STUDENT`;
+  shortcuts for `STAFF` and `ADMIN`)
 
 ## Homework 1 — Announcements (no database) ✅
 - [x] Create the Announcement model

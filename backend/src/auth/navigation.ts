@@ -25,6 +25,7 @@ const MENU: { item: MenuItem; roles: Viewer[] }[] = [
   { item: { label: 'Applications', href: '/job-applications' }, roles: LOGGED_IN },
   { item: { label: 'Users', href: '/users' }, roles: ['ADMIN'] },
   { item: { label: 'Admin', href: '/admin' }, roles: ['ADMIN'] },
+  { item: { label: 'My account', href: '/account' }, roles: LOGGED_IN }, // task 7
   { item: { label: 'About', href: '/about' }, roles: EVERYONE },
 ];
 

@@ -147,6 +147,7 @@ flowchart LR
 | `http://localhost:3000/register` | 📄 Sign-up page for students, graduates and staff (`POST /api/register`) |
 | `http://localhost:3000/login` | 📄 Login page; the header button switches between Log in and Log out (`/api/auth`) |
 | `http://localhost:3000/admin` | 🛡️ Admin panel (ADMIN only): approve accounts, change roles and status, delete users, links to manage the content |
+| `http://localhost:3000/account` | 👤 My account (any login): your own details, plus your alumni profile and applications, or shortcuts, by role |
 | `http://localhost:3000/404` | 📄 The generic "Page not found" page; invalid web requests are redirected here |
 | `http://localhost:3000/api/...` | 🔌 JSON API for the same data (`users`, `announcements`, `job-postings`, `job-applications`) |
 | `http://localhost:3000/api/swagger` | 📘 Interactive API docs |
@@ -313,7 +314,9 @@ The API returns `400` for invalid input or non-numeric IDs, `409` for duplicate 
 
 **Admin panel.** `/admin` shows counts (`GET /api/admin/summary`), the accounts waiting for approval (Approve / Reject) and every user with a role and a status control (Save / Delete), plus links to create and manage announcements, job postings and applications. Only an `ADMIN` may read `/api/admin` or create, change or delete a user; any other role gets `403` from the auth middleware and sees "Only admins can open this page". An admin cannot change their own role, deactivate or delete their own account (`400`), so the panel never locks its last admin out. To make an account an admin: log in as an admin, open `/admin` and set its role to `ADMIN`. Details in [DDD.md §4.1 and §4.12](DDD.md).
 
-**Menu by role.** `GET /api/auth/me` also returns `menu`, the header links for the role (`backend/src/auth/navigation.ts`), and `account.js` draws the header menu from it on the landing and the workspace. A visitor sees Home, Workspace, Opportunities, Announcements and About; every logged-in user also gets Applications; an `ADMIN` also gets Users and Admin. The HTML holds the visitor's menu, so it works without JavaScript. Hiding a link does not protect a page: the auth middleware still decides access. Details in [DDD.md §4.13](DDD.md).
+**Menu by role.** `GET /api/auth/me` also returns `menu`, the header links for the role (`backend/src/auth/navigation.ts`), and `account.js` draws the header menu from it on the landing and the workspace. A visitor sees Home, Workspace, Opportunities, Announcements and About; every logged-in user also gets Applications and My account; an `ADMIN` also gets Users and Admin. The HTML holds the visitor's menu, so it works without JavaScript. Hiding a link does not protect a page: the auth middleware still decides access. Details in [DDD.md §4.13](DDD.md).
+
+**My account.** `/account` is each user's own page (menu: My account). `GET /api/account` has no id in the URL and always reads the logged-in user, so it never shows someone else's data; without a login → `401`. Every role sees its account details; an `ALUMNI` user also sees their alumni profile; `ALUMNI` and `STUDENT` see their own job applications with the posting's title and company; `STAFF` get shortcuts to publish announcements and job postings; an `ADMIN` gets a shortcut to the admin panel. Details in [DDD.md §4.14](DDD.md).
 
 Every `404` carries a reason, every `5xx` is hidden behind a safe message, and every failed request is logged: see [Errors and logging](#errors-and-logging).
 
@@ -422,6 +425,7 @@ alumni/
 │       ├── job-applications/   ┘
 │       ├── registration/       POST /api/register: user and alumni profile in one step
 │       ├── auth/               POST /api/auth/login and /logout, GET /api/auth/me: password hashing, sessions, menu by role
+│       ├── account/            GET /api/account: the logged-in user's own page (any login)
 │       ├── admin/              GET /api/admin/summary: counts for the admin panel (ADMIN only)
 │       └── health/             GET /api/health
 └── postman/                    request collection, including error cases
@@ -550,7 +554,7 @@ flowchart LR
 | 06 | Database integration | Job postings and job applications: migrations, models, direct and nested routes, seed | ✅ |
 | 07 | Errors and logging | Postman error cases for every feature, optional job-posting fields, request logger, 404 and 5xx Guardians, generic `/404` page, `logs/error.logs` | ✅ |
 | 08 | **Midterm** · Web design | Brand and design documents and the Gate-A home-page study | ✅ |
-| 09 | Middleware | Users and roles in `DDD.md`, registration, login and logout, auth middleware, admin panel, menu by role (given in class); still planned: request ids, security headers, rate limiting, one error format for the `400`s | 🚧 |
+| 09 | Middleware | Users and roles in `DDD.md`, registration, login and logout, auth middleware, admin panel, menu by role, user-specific pages (given in class); still planned: request ids, security headers, rate limiting, one error format for the `400`s | 🚧 |
 | 10 | Front end | React app served by nginx; full stack from one command | 🗓️ |
 | 11 | Auth | Approval screens for admins, role and ownership checks (sign-up and sessions came in week 9) | 🗓️ |
 | 12 | Service layers | Mentorship, connections, notifications, reports | 🗓️ |
