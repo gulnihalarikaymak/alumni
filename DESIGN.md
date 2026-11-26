@@ -63,7 +63,7 @@ All content must remain accessible when decorative animation is unavailable.
 
 The current WebP photographs are AI-generated illustrations. They represent
 university life without identifying actual graduates or achievements.
-The mark in `emblem.svg` is a project illustration. See [BRAND.md](BRAND.md)
+The mark in `emblem.svg` is an original "İÜ" monogram in a laurel seal, drawn for this project; it is not the university's official emblem. Replace the file only with a logo you have permission to use. See [BRAND.md](BRAND.md)
 for naming and copy.
 
 The week 8 home-page study explored the Beyazıt gate. The coursework record

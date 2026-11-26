@@ -1,5 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+<!-- İÜ ATS project emblem: an original "İÜ" monogram in a laurel seal (not the university's official emblem) -->
 <circle cx="26" cy="26" r="24" stroke-width="1.2"/><circle cx="26" cy="26" r="21.5" stroke-width=".6"/>
 <g id="branch" stroke-width="1"><path d="M25 41C15 39 10 32 11 22"/><path d="M13 33q-5-1-5-5 4 1 5 5Zm-2-6q-4-2-3-6 3 2 3 6Zm0-5q-2-4 1-7 1 4-1 7Zm4 13q-1-5 1-6 2 3-1 6Zm3 3q-5 1-7-3 5 0 7 3Zm3 1q-2-4 0-6 3 3 0 6Z" fill="currentColor" stroke="none"/></g>
 <use href="#branch" transform="translate(52 0) scale(-1 1)"/>
-<path d="M26 34c-2-2-5-3-9-3v-9c4 0 7 1 9 3 2-2 5-3 9-3v9c-4 0-7 1-9 3Zm0-9v9m-7-9 4 2m6 0 4-2" stroke-width="1.4"/><path d="M23 18c0-3 4-4 4-8 5 5-1 6 0 9 1-1 2-1 3-3 1 5-7 7-7 2Z" fill="currentColor" stroke="none"/></svg>
+<!-- İ: a stem with serifs and a dot -->
+<path d="M19.5 19v14M17.6 19h3.8M17.6 33h3.8" stroke-width="1.8"/>
+<circle cx="19.5" cy="15.6" r="1.15" fill="currentColor" stroke="none"/>
+<!-- Ü: a U with serifs and two dots -->
+<path d="M24.5 19v8.6a4 4 0 0 0 8 0V19M22.9 19h3.2M30.9 19h3.2" stroke-width="1.8"/>
+<circle cx="26.6" cy="15.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="30.4" cy="15.6" r="1.15" fill="currentColor" stroke="none"/>
+<path d="M20 37h12" stroke-width=".8"/>
+</svg>

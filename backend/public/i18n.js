@@ -13,7 +13,7 @@
     // Header, menu and footer (landing and workspace)
     'Skip to content': 'İçeriğe geç',
     'Alumni Network': 'Mezun Ağı',
-    'ATS İÜ Alumni Network, home': 'ATS İÜ Mezun Ağı, ana sayfa',
+    'İÜ ATS Alumni Network, home': 'İÜ ATS Mezun Ağı, ana sayfa',
     'Main navigation': 'Ana menü',
     'Platform': 'Platform',
     'Home': 'Ana sayfa',
@@ -37,7 +37,7 @@
     'Loading workspace…': 'Çalışma alanı yükleniyor…',
 
     // Landing: hero and gallery
-    'Beyond the Years — ATS İÜ Alumni Network': 'Yılların Ötesinde — ATS İÜ Mezun Ağı',
+    'Beyond the Years — İÜ ATS Alumni Network': 'Yılların Ötesinde — İÜ ATS Mezun Ağı',
     'Three friends walking together under sunlit campus trees': 'Güneşli kampüs ağaçlarının altında birlikte yürüyen üç arkadaş',
     'İstanbul Üniversitesi · Alumni Network': 'İstanbul Üniversitesi · Mezun Ağı',
     'The story doesn’t end here.': 'Hikâye burada bitmiyor.',
@@ -106,8 +106,8 @@
     'A community that moves forward': 'İleriye giden bir topluluk',
     'Stay connected to': 'Bundan sonrasına',
     'what comes next.': 'bağlı kalın.',
-    'ATS İÜ connects İstanbul University graduates through professional opportunities, university announcements, and a shared digital community.':
-      'ATS İÜ, İstanbul Üniversitesi mezunlarını kariyer fırsatları, üniversite duyuruları ve ortak bir dijital toplulukla buluşturur.',
+    'İÜ ATS connects İstanbul University graduates through professional opportunities, university announcements, and a shared digital community.':
+      'İÜ ATS, İstanbul Üniversitesi mezunlarını kariyer fırsatları, üniversite duyuruları ve ortak bir dijital toplulukla buluşturur.',
     'Alumni profiles': 'Mezun profilleri',
     'Find the people at the heart of the university community.': 'Üniversite topluluğunun kalbindeki insanları bulun.',
     'Career opportunities': 'Kariyer fırsatları',
@@ -143,13 +143,49 @@
     'Hello': 'Merhaba',
     'Named greeting': 'İsimle selamlama',
     'Sum': 'Toplama',
-    'About ATS İÜ': 'ATS İÜ hakkında',
+    'About İÜ ATS': 'İÜ ATS hakkında',
     'A shared': 'Ortak bir',
     'beginning.': 'başlangıç.',
-    'The Alumni Tracking System connects İstanbul University’s graduates with university announcements, job postings and the people who share their history.':
-      'Mezun Takip Sistemi, İstanbul Üniversitesi mezunlarını üniversite duyuruları, iş ilanları ve aynı geçmişi paylaştıkları insanlarla buluşturur.',
+    'The Alumni Tracking System keeps İstanbul University students, graduates and staff in touch after graduation: one place for university announcements, job openings and applications.':
+      'Mezun Takip Sistemi, İstanbul Üniversitesi’nin öğrencilerini, mezunlarını ve personelini mezuniyetten sonra da bir arada tutar: üniversite duyuruları, iş ilanları ve başvurular tek bir yerde.',
     'Enter the workspace': 'Çalışma alanına gir',
     'People spending time together outdoors': 'Açık havada birlikte vakit geçiren insanlar',
+    'What you can do': 'Neler yapabilirsiniz',
+    'Find opportunities': 'Fırsatları bulun',
+    'Browse internships and jobs shared with the community, and apply in ATS or through the employer’s own link.':
+      'Toplulukla paylaşılan staj ve iş ilanlarına göz atın; ATS üzerinden ya da işverenin kendi bağlantısıyla başvurun.',
+    'Follow announcements': 'Duyuruları takip edin',
+    'Read news from the university, the career centre and the alumni office in one list.':
+      'Üniversitenin, kariyer merkezinin ve mezunlar ofisinin haberlerini tek bir listede okuyun.',
+    'Track applications': 'Başvurularınızı izleyin',
+    'See where each job application stands: submitted, reviewed, accepted or rejected.':
+      'Her iş başvurusunun durumunu görün: gönderildi, incelendi, kabul edildi ya da reddedildi.',
+    'Keep records current': 'Kayıtları güncel tutun',
+    'Administrators approve new accounts, assign roles and keep the information up to date.':
+      'Yöneticiler yeni hesapları onaylar, rol atar ve bilgileri güncel tutar.',
+    'Who it is for': 'Kimler için',
+    'Studying at İstanbul University: reads announcements and applies to job postings.':
+      'İstanbul Üniversitesi’nde okuyanlar: duyuruları okur ve iş ilanlarına başvurur.',
+    'Completed a degree: adds graduation year and city at sign-up, and applies to job postings.':
+      'Mezun olanlar: kayıt olurken mezuniyet yılını ve şehrini ekler, iş ilanlarına başvurur.',
+    'Career centre and alumni office: shares announcements and job postings.':
+      'Kariyer merkezi ve mezunlar ofisi: duyuru ve iş ilanı paylaşır.',
+    'Administrator': 'Yönetici',
+    'Approves new accounts, assigns roles and manages user records.': 'Yeni hesapları onaylar, rol atar ve kullanıcı kayıtlarını yönetir.',
+    'How to join': 'Nasıl katılırım',
+    'Choose student, graduate or staff and set a password.': 'Öğrenci, mezun ya da personel olarak seçin ve bir şifre belirleyin.',
+    'Wait for approval': 'Onayı bekleyin',
+    'An administrator checks the account and activates it.': 'Bir yönetici hesabı kontrol eder ve etkinleştirir.',
+    'Use your e-mail and password to open the workspace.': 'E-posta ve şifrenizle çalışma alanını açın.',
+    'Your data': 'Verileriniz',
+    'ATS keeps only what it needs: your e-mail, your role and your password in protected (hashed) form; for graduates also name, graduation year and city.':
+      'ATS yalnızca gerekenleri saklar: e-posta adresiniz, rolünüz ve korumalı (hash’lenmiş) şifreniz; mezunlar için ayrıca ad, mezuniyet yılı ve şehir.',
+    'It never asks for an ID number, birth date or home address, in line with KVKK, the Turkish personal data protection law.':
+      'KVKK’ya (Kişisel Verilerin Korunması Kanunu) uygun olarak kimlik numarası, doğum tarihi veya ev adresi istemez.',
+    'About this project': 'Bu proje hakkında',
+    'İÜ ATS is a student project for the Web Programming course (YBSB3001) at İstanbul University, Faculty of Economics, Management Information Systems, in the 2026 fall term. It is not an official university service, and the records you see are synthetic demo data.':
+      'İÜ ATS, İstanbul Üniversitesi İktisat Fakültesi Yönetim Bilişim Sistemleri bölümünde 2026 güz döneminde Web Programlama (YBSB3001) dersi için hazırlanmış bir öğrenci projesidir. Resmî bir üniversite hizmeti değildir; gördüğünüz kayıtlar yapay demo verileridir.',
+    'Built with NestJS, PostgreSQL and Prisma.': 'NestJS, PostgreSQL ve Prisma ile geliştirildi.',
 
     // Workspace: shared controls and messages
     'Try again': 'Tekrar dene',
@@ -268,7 +304,7 @@
     'Last response': 'Son yanıt',
 
     // Register page
-    'Join ATS İÜ': 'ATS İÜ’ye katılın',
+    'Join İÜ ATS': 'İÜ ATS’ye katılın',
     'Join the alumni': 'Mezun',
     'network.': 'ağına katılın.',
     'Students, graduates and staff of İstanbul University share announcements, career opportunities and the people behind them.':
@@ -359,13 +395,13 @@
     'Open the admin panel': 'Yönetim panelini aç',
 
     // Error pages
-    'Page not found — ATS İÜ': 'Sayfa bulunamadı — ATS İÜ',
+    'Page not found — İÜ ATS': 'Sayfa bulunamadı — İÜ ATS',
     'Page not found': 'Sayfa bulunamadı',
     'The page you requested could not be found.': 'İstediğiniz sayfa bulunamadı.',
     'No page was found at {path}.': '{path} adresinde bir sayfa bulunamadı.',
     'Back to the home page': 'Ana sayfaya dön',
     'Open workspace': 'Çalışma alanını aç',
-    'Something went wrong — ATS İÜ': 'Bir sorun oluştu — ATS İÜ',
+    'Something went wrong — İÜ ATS': 'Bir sorun oluştu — İÜ ATS',
     'Service error': 'Servis hatası',
     'Something went wrong': 'Bir sorun oluştu',
     'Something went wrong on our side. Please try again later.': 'Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.'

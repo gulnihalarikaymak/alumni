@@ -1,7 +1,7 @@
-# ATS İÜ brand
+# İÜ ATS brand
 
 ATS is the Alumni Tracking System, an Istanbul University Web Programming
-course project. The landing uses the short identity **ATS İÜ** and the
+course project. The landing uses the short identity **İÜ ATS** and the
 descriptor **Alumni Network**.
 
 ## Audience and tone
@@ -19,7 +19,7 @@ explains the action and its result directly.
 - The interface is in English and Turkish. Write the English text first and add
   its Turkish translation to `backend/public/i18n.js`; a text without one stays
   English. Records from the database and the API's error messages are not
-  translated. Preserve Turkish spelling in İstanbul Üniversitesi and ATS İÜ.
+  translated. Preserve Turkish spelling in İstanbul Üniversitesi and İÜ ATS.
 - In Turkish the descriptor is **Mezun Ağı** and the system is **Mezun Takip Sistemi**.
 - Use action labels such as Browse opportunities, Save posting and Delete user.
 - Link labels identify existing destinations. Represent future functionality

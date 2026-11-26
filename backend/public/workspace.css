@@ -266,6 +266,24 @@ input[type="radio"], input[type="checkbox"] { width: 1.15rem; height: 1.15rem; m
 
 .form-error { overflow-wrap: anywhere; padding: .85rem 1rem; border-left: 3px solid var(--danger-ink); color: var(--danger-ink); background: var(--danger-bg); }
 #action-error { margin-bottom: 1rem; }
+/* About page (/about) */
+.about-block { margin-top: clamp(2.5rem, 6vw, 5rem); padding-top: clamp(1.5rem, 3vw, 2.5rem); border-top: 1px solid var(--line); }
+.about-block h2 { margin-bottom: 1.25rem; }
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; }
+.about-grid article { padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); }
+.about-grid h3 { font-size: 1.6rem; margin-bottom: .5rem; }
+.about-grid p, .about-two p, .about-note p:not(.meta) { color: var(--muted); max-width: 62ch; }
+.about-roles { max-width: 56rem; }
+.about-roles dt { color: var(--ink); font-weight: 600; }
+.about-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.5rem, 5vw, 5rem); }
+.about-two p + p { margin-top: .75rem; }
+.about-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 1rem; counter-reset: step; }
+.about-steps li { display: grid; grid-template-columns: 2.4rem 1fr; column-gap: .9rem; counter-increment: step; }
+.about-steps li::before { content: counter(step); grid-row: span 2; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--tint); color: var(--accent); font: 400 1.3rem/1 var(--serif); }
+.about-steps span { color: var(--muted); }
+.about-note p + p { margin-top: .75rem; }
+@media (max-width: 42rem) { .about-two { grid-template-columns: minmax(0, 1fr); } }
+
 /* Admin panel (/admin) */
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .75rem; margin-bottom: clamp(1rem, 2vw, 2rem); }
 .stat { display: grid; gap: .3rem; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }

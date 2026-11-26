@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Workspace — ATS İÜ</title>
+  <title>Workspace — İÜ ATS</title>
   <link rel="icon" href="/emblem.svg" type="image/svg+xml">
   <script>
     try {
@@ -21,9 +21,9 @@
   <a class="skip" href="#main">Skip to content</a>
   <header class="site">
     <div class="bar">
-      <a class="brand" href="/" aria-label="ATS İÜ Alumni Network, home">
+      <a class="brand" href="/" aria-label="İÜ ATS Alumni Network, home">
         <span class="brand-mark" aria-hidden="true"></span>
-        <span>ATS <span lang="tr">İÜ</span><small>Alumni Network</small></span>
+        <span><span lang="tr">İÜ</span> ATS<small>Alumni Network</small></span>
       </a>
       <nav class="nav" id="workspace-nav" aria-label="Platform">
         <a href="/">Home</a>
@@ -72,12 +72,53 @@
 </details></template>
 <template id="about-page"><section class="workspace-intro">
   <div>
-    <p class="kicker">About ATS İÜ</p>
+    <p class="kicker">About İÜ ATS</p>
     <h1>A shared <em>beginning.</em></h1>
-    <p>The Alumni Tracking System connects İstanbul University’s graduates with university announcements, job postings and the people who share their history.</p>
-    <a class="btn" href="/platform">Enter the workspace <span aria-hidden="true">→</span></a>
+    <p>The Alumni Tracking System keeps İstanbul University students, graduates and staff in touch after graduation: one place for university announcements, job openings and applications.</p>
+    <div class="form-actions">
+      <a class="btn" href="/register">Create an account <span aria-hidden="true">→</span></a>
+      <a class="btn quiet" href="/job-postings">Browse opportunities</a>
+    </div>
   </div>
   <img src="/media/connection.webp" width="1600" height="1000" alt="People spending time together outdoors">
+</section>
+<section class="about-block" aria-labelledby="about-do">
+  <h2 id="about-do">What you can do</h2>
+  <div class="about-grid">
+    <article><h3>Find opportunities</h3><p>Browse internships and jobs shared with the community, and apply in ATS or through the employer’s own link.</p></article>
+    <article><h3>Follow announcements</h3><p>Read news from the university, the career centre and the alumni office in one list.</p></article>
+    <article><h3>Track applications</h3><p>See where each job application stands: submitted, reviewed, accepted or rejected.</p></article>
+    <article><h3>Keep records current</h3><p>Administrators approve new accounts, assign roles and keep the information up to date.</p></article>
+  </div>
+</section>
+<section class="about-block" aria-labelledby="about-who">
+  <h2 id="about-who">Who it is for</h2>
+  <dl class="record about-roles">
+    <dt>Student</dt><dd>Studying at İstanbul University: reads announcements and applies to job postings.</dd>
+    <dt>Graduate</dt><dd>Completed a degree: adds graduation year and city at sign-up, and applies to job postings.</dd>
+    <dt>Staff</dt><dd>Career centre and alumni office: shares announcements and job postings.</dd>
+    <dt>Administrator</dt><dd>Approves new accounts, assigns roles and manages user records.</dd>
+  </dl>
+</section>
+<div class="about-block about-two">
+  <section aria-labelledby="about-join">
+    <h2 id="about-join">How to join</h2>
+    <ol class="about-steps">
+      <li><strong>Register</strong><span>Choose student, graduate or staff and set a password.</span></li>
+      <li><strong>Wait for approval</strong><span>An administrator checks the account and activates it.</span></li>
+      <li><strong>Log in</strong><span>Use your e-mail and password to open the workspace.</span></li>
+    </ol>
+  </section>
+  <section aria-labelledby="about-data">
+    <h2 id="about-data">Your data</h2>
+    <p>ATS keeps only what it needs: your e-mail, your role and your password in protected (hashed) form; for graduates also name, graduation year and city.</p>
+    <p>It never asks for an ID number, birth date or home address, in line with KVKK, the Turkish personal data protection law.</p>
+  </section>
+</div>
+<section class="about-block about-note" aria-labelledby="about-project">
+  <h2 id="about-project">About this project</h2>
+  <p>İÜ ATS is a student project for the Web Programming course (YBSB3001) at İstanbul University, Faculty of Economics, Management Information Systems, in the 2026 fall term. It is not an official university service, and the records you see are synthetic demo data.</p>
+  <p class="meta">Built with NestJS, PostgreSQL and Prisma. <a href="/api/swagger">API documentation</a> · <a href="/api/health">System status</a></p>
 </section></template>
   <script type="module" src="/workspace.js"></script>
 </body>
