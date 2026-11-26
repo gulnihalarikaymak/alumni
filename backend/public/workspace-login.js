@@ -16,7 +16,7 @@ function loggedIn(user) {
   const logout = el('button', { class: 'btn quiet', type: 'button' }, t('Log out'));
   logout.addEventListener('click', async () => {
     logout.disabled = true;
-    try { await api('/auth/logout', 'POST'); } finally { location.reload(); }
+    try { sessionStorage.removeItem('menu'); await api('/auth/logout', 'POST'); } finally { location.reload(); }
   });
   return el('div', { class: 'stack' },
     el('h2', { id: 'login-form-title' }, t('You are logged in')),

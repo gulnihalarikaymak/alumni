@@ -72,6 +72,13 @@ button[hidden], [hidden] { display: none; }
 .masthead { position: fixed; z-index: 8; inset: 0 0 auto; color: #fffaf1; background: linear-gradient(to bottom, rgba(12,14,11,.37), transparent); }
 .masthead::before { content: ""; position: absolute; inset: 0; background: var(--color-paper-glass); opacity: 0; transition: opacity .3s; }
 .masthead-inner { position: relative; height: var(--nav-height); display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+/* Wide screens: logo | menu (centred) | buttons, the same three columns as the workspace
+   header, so the menu sits in the same place on every page and buttons cannot push it. */
+@media (min-width: 1201px) {
+  .masthead-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .masthead-inner > .brand { justify-self: start; }
+  .masthead-inner > .header-actions { justify-self: end; }
+}
 .masthead-inner::after { position: absolute; content: ""; left: var(--gutter); right: var(--gutter); bottom: 0; height: 1px; background: currentColor; opacity: .27; }
 .masthead.is-paper, .masthead.menu-open { color: var(--color-ink); }
 .masthead.is-paper::before, .masthead.menu-open::before { opacity: 1; }

@@ -68,8 +68,13 @@ a:hover { text-decoration-thickness: 2px; }
 [hidden] { display: none !important; }
 .bar, main, .site-foot { width: min(100% - clamp(2rem, 9vw, 10rem), 90rem); margin-inline: auto; }
 .site { border-bottom: 1px solid var(--line); }
-.bar { display: flex; align-items: center; min-height: 4.75rem; gap: clamp(1rem, 2.5vw, 4rem); }
-.brand { display: inline-flex; align-items: center; gap: .7rem; margin-right: auto; color: var(--ink); font: 400 1.85rem/.9 var(--serif); text-decoration: none; }
+/* Header: logo | menu (centred) | buttons, the same three columns as the landing header,
+   so the menu stays in one place on every page and buttons that appear cannot push it. */
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; min-height: 4.75rem; column-gap: clamp(1rem, 2.5vw, 4rem); }
+.bar-actions { justify-self: end; display: flex; align-items: center; gap: .6rem; }
+.bar .nav { flex-wrap: nowrap; gap: .35rem clamp(20px, 2.3vw, 40px); }
+.bar .nav a { font-size: .845rem; font-weight: 500; white-space: nowrap; }
+.brand { justify-self: start; display: inline-flex; align-items: center; gap: .7rem; color: var(--ink); font: 400 1.85rem/.9 var(--serif); text-decoration: none; }
 .brand-mark { width: 2.65rem; aspect-ratio: 1; background: currentColor; mask: url("/emblem.svg") center / contain no-repeat; }
 .brand small { display: block; font: 500 .66rem/1.3 var(--sans); letter-spacing: .075em; margin-top: .3rem; }
 .nav, .site-foot nav, .resources nav { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem clamp(.7rem, 1.5vw, 2rem); }
@@ -184,7 +189,10 @@ textarea { resize: vertical; }
 .health-json { color: #f4f1eb; background: #101b2a; padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; }
 /* Same menu switch as the landing header (1200px): the seven links move behind the Menu button. */
 @media (max-width: 75rem) {
-  .bar { flex-wrap: wrap; padding-block: .65rem; min-height: 4.2rem; gap: .4rem; }
+  /* narrow screens: one row of logo, Menu and buttons; the menu opens below it */
+  .bar { display: flex; flex-wrap: wrap; padding-block: .65rem; min-height: 4.2rem; gap: .4rem; }
+  .brand { margin-right: auto; }
+  .bar .nav { flex-wrap: wrap; }
   .nav { order: 3; width: 100%; padding-bottom: .3rem; }
   .lang-in-header { display: none; }
   .lang-in-menu { display: inline-flex; width: auto; height: auto; min-height: 2.75rem; padding: 0; border: 0; border-radius: 0; color: var(--accent); font: 500 .91rem var(--sans); letter-spacing: 0; text-decoration: underline; text-underline-offset: .3em; }
@@ -198,6 +206,7 @@ textarea { resize: vertical; }
   .nav { gap: 0 .9rem; }
   .nav a { min-height: 2.75rem; font-size: .9rem; }
   .bar { column-gap: .4rem; }
+  .bar-actions { gap: .4rem; }
   .brand { font-size: 1.6rem; gap: .5rem; }
   .bar-action, .workspace-menu { padding: 0 .7rem; font-size: .82rem; }
   .bar-action svg { display: none; }

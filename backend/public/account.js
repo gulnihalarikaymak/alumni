@@ -7,6 +7,10 @@
 (async () => {
   const { t } = window.i18n;
 
+  // The last menu of this browser tab session: drawn at once, so a logged-in user's
+  // longer menu does not appear (and move the header) only after the request below.
+  try { drawMenu(JSON.parse(sessionStorage.getItem('menu')) ?? []); } catch { /* no saved menu */ }
+
   let me;
   try {
     const response = await fetch('/api/auth/me', { headers: { Accept: 'application/json' }, cache: 'no-store' });
@@ -16,6 +20,7 @@
   }
 
   drawMenu(me.menu ?? []);
+  try { sessionStorage.setItem('menu', JSON.stringify(me.menu ?? [])); } catch { /* storage blocked */ }
   if (me.user) showLogout(me.user);
 
   function drawMenu(items) {
@@ -48,6 +53,7 @@
     logout.addEventListener('click', async () => {
       logout.disabled = true;
       try {
+        sessionStorage.removeItem('menu'); // the next page starts with the visitor menu
         await fetch('/api/auth/logout', { method: 'POST' });
       } finally {
         location.reload(); // the page reloads without the session
