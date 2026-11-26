@@ -318,6 +318,7 @@
 
     // Admin panel
     'Admin': 'Yönetim',
+    '{count} waiting for approval': '{count} hesap onay bekliyor',
     'Admin panel': 'Yönetim paneli',
     'Approve accounts, assign roles and manage the records.': 'Hesapları onaylayın, rol atayın ve kayıtları yönetin.',
     'Waiting for approval': 'Onay bekleyenler',

@@ -304,8 +304,13 @@ their menu from it (`backend/public/account.js`).
 | Home, Opportunities, Announcements, About | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Workspace (`/platform`; a visitor is sent to `/login`) | | ✓ | ✓ | ✓ | ✓ |
 | Applications (`/job-applications`) | | ✓ | ✓ | ✓ | ✓ |
-| Users (`/users`), Admin (`/admin`) | | | | | ✓ |
 | My account (`/account`, 4.14) | | ✓ | ✓ | ✓ | ✓ |
+
+The admin panel is not a menu link. An `ADMIN` gets a separate burgundy **Admin** button with a
+shield next to **Log out**, with the number of accounts waiting for approval as a badge
+(`GET /api/admin/summary`); the user list opens from the panel. Below 1400px the button shows
+only the shield and the count; on a phone it moves into the menu as "Admin (12)". After login,
+an `ADMIN` starts on `/admin`, everyone else on `/platform` (unless `?next=` names a page).
 
 The menu only hides links. Access is still decided by `AuthMiddleware` (4.12):
 a user who types `/users` gets the page if their login allows it.

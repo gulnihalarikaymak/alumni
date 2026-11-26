@@ -7,9 +7,11 @@ const { t } = window.i18n; // interface language, see i18n.js
 
 // The page to open after login: "?next=/users" when the auth middleware sent the
 // visitor here. Only a path on this site is accepted ("//evil.example" is not).
-function nextPage() {
+// Without one, an ADMIN starts in the admin panel and everyone else in the workspace.
+function nextPage(user) {
   const next = new URLSearchParams(location.search).get('next');
-  return next && next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/login') ? next : '/platform';
+  if (next && next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/login')) return next;
+  return user.role === 'ADMIN' ? '/admin' : '/platform';
 }
 
 function loggedIn(user) {
@@ -21,7 +23,8 @@ function loggedIn(user) {
   return el('div', { class: 'stack' },
     el('h2', { id: 'login-form-title' }, t('You are logged in')),
     details([[t('E-mail'), user.email], [t('Role'), badge(user.role, true)], [t('Status'), badge(user.status)]]),
-    el('div', { class: 'form-actions' }, buttonLink('/platform', t('Enter the workspace')), logout));
+    el('div', { class: 'form-actions' },
+      user.role === 'ADMIN' ? buttonLink('/admin', t('Admin panel')) : buttonLink('/platform', t('Enter the workspace')), logout));
 }
 
 function loginForm() {
@@ -41,8 +44,8 @@ function loginForm() {
     errorBox.hidden = true;
     const values = new FormData(formNode);
     try {
-      await api('/auth/login', 'POST', { email: values.get('email'), password: values.get('password') });
-      location.assign(nextPage());
+      const { user } = await api('/auth/login', 'POST', { email: values.get('email'), password: values.get('password') });
+      location.assign(nextPage(user));
     } catch (error) {
       // 401: one message for a wrong e-mail or password; 403: the API says which status the account has
       errorBox.textContent = error.status === 401 ? t('E-mail or password is incorrect.') : error.message;

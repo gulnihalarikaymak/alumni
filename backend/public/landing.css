@@ -75,7 +75,7 @@ button[hidden], [hidden] { display: none; }
 /* Wide screens: logo | menu (centred) | buttons, the same three columns as the workspace
    header, so the menu sits in the same place on every page and buttons cannot push it. */
 @media (min-width: 1201px) {
-  .masthead-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .masthead-inner { display: grid; grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr); }
   .masthead-inner > .brand { justify-self: start; }
   .masthead-inner > .header-actions { justify-self: end; }
 }
@@ -111,6 +111,12 @@ button.platform-link { background: transparent; color: inherit; font-family: var
 .platform-link.primary:hover { background: #ead1b1; border-color: #ead1b1; }
 .is-paper .platform-link.primary, .menu-open .platform-link.primary { background: var(--color-ink); color: var(--color-background); border-color: var(--color-ink); }
 .is-paper .platform-link.primary:hover, .menu-open .platform-link.primary:hover { background: var(--color-accent); border-color: var(--color-accent); }
+/* "Admin" (ADMIN only, account.js): burgundy with a shield, so it stands apart from the menu */
+.platform-link.admin-action { gap: 7px; background: var(--color-accent); border-color: var(--color-accent); color: var(--color-background); }
+.platform-link.admin-action:hover { filter: brightness(1.12); background: var(--color-accent); }
+.platform-link.admin-action svg { display: block; } /* the shield stays even where other button icons hide */
+.primary-nav a.admin-in-menu { display: none; } /* the same link inside the menu, shown on phones only */
+.admin-action .count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--color-background); color: var(--color-accent); font-size: .7rem; font-weight: 700; }
 .platform-link svg, .text-link svg, .ink-link svg, .back-top svg { width: 16px; height: 16px; }
 .platform-link:hover { background: #ffffff20; }
 .is-paper .platform-link:hover, .menu-open .platform-link:hover { background: var(--color-hover); }
@@ -233,6 +239,8 @@ body::after { content: ""; pointer-events: none; position: fixed; z-index: 9; in
 }
 @media (max-width: 700px) {
   .register-action { display: none; } /* no room on a phone; /login links to /register */
+  .admin-action { display: none; } /* no room on a phone: the menu has the Admin link instead */
+  .admin-in-menu { display: flex !important; }
   :root { --nav-height: 68px; --gutter: clamp(20px,5.5vw,32px); }
   .emblem { width: 37px; height: 37px; }
   .wordmark { font-size: 1.62rem; }
@@ -285,4 +293,11 @@ body::after { content: ""; pointer-events: none; position: fixed; z-index: 9; in
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* Between the menu switch (1200px) and 1400px an admin's buttons are too wide:
+   the Admin button keeps its shield and count, and the word is read aloud only. */
+@media (min-width: 1201px) and (max-width: 1400px) {
+  .admin-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .platform-link.admin-action { padding: 9px 11px; }
 }

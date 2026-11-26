@@ -70,7 +70,7 @@ a:hover { text-decoration-thickness: 2px; }
 .site { border-bottom: 1px solid var(--line); }
 /* Header: logo | menu (centred) | buttons, the same three columns as the landing header,
    so the menu stays in one place on every page and buttons that appear cannot push it. */
-.bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; min-height: 4.75rem; column-gap: clamp(1rem, 2.5vw, 4rem); }
+.bar { display: grid; grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr); align-items: center; min-height: 4.75rem; column-gap: clamp(1rem, 2.5vw, 4rem); }
 .bar-actions { justify-self: end; display: flex; align-items: center; gap: .6rem; }
 .bar .nav { flex-wrap: nowrap; gap: .35rem clamp(20px, 2.3vw, 40px); }
 .bar .nav a { font-size: .845rem; font-weight: 500; white-space: nowrap; }
@@ -86,6 +86,12 @@ button.bar-action { background: transparent; font-family: var(--sans); cursor: p
 /* "Register" is the filled button next to the outlined "Log in" */
 .bar-action.primary { background: var(--action); color: var(--on-action); border-color: var(--action); }
 .bar-action.primary:hover, .bar-action.primary[aria-current] { background: var(--accent); border-color: var(--accent); }
+/* "Admin" (ADMIN only, account.js): burgundy with a shield, so it stands apart from the menu */
+.bar-action.admin-action { gap: .45rem; background: var(--accent); border-color: var(--accent); color: var(--page); }
+.bar-action.admin-action:hover, .bar-action.admin-action[aria-current] { background: var(--action); border-color: var(--action); color: var(--on-action); }
+.bar-action.admin-action svg { width: 1.1rem; height: 1.1rem; }
+.nav a.admin-in-menu { display: none; } /* the same link inside the menu, shown on phones only */
+.admin-action .count { display: inline-grid; place-items: center; min-width: 1.35rem; height: 1.35rem; padding: 0 .35rem; border-radius: 1rem; background: var(--page); color: var(--accent); font-size: .72rem; font-weight: 700; }
 .bar-action:hover, .bar-action[aria-current] { background: var(--tint); border-color: var(--muted); }
 .theme-toggle { display: grid; place-items: center; background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 50%; height: 2.75rem; width: 2.75rem; cursor: pointer; }
 .theme-toggle svg { width: 1.35rem; }
@@ -211,6 +217,8 @@ textarea { resize: vertical; }
   .bar { column-gap: .4rem; }
   .bar-actions { gap: .4rem; }
   .register-action { display: none; } /* no room on a phone; /login links to /register */
+  .admin-action { display: none; } /* no room on a phone: the menu has the Admin link instead */
+  .admin-in-menu { display: inline-flex !important; }
   .brand { font-size: 1.6rem; gap: .5rem; }
   .bar-action, .workspace-menu { padding: 0 .7rem; font-size: .82rem; }
   .bar-action svg { display: none; }
@@ -265,3 +273,11 @@ td select:disabled { opacity: .7; }
 button:disabled { cursor: wait; opacity: .65; }
 .missing .sub { overflow-wrap: anywhere; }
 td .actions { flex-wrap: nowrap; }
+
+/* Between the menu switch (75rem) and 1400px an admin's buttons are too wide:
+   the Admin button keeps its shield and count, and the word is read aloud only. */
+@media (min-width: 75.0625rem) and (max-width: 87.5rem) {
+  .admin-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .bar-action.admin-action { padding: 0 .7rem; }
+  .bar { column-gap: 1rem; }
+}

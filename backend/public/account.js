@@ -6,6 +6,9 @@
 // and for a logged-in user "Log in" becomes "Log out" and "Register" disappears.
 (async () => {
   const { t } = window.i18n;
+  // A shield: the admin button's icon (a fixed string, no user data)
+  const SHIELD_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">' +
+    '<path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></svg>';
 
   // The last menu of this browser tab session: drawn at once, so a logged-in user's
   // longer menu does not appear (and move the header) only after the request below.
@@ -61,5 +64,42 @@
     });
     login.replaceWith(logout);
     document.querySelector('.register-action')?.remove(); // a logged-in user does not register again
+    if (user.role === 'ADMIN') showAdmin(logout);
+  }
+
+  // An ADMIN gets the admin panel as a button of its own before "Log out", not as one
+  // more menu link, with the number of accounts waiting for approval as a badge.
+  async function showAdmin(logout) {
+    const admin = document.createElement('a');
+    admin.href = '/admin';
+    // the same button style as "Log out": bar-action (workspace) or platform-link (landing)
+    admin.className = (logout.classList.contains('bar-action') ? 'bar-action' : 'platform-link') + ' admin-action';
+    admin.insertAdjacentHTML('afterbegin', SHIELD_ICON);
+    const label = document.createElement('span');
+    label.className = 'admin-label';
+    label.textContent = t('Admin');
+    admin.append(label);
+    if (location.pathname === '/admin') admin.setAttribute('aria-current', 'page');
+    logout.before(admin);
+    // On a phone the header has no room for it: the same link goes into the menu (CSS picks one)
+    const menuLink = document.createElement('a');
+    menuLink.href = '/admin';
+    menuLink.className = 'admin-in-menu';
+    menuLink.textContent = t('Admin');
+    const nav = document.querySelector('#workspace-nav, #primary-nav');
+    nav?.insertBefore(menuLink, nav.querySelector('.lang-in-menu'));
+
+    try {
+      const response = await fetch('/api/admin/summary', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+      const pending = (await response.json()).users.byStatus.PENDING;
+      if (pending > 0) {
+        const badge = document.createElement('span');
+        badge.className = 'count';
+        badge.textContent = pending;
+        admin.append(badge);
+        menuLink.textContent = t('Admin') + ' (' + pending + ')';
+        admin.setAttribute('aria-label', t('Admin') + ', ' + t('{count} waiting for approval', { count: pending }));
+      }
+    } catch { /* no badge when the summary cannot be read */ }
   }
 })();
