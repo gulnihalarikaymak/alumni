@@ -1,4 +1,4 @@
-import { el } from './workspace-ui.js';
+import { currentUser, el } from './workspace-ui.js';
 import { editRecord, listRecords, showRecord } from './workspace-records.js';
 import { listApplications, postingApplications, showApplication } from './workspace-applications.js';
 import { healthPage } from './health-status.js';
@@ -24,6 +24,11 @@ async function pageContent() {
   if (path === '/platform' || path === '/about') {
     const page = document.getElementById(section + '-page').content.cloneNode(true);
     translate(page);
+    // A card with data-roles="ADMIN" is only for those roles (the same rule as the API)
+    const user = await currentUser();
+    page.querySelectorAll('[data-roles]').forEach(node => {
+      if (!user || !node.dataset.roles.split(' ').includes(user.role)) node.remove();
+    });
     return page;
   }
   if (path === '/api/health') return healthPage();

@@ -149,6 +149,20 @@ export function deleteButton(path, destination, prompt, label = t('Delete')) {
   return button;
 }
 
+// Who is logged in (null for a visitor): one GET /api/auth/me per page, shared by every module.
+let viewer;
+export function currentUser() {
+  viewer ??= api('/auth/me').then(response => response.user);
+  return viewer;
+}
+
+// May this user change records of this type? The same rules as the server
+// (backend/src/auth/access-rules.ts): a visitor changes nothing, only an ADMIN
+// changes users. Hiding a button is only a convenience; the API still checks.
+export function canChange(user, type) {
+  return Boolean(user) && (type !== 'users' || user.role === 'ADMIN');
+}
+
 export function dataLink(path) {
   return el('p', { class: 'foot' }, link('/api' + path, t('View JSON')));
 }
