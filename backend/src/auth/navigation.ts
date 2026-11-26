@@ -17,14 +17,14 @@ const LOGGED_IN: Viewer[] = ['STUDENT', 'ALUMNI', 'STAFF', 'ADMIN'];
 
 // In menu order. A visitor sees only the public pages; job applications need a
 // login. The admin panel is not a menu link: an ADMIN gets a separate "Admin"
-// button next to "Log out" (account.js), and the user list opens from the panel.
+// button in the header and a row in the ☰ panel (account.js); the user list opens
+// from the panel. "My account" is also in the ☰ panel, not in the menu.
 const MENU: { item: MenuItem; roles: Viewer[] }[] = [
   { item: { label: 'Home', href: '/' }, roles: EVERYONE },
   { item: { label: 'Workspace', href: '/platform' }, roles: LOGGED_IN }, // needs a login (access-rules.ts)
   { item: { label: 'Opportunities', href: '/job-postings' }, roles: EVERYONE },
   { item: { label: 'Announcements', href: '/announcements' }, roles: EVERYONE },
   { item: { label: 'Applications', href: '/job-applications' }, roles: LOGGED_IN },
-  { item: { label: 'My account', href: '/account' }, roles: LOGGED_IN }, // task 7
   { item: { label: 'About', href: '/about' }, roles: EVERYONE },
 ];
 

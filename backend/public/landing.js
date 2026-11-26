@@ -1,8 +1,6 @@
 (() => {
   const hero = document.querySelector(".hero");
   const masthead = document.querySelector("#masthead");
-  const menu = document.querySelector(".menu-toggle");
-  const nav = document.querySelector(".primary-nav");
   const progress = document.querySelector(".page-progress");
   // The historical double-click preview can still open the real local ATS pages.
   if (location.protocol === "file:" || location.pathname.endsWith("/backend/public/index.html")) {
@@ -22,7 +20,6 @@
   const frameControls = document.querySelector(".frame-controls");
   const frameNumber = document.querySelector(".frame-number b");
   const frameName = document.querySelector(".frame-name");
-  const compact = matchMedia("(max-width: 1200px)");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const gsap = window.gsap;
   let frame = 0;
@@ -31,40 +28,7 @@
   let displayTween;
   let previousLayer;
   let scrollFrame = 0;
-
-  function setMenu(open, returnFocus = false) {
-    masthead.classList.toggle("menu-open", open);
-    menu.setAttribute("aria-expanded", String(open));
-    menu.setAttribute("aria-label", t(open ? "Close navigation" : "Open navigation"));
-    if (returnFocus) menu.focus();
-  }
-
-  // Light / dark theme, shared with the workspace pages through localStorage "theme".
-  const themeButton = document.querySelector(".theme-toggle");
-  const root = document.documentElement;
-  function setThemeLabel() {
-    themeButton.setAttribute("aria-label", t(root.dataset.theme === "dark" ? "Switch to light theme" : "Switch to dark theme"));
-  }
-  themeButton.hidden = false;
-  setThemeLabel();
-  themeButton.addEventListener("click", () => {
-    root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
-    setThemeLabel();
-    try { localStorage.setItem("theme", root.dataset.theme); } catch {}
-  });
-
-  menu.addEventListener("click", () => setMenu(menu.getAttribute("aria-expanded") !== "true"));
-  nav.addEventListener("click", () => setMenu(false));
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && menu.getAttribute("aria-expanded") === "true") setMenu(false, true);
-  });
-  document.addEventListener("click", event => {
-    if (!masthead.contains(event.target)) setMenu(false);
-  });
-  masthead.addEventListener("focusout", event => {
-    if (event.relatedTarget && !masthead.contains(event.relatedTarget)) setMenu(false);
-  });
-  compact.addEventListener("change", () => setMenu(false));
+  // The ☰ menu, the theme and the language are in account.js, shared with the workspace pages.
 
   function updateScroll() {
     scrollFrame = 0;

@@ -12,8 +12,8 @@
   <link rel="stylesheet" href="landing.css">
   <link rel="stylesheet" href="chapters.css">
   <noscript><style>
-    @media (max-width: 950px) {
-      .masthead .menu-toggle { display: none; }
+    /* Without JavaScript there is no ☰ panel: keep the menu in the header, scrolling sideways */
+    @media (max-width: 1200px) {
       .masthead .primary-nav { display: flex; overflow-x: auto; gap: 1rem; padding-block: 0; }
       .masthead .primary-nav a { font-size: .85rem; min-height: 44px; white-space: nowrap; }
     }
@@ -43,14 +43,13 @@
         <a href="/job-postings">Opportunities</a>
         <a href="/announcements">Announcements</a>
         <a href="/about">About</a>
-        <button type="button" class="lang-toggle lang-in-menu" data-style="full" hidden></button>
       </nav>
       <div class="header-actions">
         <a class="platform-link account-action" href="/login">Log in</a>
         <a class="platform-link primary register-action" href="/register">Register</a>
-        <button type="button" class="lang-toggle lang-in-header" hidden></button>
-        <button type="button" class="theme-toggle" aria-label="Switch to dark theme" title="Switch theme" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/></svg></button>
-        <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation"><span></span><span></span></button>
+        <!-- ☰: the account and settings panel; on narrow screens also the menu (account.js) -->
+        <button type="button" class="menu-button" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu" hidden><span></span><span></span><span></span></button>
+        <div class="site-menu" id="site-menu" hidden></div>
       </div>
     </div>
     <div class="page-progress" aria-hidden="true"></div>

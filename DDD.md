@@ -304,13 +304,22 @@ their menu from it (`backend/public/account.js`).
 | Home, Opportunities, Announcements, About | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Workspace (`/platform`; a visitor is sent to `/login`) | | ✓ | ✓ | ✓ | ✓ |
 | Applications (`/job-applications`) | | ✓ | ✓ | ✓ | ✓ |
-| My account (`/account`, 4.14) | | ✓ | ✓ | ✓ | ✓ |
 
-The admin panel is not a menu link. An `ADMIN` gets a separate burgundy **Admin** button with a
-shield next to **Log out**, with the number of accounts waiting for approval as a badge
-(`GET /api/admin/summary`); the user list opens from the panel. Below 1400px the button shows
-only the shield and the count; on a phone it moves into the menu as "Admin (12)". After login,
-an `ADMIN` starts on `/admin`, everyone else on `/platform` (unless `?next=` names a page).
+The ☰ button at the right of the header opens one panel for the account and the settings:
+
+| ☰ panel row | Visitor | Logged in | `ADMIN` |
+|---|:---:|:---:|:---:|
+| Logged in as (e-mail and role) | | ✓ | ✓ |
+| My account (`/account`, 4.14) | | ✓ | ✓ |
+| Admin panel (`/admin`), with the number waiting for approval | | | ✓ |
+| Log in, Register | ✓ | | |
+| Settings: language (Türkçe / English), theme (light / dark) | ✓ | ✓ | ✓ |
+| Log out | | ✓ | ✓ |
+
+Below 1200px the menu links move into the same panel, so ☰ is the only menu button.
+An `ADMIN` also keeps a burgundy **Admin** button with a shield and the count in the header
+(hidden on phones, where the panel row is enough); the user list opens from the admin panel.
+After login, an `ADMIN` starts on `/admin`, everyone else on `/platform` (unless `?next=` names a page).
 
 The menu only hides links. Access is still decided by `AuthMiddleware` (4.12):
 a user who types `/users` gets the page if their login allows it.

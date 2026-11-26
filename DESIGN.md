@@ -32,13 +32,17 @@ midnight navy surfaces, ivory text and a light rose accent for readable links.
 ## Components and motion
 
 - The landing and the workspace share one menu, with the same links in the same order:
-  Home, Workspace, Opportunities, Announcements, Applications, Users, About, and a
-  Log in and Register buttons (one Log out button once logged in; Register is hidden on phones), a TR/EN language button and a light/dark theme button on the
-  right. Each choice is saved once (`localStorage` keys `lang` and `theme`) and
+  Home, Workspace, Opportunities, Announcements, Applications, About (by role). On the
+  right a visitor sees Log in and Register (Register hidden on phones), an admin sees
+  the burgundy Admin button, and everyone has the ☰ button at the far right. ☰ opens
+  one panel (`account.js`): who is logged in, My account, the admin panel, the settings
+  (language and theme as two-way switches) and Log out, or Log in and Register for a
+  visitor. Each setting is saved once (`localStorage` keys `lang` and `theme`) and
   applies to every page; without a saved choice the page follows the browser's
-  language and the system theme. Each header keeps its own look, but both use three columns (logo, centred menu, buttons), so the menu sits in the same place on every page and buttons that appear or change cannot move it. Below 1200px both
-  move the links behind a keyboard-operable menu button, and the language choice
-  moves into that menu.
+  language and the system theme. Each header keeps its own look, but both use three
+  columns (logo, centred menu, buttons), so the menu sits in the same place on every
+  page and buttons that appear or change cannot move it. Below 1200px the menu links
+  move into the ☰ panel. The panel closes with Esc (focus returns to ☰) or a click outside.
 - The fixed landing navigation changes from light text over the photograph to
   dark text on an ivory surface.
 - The hero uses word reveals, a photographic gallery, restrained scale motion

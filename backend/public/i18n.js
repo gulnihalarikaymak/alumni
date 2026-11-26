@@ -320,6 +320,16 @@
     'Admin': 'Yönetim',
     '{count} waiting for approval': '{count} hesap onay bekliyor',
     'Admin panel': 'Yönetim paneli',
+
+    // The ☰ panel (account.js)
+    'Open menu': 'Menüyü aç',
+    'Close menu': 'Menüyü kapat',
+    'Logged in as': 'Giriş yapan',
+    'Settings': 'Ayarlar',
+    'Language': 'Dil',
+    'Theme': 'Tema',
+    'Light': 'Açık',
+    'Dark': 'Koyu',
     'Approve accounts, assign roles and manage the records.': 'Hesapları onaylayın, rol atayın ve kayıtları yönetin.',
     'Waiting for approval': 'Onay bekleyenler',
     'No accounts are waiting for approval.': 'Onay bekleyen hesap yok.',
@@ -419,27 +429,17 @@
     }));
   }
 
-  // Every .lang-toggle button switches to the other language and reloads the page.
-  function setUpButtons() {
-    const other = lang === 'tr' ? 'en' : 'tr';
-    for (const button of document.querySelectorAll('.lang-toggle')) {
-      button.textContent = button.dataset.style === 'full' ? (other === 'tr' ? 'Türkçe' : 'English') : other.toUpperCase();
-      button.lang = other;
-      button.setAttribute('aria-label', other === 'tr' ? 'Türkçe' : 'English');
-      button.title = other === 'tr' ? 'Türkçe' : 'English';
-      button.hidden = false;
-      button.addEventListener('click', () => {
-        try { localStorage.setItem('lang', other); } catch {}
-        location.reload();
-      });
-    }
+  // Saves the chosen language and reloads the page in it (the ☰ panel calls this, account.js).
+  function setLanguage(next) {
+    if (next === lang) return;
+    try { localStorage.setItem('lang', next); } catch {}
+    location.reload();
   }
 
   function translatePage() {
     document.title = t(document.title);
     translateHeadline();
     translate(document.body);
-    setUpButtons();
   }
 
   window.i18n = {
@@ -448,6 +448,7 @@
     t,
     count,
     translate,
-    translatePage
+    translatePage,
+    setLanguage
   };
 })();
