@@ -284,7 +284,7 @@ and a protected page redirects to `/login?next=<page>`.
 | | Without login | Login required | `ADMIN` only (`403` for other roles) |
 |---|---|---|---|
 | JSON API | `GET` announcements and job postings (list and one), `GET /api/health`, Swagger, `POST /api/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | everything else: every `POST`/`PUT`/`PATCH`/`DELETE`, users, job applications (also under a posting or a user), `GET /api/account` | `GET /api/admin/summary`; `POST`, `PUT`, `PATCH`, `DELETE` on `/api/users` |
-| Pages | `/`, `/platform`, `/about`, announcements and job postings (list and one), `/register`, `/login`, `/404` | `/users…`, `/job-applications…`, `/admin`, `/account`, every `…/create` and `…/edit` page, `/job-postings/:id/applications` | (`/admin` shows "Only admins" to other roles: its data is `ADMIN` only) |
+| Pages | `/`, `/about`, announcements and job postings (list and one), `/register`, `/login`, `/404` | `/platform` (the workspace), `/users…`, `/job-applications…`, `/admin`, `/account`, every `…/create` and `…/edit` page, `/job-postings/:id/applications` | (`/admin` shows "Only admins" to other roles: its data is `ADMIN` only) |
 
 Apart from the `ADMIN` column, any logged-in user passes; other role checks come in week 11. An unknown `/api` path
 answers `401` to a visitor and `404` after login.
@@ -301,7 +301,8 @@ their menu from it (`backend/public/account.js`).
 
 | Menu link | Visitor | `STUDENT` | `ALUMNI` | `STAFF` | `ADMIN` |
 |---|:---:|:---:|:---:|:---:|:---:|
-| Home, Workspace, Opportunities, Announcements, About | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Home, Opportunities, Announcements, About | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Workspace (`/platform`; a visitor is sent to `/login`) | | ✓ | ✓ | ✓ | ✓ |
 | Applications (`/job-applications`) | | ✓ | ✓ | ✓ | ✓ |
 | Users (`/users`), Admin (`/admin`) | | | | | ✓ |
 | My account (`/account`, 4.14) | | ✓ | ✓ | ✓ | ✓ |

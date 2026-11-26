@@ -19,7 +19,7 @@ const LOGGED_IN: Viewer[] = ['STUDENT', 'ALUMNI', 'STAFF', 'ADMIN'];
 // login; the user list and the admin panel are for account managers (ADMIN).
 const MENU: { item: MenuItem; roles: Viewer[] }[] = [
   { item: { label: 'Home', href: '/' }, roles: EVERYONE },
-  { item: { label: 'Workspace', href: '/platform' }, roles: EVERYONE },
+  { item: { label: 'Workspace', href: '/platform' }, roles: LOGGED_IN }, // needs a login (access-rules.ts)
   { item: { label: 'Opportunities', href: '/job-postings' }, roles: EVERYONE },
   { item: { label: 'Announcements', href: '/announcements' }, roles: EVERYONE },
   { item: { label: 'Applications', href: '/job-applications' }, roles: LOGGED_IN },

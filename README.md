@@ -139,7 +139,7 @@ flowchart LR
 | Address | What it is |
 |---|---|
 | `http://localhost:3000/` | Public Beyond the Years landing |
-| `http://localhost:3000/platform` | ATS workspace |
+| `http://localhost:3000/platform` | ATS workspace (needs a login; visitors are sent to `/login`) |
 | `http://localhost:3000/users` | 📄 Web pages for users |
 | `http://localhost:3000/announcements` | 📄 Web pages for announcements |
 | `http://localhost:3000/job-postings` | 📄 Web pages for job postings, and each posting's applications |
@@ -370,7 +370,7 @@ In Postman, run `0 - Log in as admin` first; its `adminEmail` and `adminPassword
 
 **Admin panel.** `/admin` shows counts (`GET /api/admin/summary`), the accounts waiting for approval (Approve / Reject) and every user with a role and a status control (Save / Delete), plus links to manage announcements, job postings and applications. Any other role sees "Only admins can open this page". An admin cannot change their own role, deactivate or delete their own account (`400`), so the panel never locks its last admin out. Details in [DDD.md §4.1 and §4.12](DDD.md).
 
-**Menu by role.** `GET /api/auth/me` also returns `menu`, the header links for the role (`backend/src/auth/navigation.ts`). `backend/public/account.js` draws the header menu from it on the landing and the workspace. A visitor sees Home, Workspace, Opportunities, Announcements and About; every logged-in user also gets Applications and My account; an `ADMIN` also gets Users and Admin. The HTML holds the visitor's menu, so it works without JavaScript. Hiding a link does not protect a page: the middleware still decides. Details in [DDD.md §4.13](DDD.md).
+**Menu by role.** `GET /api/auth/me` also returns `menu`, the header links for the role (`backend/src/auth/navigation.ts`). `backend/public/account.js` draws the header menu from it on the landing and the workspace. A visitor sees Home, Opportunities, Announcements and About; every logged-in user also gets Workspace, Applications and My account (the "Enter ATS Platform" buttons send a visitor to `/login`, then on to the workspace); an `ADMIN` also gets Users and Admin. The HTML holds the visitor's menu, so it works without JavaScript. Hiding a link does not protect a page: the middleware still decides. Details in [DDD.md §4.13](DDD.md).
 
 **My account.** `/account` is each user's own page. `GET /api/account` has no id in the URL and always reads the logged-in user, so it never shows someone else's data. Every role sees its account details; an `ALUMNI` user also sees their alumni profile; `ALUMNI` and `STUDENT` see their own job applications; `STAFF` get shortcuts to publish announcements and job postings; an `ADMIN` gets a shortcut to the admin panel. Details in [DDD.md §4.14](DDD.md).
 
