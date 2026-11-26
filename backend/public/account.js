@@ -1,9 +1,9 @@
 // The header's menu and account button, on the landing and on every workspace page.
 // In the HTML the menu holds the visitor's links and the account button is a
-// "Log in" link to /login, so both work without JavaScript.
+// "Log in" link to /login next to a "Register" link, so both work without JavaScript.
 // GET /api/auth/me says who is logged in and which menu links their role gets
 // (task 6, backend/src/auth/navigation.ts): the menu is drawn from that list,
-// and "Log in" becomes "Log out" for a logged-in user.
+// and for a logged-in user "Log in" becomes "Log out" and "Register" disappears.
 (async () => {
   const { t } = window.i18n;
 
@@ -60,5 +60,6 @@
       }
     });
     login.replaceWith(logout);
+    document.querySelector('.register-action')?.remove(); // a logged-in user does not register again
   }
 })();

@@ -83,6 +83,9 @@ a:hover { text-decoration-thickness: 2px; }
 .bar-action { display: inline-flex; align-items: center; gap: .7rem; min-height: 2.75rem; padding: 0 1.1rem; border: 1px solid var(--line); border-radius: 2rem; color: var(--ink); font-size: .88rem; font-weight: 500; text-decoration: none; white-space: nowrap; }
 .bar-action svg { width: 1rem; height: 1rem; }
 button.bar-action { background: transparent; font-family: var(--sans); cursor: pointer; }
+/* "Register" is the filled button next to the outlined "Log in" */
+.bar-action.primary { background: var(--action); color: var(--on-action); border-color: var(--action); }
+.bar-action.primary:hover, .bar-action.primary[aria-current] { background: var(--accent); border-color: var(--accent); }
 .bar-action:hover, .bar-action[aria-current] { background: var(--tint); border-color: var(--muted); }
 .theme-toggle { display: grid; place-items: center; background: transparent; border: 1px solid var(--line); color: var(--ink); border-radius: 50%; height: 2.75rem; width: 2.75rem; cursor: pointer; }
 .theme-toggle svg { width: 1.35rem; }
@@ -207,6 +210,7 @@ textarea { resize: vertical; }
   .nav a { min-height: 2.75rem; font-size: .9rem; }
   .bar { column-gap: .4rem; }
   .bar-actions { gap: .4rem; }
+  .register-action { display: none; } /* no room on a phone; /login links to /register */
   .brand { font-size: 1.6rem; gap: .5rem; }
   .bar-action, .workspace-menu { padding: 0 .7rem; font-size: .82rem; }
   .bar-action svg { display: none; }

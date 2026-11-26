@@ -106,6 +106,11 @@ button[hidden], [hidden] { display: none; }
 .platform-link { border: 1px solid currentColor; padding: 9px 17px; border-radius: 30px; display: flex; align-items: center; gap: 13px; font-size: .815rem; font-weight: 500; min-height: 42px; }
 .platform-link, .scroll-cue { white-space: nowrap; }
 button.platform-link { background: transparent; color: inherit; font-family: var(--sans); cursor: pointer; }
+/* "Register": filled next to the outlined "Log in"; light over the photo, dark on the paper header */
+.platform-link.primary { background: #fffaf1; color: #15191e; border-color: #fffaf1; }
+.platform-link.primary:hover { background: #ead1b1; border-color: #ead1b1; }
+.is-paper .platform-link.primary, .menu-open .platform-link.primary { background: var(--color-ink); color: var(--color-background); border-color: var(--color-ink); }
+.is-paper .platform-link.primary:hover, .menu-open .platform-link.primary:hover { background: var(--color-accent); border-color: var(--color-accent); }
 .platform-link svg, .text-link svg, .ink-link svg, .back-top svg { width: 16px; height: 16px; }
 .platform-link:hover { background: #ffffff20; }
 .is-paper .platform-link:hover, .menu-open .platform-link:hover { background: var(--color-hover); }
@@ -227,6 +232,7 @@ body::after { content: ""; pointer-events: none; position: fixed; z-index: 9; in
   .community { grid-template-columns: 1fr 1.1fr; gap: 34px; }
 }
 @media (max-width: 700px) {
+  .register-action { display: none; } /* no room on a phone; /login links to /register */
   :root { --nav-height: 68px; --gutter: clamp(20px,5.5vw,32px); }
   .emblem { width: 37px; height: 37px; }
   .wordmark { font-size: 1.62rem; }

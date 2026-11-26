@@ -33,7 +33,7 @@ midnight navy surfaces, ivory text and a light rose accent for readable links.
 
 - The landing and the workspace share one menu, with the same links in the same order:
   Home, Workspace, Opportunities, Announcements, Applications, Users, About, and a
-  Log in / Log out button, a TR/EN language button and a light/dark theme button on the
+  Log in and Register buttons (one Log out button once logged in; Register is hidden on phones), a TR/EN language button and a light/dark theme button on the
   right. Each choice is saved once (`localStorage` keys `lang` and `theme`) and
   applies to every page; without a saved choice the page follows the browser's
   language and the system theme. Each header keeps its own look, but both use three columns (logo, centred menu, buttons), so the menu sits in the same place on every page and buttons that appear or change cannot move it. Below 1200px both
