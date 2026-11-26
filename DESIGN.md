@@ -63,7 +63,7 @@ All content must remain accessible when decorative animation is unavailable.
 
 The current WebP photographs are AI-generated illustrations. They represent
 university life without identifying actual graduates or achievements.
-The mark in `emblem.svg` is an original "İÜ" monogram in a laurel seal, drawn for this project; it is not the university's official emblem. Replace the file only with a logo you have permission to use. See [BRAND.md](BRAND.md)
+The mark in `emblem.svg` is the İstanbul University logo, shown in its own colours (green and yellow). The file is "İstanbul Üniversitesi Logo.svg" from Wikimedia Commons (https://commons.wikimedia.org/wiki/File:%C4%B0stanbul_%C3%9Cniversitesi_Logo.svg), taken there from the university's corporate identity guide; follow the university's logo rules when using it. The About page states that IU ATS is a course project, not an official university service. See [BRAND.md](BRAND.md)
 for naming and copy.
 
 The week 8 home-page study explored the Beyazıt gate. The coursework record
