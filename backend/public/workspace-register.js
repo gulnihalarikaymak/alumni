@@ -135,7 +135,7 @@ export function registerPage() {
   const title = el('h1', {}, t('Join the alumni') + ' ', el('em', {}, t('network.')));
   return el('div', { class: 'register' },
     el('div', { class: 'register-intro' },
-      el('p', { class: 'kicker' }, t('Join İÜ ATS')), title,
+      el('p', { class: 'kicker' }, t('Join IU ATS')), title,
       el('p', {}, t('Students, graduates and staff of İstanbul University share announcements, ' +
         'career opportunities and the people behind them.')),
       el('img', { src: '/media/milestone.webp', width: 1600, height: 1000, alt: t('Graduates in gowns throwing their caps into the air') })),

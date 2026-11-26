@@ -52,7 +52,7 @@ async function render() {
     if (!content) return;
     const notice = el('p', { id: 'action-error', class: 'form-error', role: 'alert', tabindex: '-1', hidden: true });
     main.replaceChildren(notice, ...[content].flat());
-    document.title = main.querySelector('h1').textContent + ' — İÜ ATS';
+    document.title = main.querySelector('h1').textContent + ' — ' + t('IU ATS');
   } catch (error) {
     if (error.status === 404) return notFound();
     const retry = el('button', { class: 'btn', type: 'button' }, t('Try again'));
@@ -61,7 +61,7 @@ async function render() {
       retry.textContent = t('Loading…');
       render();
     });
-    document.title = t('Unable to load page') + ' — İÜ ATS';
+    document.title = t('Unable to load page') + ' — ' + t('IU ATS');
     main.replaceChildren(el('section', { class: 'card narrow stack' },
       el('h1', {}, t('Unable to load page')), el('p', { role: 'alert' }, error.message), el('div', {}, retry)));
   } finally {
